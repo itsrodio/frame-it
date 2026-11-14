@@ -4,6 +4,7 @@ import { Menu as MenuPrimitive } from '@base-ui/react/menu';
 import { cn } from 'cn';
 import { CheckIcon, ChevronRightIcon } from 'lucide-react';
 import type * as React from 'react';
+import { usePortalContainer } from '@/lib/portal-context';
 
 function DropdownMenu({ ...props }: MenuPrimitive.Root.Props) {
 	return <MenuPrimitive.Root data-slot="dropdown-menu" {...props} />;
@@ -23,16 +24,20 @@ function DropdownMenuContent({
 	side = 'bottom',
 	sideOffset = 4,
 	className,
+	container,
 	...props
 }: MenuPrimitive.Popup.Props &
 	Pick<
 		MenuPrimitive.Positioner.Props,
 		'align' | 'alignOffset' | 'side' | 'sideOffset'
-	>) {
+	> &
+	Pick<MenuPrimitive.Portal.Props, 'container'>) {
+	const defaultContainer = usePortalContainer();
+
 	return (
-		<MenuPrimitive.Portal>
+		<MenuPrimitive.Portal container={container ?? defaultContainer}>
 			<MenuPrimitive.Positioner
-				className="isolate z-50 outline-none"
+				className="isolate z-50 outline-none pointer-events-auto"
 				align={align}
 				alignOffset={alignOffset}
 				side={side}

@@ -46,7 +46,7 @@
 4. Load unpacked in Chrome:
    - Go to `chrome://extensions/`
    - Enable **Developer mode** (top right)
-   - Click **Load unpacked** and select the `dist/` directory.
+   - Click **Load unpacked** and select the `.output/chrome-mv3` directory.
 
 ---
 
@@ -68,7 +68,9 @@ pnpm lint # Lint and format check
 
 ## 🗺️ Roadmap
 
-- [ ] Support baseline grids (8pt / 4pt grid overlay)
-- [ ] Keyboard shortcuts to toggle specific guides
-- [ ] Export layout specs or capture full-page overlay screenshots
-- [ ] Synchronized presets via cloud or shared config file
+- [x] Layout grids overlay (Columns, Rows & Grid)
+- [x] Customizable grid parameters (colors, opacity, gutters, columns)
+- [ ] **Inspect Mode**: Hover guides to measure margins, paddings, and distances between DOM elements
+- [ ] **Rulers & Custom Guides**: Drag-and-drop horizontal/vertical guides like in Figma (`Shift + R`)
+- [ ] **Per-domain Persistence**: Remember grid settings per URL/localhost port
+- [ ] **Store Releases**: Chrome Web Store & Firefox Add-ons

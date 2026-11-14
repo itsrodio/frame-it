@@ -1,8 +1,8 @@
 {
 	"name": "frame-it",
-	"description": "manifest.json description",
+	"description": "Overlay customizable column, row, and pixel layout grids onto any live website.",
 	"private": true,
-	"version": "0.0.0",
+	"version": "0.1.0",
 	"type": "module",
 	"scripts": {
 		"dev": "wxt",
@@ -37,6 +37,7 @@
 		"@commitlint/config-conventional": "^21.2.4",
 		"@types/react": "^19.2.14",
 		"@types/react-dom": "^19.2.3",
+		"@wxt-dev/auto-icons": "^1.1.2",
 		"@wxt-dev/module-react": "^1.1.5",
 		"lefthook": "^2.2.2",
 		"typescript": "^5.9.3",

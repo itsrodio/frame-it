@@ -1,29 +1,39 @@
 import ReactDOM from 'react-dom/client';
 import '@/assets/tailwind.css';
-import { Button } from '@/components/ui/button';
+import { App } from '@/App';
 
 export default defineContentScript({
-	matches: ['<all_urls>'],
+	registration: 'runtime',
 	cssInjectionMode: 'ui',
 
 	async main(ctx) {
+		let isMounted = false;
+
+		const closeOverlay = () => {
+			if (!isMounted) return;
+			ui.remove();
+			isMounted = false;
+		};
+
 		const ui = await createShadowRootUi(ctx, {
-			name: 'frame-it-root',
-			position: 'inline',
-			anchor: 'body',
-			append: 'last',
+			name: 'frameit-overlay',
+			position: 'overlay',
+			zIndex: 2147483647,
 			onMount: (container) => {
-				const root = ReactDOM.createRoot(container);
-				root.render(
-					<div className="fixed bottom-4 right-4 z-[2147483647]">
-						<Button
-							variant="default"
-							onClick={() => console.log('frame-it triggered')}
-						>
-							Toggle Grid
-						</Button>
-					</div>,
+				// Создаем обертку для React внутри Shadow DOM
+				const wrapper = document.createElement('div');
+				wrapper.id = 'frameit-root';
+				// Задаем тему синхронно до вставки в DOM, чтобы избежать моргания (FOUC)
+				wrapper.classList.add(
+					window.matchMedia('(prefers-color-scheme: dark)').matches
+						? 'dark'
+						: 'light',
 				);
+				container.append(wrapper);
+
+				const root = ReactDOM.createRoot(wrapper);
+				// Передаем wrapper в App, чтобы Portal'ы (Tooltip/Dropdown) рендерились внутри Shadow DOM
+				root.render(<App portalContainer={wrapper} onClose={closeOverlay} />);
 				return root;
 			},
 			onRemove: (root) => {
@@ -32,5 +42,17 @@ export default defineContentScript({
 		});
 
 		ui.mount();
+		isMounted = true;
+
+		browser.runtime.onMessage.addListener((msg) => {
+			if (msg.type === 'TOGGLE_OVERLAY') {
+				if (isMounted) {
+					closeOverlay();
+				} else {
+					ui.mount();
+					isMounted = true;
+				}
+			}
+		});
 	},
 });
