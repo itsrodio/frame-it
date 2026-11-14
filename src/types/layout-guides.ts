@@ -46,4 +46,5 @@ export interface LayoutGuidesToolProps {
 	onColumnsChange: (patch: Partial<LinearGuideSettings>) => void;
 	onRowsChange: (patch: Partial<LinearGuideSettings>) => void;
 	onGridChange: (patch: Partial<GridGuideSettings>) => void;
+	onReset: () => void;
 }

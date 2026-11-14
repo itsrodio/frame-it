@@ -53,6 +53,8 @@ export const DEFAULT_GRID_SETTINGS: GridGuideSettings = {
 	opacity: 10,
 };
 
+export const LAYOUT_GUIDES_STORAGE_KEY = 'frameit:layout-guides';
+
 export const DEFAULT_LAYOUT_GUIDES_STATE: LayoutGuidesState = {
 	enabled: true,
 	type: 'columns',

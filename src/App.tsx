@@ -1,7 +1,13 @@
 import { CSPProvider } from '@base-ui/react/csp-provider';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Dock } from '@/components/overlay/dock';
-import { DEFAULT_LAYOUT_GUIDES_STATE } from '@/components/overlay/layout-guides/constants';
+import {
+	DEFAULT_COLUMNS_SETTINGS,
+	DEFAULT_GRID_SETTINGS,
+	DEFAULT_LAYOUT_GUIDES_STATE,
+	DEFAULT_ROWS_SETTINGS,
+	LAYOUT_GUIDES_STORAGE_KEY,
+} from '@/components/overlay/layout-guides/constants';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { PortalContext } from '@/lib/portal-context';
 import { ThemeProvider } from '@/lib/theme-provider';
@@ -11,6 +17,41 @@ import type {
 	LayoutGuidesState,
 	LinearGuideSettings,
 } from '@/types/layout-guides';
+
+function loadLayoutGuidesState(): LayoutGuidesState {
+	try {
+		const raw = window.localStorage.getItem(LAYOUT_GUIDES_STORAGE_KEY);
+		if (!raw) return DEFAULT_LAYOUT_GUIDES_STATE;
+		const parsed = JSON.parse(raw) as Partial<LayoutGuidesState>;
+
+		return {
+			enabled:
+				typeof parsed.enabled === 'boolean'
+					? parsed.enabled
+					: DEFAULT_LAYOUT_GUIDES_STATE.enabled,
+			type:
+				parsed.type === 'columns' ||
+				parsed.type === 'rows' ||
+				parsed.type === 'grid'
+					? parsed.type
+					: DEFAULT_LAYOUT_GUIDES_STATE.type,
+			columns: {
+				...DEFAULT_COLUMNS_SETTINGS,
+				...parsed.columns,
+			},
+			rows: {
+				...DEFAULT_ROWS_SETTINGS,
+				...parsed.rows,
+			},
+			grid: {
+				...DEFAULT_GRID_SETTINGS,
+				...parsed.grid,
+			},
+		};
+	} catch {
+		return DEFAULT_LAYOUT_GUIDES_STATE;
+	}
+}
 
 // Конвертация HEX цвета и прозрачности (0–100) в 8-значный CSS HEX
 function formatGuideColor(hex: string, opacity: number): string {
@@ -106,8 +147,19 @@ interface AppProps {
 
 export function App({ portalContainer, onClose }: AppProps) {
 	const [guidesState, setGuidesState] = useState<LayoutGuidesState>(
-		DEFAULT_LAYOUT_GUIDES_STATE,
+		loadLayoutGuidesState,
 	);
+
+	useEffect(() => {
+		try {
+			window.localStorage.setItem(
+				LAYOUT_GUIDES_STORAGE_KEY,
+				JSON.stringify(guidesState),
+			);
+		} catch {
+			// Ignore storage quota or security errors
+		}
+	}, [guidesState]);
 
 	const handleToggle = (enabled: boolean) => {
 		setGuidesState((prev) => ({ ...prev, enabled }));
@@ -138,6 +190,18 @@ export function App({ portalContainer, onClose }: AppProps) {
 		}));
 	};
 
+	const handleReset = () => {
+		setGuidesState((prev) => {
+			if (prev.type === 'columns') {
+				return { ...prev, columns: DEFAULT_COLUMNS_SETTINGS };
+			}
+			if (prev.type === 'rows') {
+				return { ...prev, rows: DEFAULT_ROWS_SETTINGS };
+			}
+			return { ...prev, grid: DEFAULT_GRID_SETTINGS };
+		});
+	};
+
 	return (
 		<CSPProvider disableStyleElements>
 			<ThemeProvider defaultTheme="system" container={portalContainer}>
@@ -155,6 +219,7 @@ export function App({ portalContainer, onClose }: AppProps) {
 								onColumnsChange={handleColumnsChange}
 								onRowsChange={handleRowsChange}
 								onGridChange={handleGridChange}
+								onReset={handleReset}
 								onClose={onClose}
 							/>
 						</div>
