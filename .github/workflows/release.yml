@@ -3,15 +3,22 @@ name: Release
 on:
   push:
     branches: [main]
+  workflow_dispatch:
+    inputs:
+      tag_name:
+        description: "Существующий тег релиза для пересборки артефактов (например, v0.2.0)"
+        required: true
+        default: "v0.2.0"
 
 permissions:
   contents: write
   pull-requests: write
 
 jobs:
-  # 1. Automatic versioning, CHANGELOG.md, and creating a Release PR / GitHub Release
+  # 1. Автоматическое версионирование, CHANGELOG.md и создание Release PR / GitHub Release
   release-please:
     name: Release Please
+    if: github.event_name == 'push'
     runs-on: ubuntu-latest
     outputs:
       release_created: ${{ steps.release.outputs.release_created }}
@@ -22,16 +29,18 @@ jobs:
         with:
           release-type: node
 
-  # 2. Build for Chrome (Edge, Brave, Opera, Arc) and Firefox on a Linux runner
+  # 2. Сборка для Chrome (Edge, Brave, Opera, Arc) и Firefox на Linux-раннере
   build-webextensions:
     name: Build Chrome & Firefox
     needs: release-please
-    if: ${{ needs.release-please.outputs.release_created == 'true' }}
+    if: ${{ always() && (needs.release-please.outputs.release_created == 'true' || github.event_name == 'workflow_dispatch') }}
     runs-on: ubuntu-latest
+    env:
+      TAG_NAME: ${{ needs.release-please.outputs.tag_name || inputs.tag_name }}
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${{ needs.release-please.outputs.tag_name }}
+          ref: ${{ env.TAG_NAME }}
       - uses: pnpm/action-setup@v4
         with:
           version: 10
@@ -50,18 +59,19 @@ jobs:
         run: gh release upload "$TAG_NAME" .output/*.zip --clobber
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          TAG_NAME: ${{ needs.release-please.outputs.tag_name }}
 
-  # 3. Building an unsigned .app for Safari on a macOS runner
+  # 3. Сборка .app для Safari на macOS-раннере (ad-hoc подпись)
   build-safari:
     name: Build Safari (macOS)
     needs: release-please
-    if: ${{ needs.release-please.outputs.release_created == 'true' }}
+    if: ${{ always() && (needs.release-please.outputs.release_created == 'true' || github.event_name == 'workflow_dispatch') }}
     runs-on: macos-latest
+    env:
+      TAG_NAME: ${{ needs.release-please.outputs.tag_name || inputs.tag_name }}
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${{ needs.release-please.outputs.tag_name }}
+          ref: ${{ env.TAG_NAME }}
       - uses: pnpm/action-setup@v4
         with:
           version: 10
@@ -85,7 +95,7 @@ jobs:
             --no-open \
             --no-prompt
 
-      - name: Build unsigned macOS .app
+      - name: Build macOS .app (ad-hoc signed)
         run: |
           PROJECT=".output/safari-xcode/Frame It/Frame It.xcodeproj"
           SCHEME=$(xcodebuild -project "$PROJECT" -list -json | jq -r '.project.schemes[0]')
@@ -93,20 +103,19 @@ jobs:
             -scheme "$SCHEME" \
             -configuration Release \
             -derivedDataPath .output/safari-build \
-            CODE_SIGN_IDENTITY="" \
+            CODE_SIGN_IDENTITY="-" \
             CODE_SIGNING_REQUIRED=NO \
-            CODE_SIGNING_ALLOWED=NO
+            CODE_SIGNING_ALLOWED=YES \
+            AD_HOC_CODE_SIGNING_ALLOWED=YES \
+            DEVELOPMENT_TEAM=""
 
       - name: Archive Safari .app
         run: |
           VERSION="${TAG_NAME#v}"
           cd ".output/safari-build/Build/Products/Release"
           ditto -c -k --keepParent "Frame It.app" "../../../../frame-it-${VERSION}-safari-macos.zip"
-        env:
-          TAG_NAME: ${{ needs.release-please.outputs.tag_name }}
 
       - name: Upload Safari asset to Release
         run: gh release upload "$TAG_NAME" .output/frame-it-*-safari-macos.zip --clobber
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          TAG_NAME: ${{ needs.release-please.outputs.tag_name }}
