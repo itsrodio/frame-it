@@ -1,0 +1,112 @@
+name: Release
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  # 1. Automatic versioning, CHANGELOG.md, and creating a Release PR / GitHub Release
+  release-please:
+    name: Release Please
+    runs-on: ubuntu-latest
+    outputs:
+      release_created: ${{ steps.release.outputs.release_created }}
+      tag_name: ${{ steps.release.outputs.tag_name }}
+    steps:
+      - uses: googleapis/release-please-action@v4
+        id: release
+        with:
+          release-type: node
+
+  # 2. Build for Chrome (Edge, Brave, Opera, Arc) and Firefox on a Linux runner
+  build-webextensions:
+    name: Build Chrome & Firefox
+    needs: release-please
+    if: ${{ needs.release-please.outputs.release_created == 'true' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.release-please.outputs.tag_name }}
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: "pnpm"
+
+      - run: pnpm install --frozen-lockfile --ignore-scripts
+      - name: Zip extension (Chrome / Chromium)
+        run: pnpm zip
+      - name: Zip extension (Firefox + Sources)
+        run: pnpm zip:firefox
+
+      - name: Upload Chrome & Firefox assets to Release
+        run: gh release upload "$TAG_NAME" .output/*.zip --clobber
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG_NAME: ${{ needs.release-please.outputs.tag_name }}
+
+  # 3. Building an unsigned .app for Safari on a macOS runner
+  build-safari:
+    name: Build Safari (macOS)
+    needs: release-please
+    if: ${{ needs.release-please.outputs.release_created == 'true' }}
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.release-please.outputs.tag_name }}
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: "pnpm"
+
+      - run: pnpm install --frozen-lockfile --ignore-scripts
+
+      - name: Build Safari web bundle (MV3)
+        run: pnpm build:safari
+
+      - name: Convert to Xcode project
+        run: |
+          xcrun safari-web-extension-converter .output/safari-mv3 \
+            --project-location .output/safari-xcode \
+            --app-name "Frame It" \
+            --bundle-identifier "com.itsrodio.frame-it" \
+            --macos-only \
+            --no-open \
+            --no-prompt
+
+      - name: Build unsigned macOS .app
+        run: |
+          PROJECT=".output/safari-xcode/Frame It/Frame It.xcodeproj"
+          SCHEME=$(xcodebuild -project "$PROJECT" -list -json | jq -r '.project.schemes[0]')
+          xcodebuild -project "$PROJECT" \
+            -scheme "$SCHEME" \
+            -configuration Release \
+            -derivedDataPath .output/safari-build \
+            CODE_SIGN_IDENTITY="" \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGNING_ALLOWED=NO
+
+      - name: Archive Safari .app
+        run: |
+          VERSION="${TAG_NAME#v}"
+          cd ".output/safari-build/Build/Products/Release"
+          ditto -c -k --keepParent "Frame It.app" "../../../../frame-it-${VERSION}-safari-macos.zip"
+        env:
+          TAG_NAME: ${{ needs.release-please.outputs.tag_name }}
+
+      - name: Upload Safari asset to Release
+        run: gh release upload "$TAG_NAME" .output/frame-it-*-safari-macos.zip --clobber
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG_NAME: ${{ needs.release-please.outputs.tag_name }}
