@@ -4,8 +4,8 @@ import type {
 } from '@/types/layout-guides';
 
 /**
- * Очищает HEX-строку от решетки и приводит к верхнему регистру,
- * а также возвращает валидный 6-значный CSS HEX с фоллбэком.
+ * Strips the leading `#`, converts the HEX string to uppercase,
+ * and returns a valid 6-digit CSS HEX with a fallback.
  */
 export function normalizeHexColor(
 	hex: string,
@@ -22,7 +22,7 @@ export function normalizeHexColor(
 }
 
 /**
- * Конвертация HEX цвета и прозрачности (0–100) в 8-значный CSS HEX (#RRGGBBAA).
+ * Converts a HEX color and opacity (0–100) into an 8-digit CSS HEX (#RRGGBBAA).
  */
 export function formatGuideColor(hex: string, opacity: number): string {
 	const { validCssHex } = normalizeHexColor(hex);
