@@ -1,144 +1,31 @@
 import { CSPProvider } from '@base-ui/react/csp-provider';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
+import { ContainerPickerOverlay } from '@/components/overlay/container-picker-overlay';
 import { Dock } from '@/components/overlay/dock';
-import {
-	DEFAULT_COLUMNS_SETTINGS,
-	DEFAULT_GRID_SETTINGS,
-	DEFAULT_LAYOUT_GUIDES_STATE,
-	DEFAULT_ROWS_SETTINGS,
-	LAYOUT_GUIDES_STORAGE_KEY,
-} from '@/components/overlay/layout-guides/constants';
+import { InspectMeasureOverlay } from '@/components/overlay/inspect-measure-overlay';
+import { LayoutGuidesOverlay } from '@/components/overlay/layout-guides-overlay';
 import { TooltipProvider } from '@/components/ui/tooltip';
+import {
+	autoDetectPageContainer,
+	containerInfoToColumnsPatch,
+	extractContainerInfo,
+} from '@/lib/container-detector';
+import { isEditableTarget } from '@/lib/dom-utils';
+import {
+	clearSiteCustomState,
+	getInitialGuidesSetup,
+	runAutoDetectOrDefaults,
+	saveSiteCustomState,
+} from '@/lib/guides-storage';
 import { PortalContext } from '@/lib/portal-context';
 import { ThemeProvider } from '@/lib/theme-provider';
 import type {
+	DetectedContainerInfo,
 	GridGuideSettings,
 	GuideType,
 	LayoutGuidesState,
 	LinearGuideSettings,
 } from '@/types/layout-guides';
-
-function loadLayoutGuidesState(): LayoutGuidesState {
-	try {
-		const raw = window.localStorage.getItem(LAYOUT_GUIDES_STORAGE_KEY);
-		if (!raw) return DEFAULT_LAYOUT_GUIDES_STATE;
-		const parsed = JSON.parse(raw) as Partial<LayoutGuidesState>;
-
-		return {
-			enabled:
-				typeof parsed.enabled === 'boolean'
-					? parsed.enabled
-					: DEFAULT_LAYOUT_GUIDES_STATE.enabled,
-			type:
-				parsed.type === 'columns' ||
-				parsed.type === 'rows' ||
-				parsed.type === 'grid'
-					? parsed.type
-					: DEFAULT_LAYOUT_GUIDES_STATE.type,
-			columns: {
-				...DEFAULT_COLUMNS_SETTINGS,
-				...parsed.columns,
-			},
-			rows: {
-				...DEFAULT_ROWS_SETTINGS,
-				...parsed.rows,
-			},
-			grid: {
-				...DEFAULT_GRID_SETTINGS,
-				...parsed.grid,
-			},
-		};
-	} catch {
-		return DEFAULT_LAYOUT_GUIDES_STATE;
-	}
-}
-
-// Конвертация HEX цвета и прозрачности (0–100) в 8-значный CSS HEX
-function formatGuideColor(hex: string, opacity: number): string {
-	const clean = hex.replace(/^#/, '');
-	const validHex = /^[0-9A-F]{6}$/i.test(clean) ? `#${clean}` : '#FF0000';
-	const alpha = Math.round((Math.max(0, Math.min(100, opacity)) / 100) * 255)
-		.toString(16)
-		.padStart(2, '0');
-	return `${validHex}${alpha}`;
-}
-
-function LayoutGuidesOverlay({ state }: { state: LayoutGuidesState }) {
-	if (!state.enabled) return null;
-
-	if (state.type === 'grid') {
-		const { size, color: rawColor, opacity } = state.grid;
-		const color = formatGuideColor(rawColor, opacity);
-
-		return (
-			<div
-				className="w-full h-full"
-				style={{
-					backgroundSize: `${size}px ${size}px`,
-					backgroundImage: `
-                        linear-gradient(to right, ${color} 1px, transparent 1px),
-                        linear-gradient(to bottom, ${color} 1px, transparent 1px)
-                    `,
-				}}
-			/>
-		);
-	}
-
-	const isColumns = state.type === 'columns';
-	const settings = state[state.type];
-	const color = formatGuideColor(settings.color, settings.opacity);
-	const isStretch = settings.alignment === 'stretch';
-	const isCenter = settings.alignment === 'center';
-	const trackSize = isStretch
-		? 'minmax(0, 1fr)'
-		: `${settings.itemSize ?? 64}px`;
-
-	const justifyOrAlign =
-		settings.alignment === 'start'
-			? 'start'
-			: settings.alignment === 'end'
-				? 'end'
-				: settings.alignment === 'center'
-					? 'center'
-					: undefined;
-
-	return (
-		<div
-			className="w-full h-full grid"
-			style={{
-				padding: isCenter
-					? 0
-					: isColumns
-						? `0 ${settings.margin}px`
-						: `${settings.margin}px 0`,
-				gap: `${settings.gutter}px`,
-				gridTemplateColumns: isColumns
-					? `repeat(${settings.count}, ${trackSize})`
-					: '1fr',
-				gridTemplateRows: !isColumns
-					? `repeat(${settings.count}, ${trackSize})`
-					: '1fr',
-				justifyContent: isColumns ? justifyOrAlign : undefined,
-				alignContent: !isColumns ? justifyOrAlign : undefined,
-			}}
-		>
-			{Array.from(
-				{ length: settings.count },
-				(_, i) => `${state.type}-guide-${i}`,
-			).map((guideId) => (
-				<div
-					key={guideId}
-					className="w-full h-full"
-					style={{
-						backgroundColor: color,
-						borderInline: isColumns ? `1px solid ${color}` : undefined,
-						borderBlock: !isColumns ? `1px solid ${color}` : undefined,
-					}}
-				/>
-			))}
-		</div>
-	);
-}
 
 interface AppProps {
 	portalContainer: HTMLElement;
@@ -146,61 +33,266 @@ interface AppProps {
 }
 
 export function App({ portalContainer, onClose }: AppProps) {
+	const [initialSetup] = useState(getInitialGuidesSetup);
 	const [guidesState, setGuidesState] = useState<LayoutGuidesState>(
-		loadLayoutGuidesState,
+		initialSetup.state,
 	);
+	const [hasCustomSiteSettings, setHasCustomSiteSettings] = useState<boolean>(
+		initialSetup.hasCustomSiteSettings,
+	);
+	const [isInspectActive, setIsInspectActive] = useState(false);
+	const [isPickingContainer, setIsPickingContainer] = useState(false);
+	const [trackedElement, setTrackedElement] = useState<HTMLElement | null>(
+		initialSetup.trackedElement,
+	);
+	const [trackedElementLabel, setTrackedElementLabel] = useState<string | null>(
+		initialSetup.trackedElementLabel,
+	);
+	const [scroll, setScroll] = useState({ x: 0, y: 0 });
+
+	// Сохраняем настройки в localStorage ТОЛЬКО если пользователь сам что-то изменил на этом сайте
+	useEffect(() => {
+		if (!hasCustomSiteSettings) return;
+		saveSiteCustomState(guidesState);
+	}, [guidesState, hasCustomSiteSettings]);
+
+	const needsScroll =
+		guidesState.enabled && guidesState[guidesState.type].followScroll;
+
+	// Отслеживание скролла страницы с батчингом через requestAnimationFrame
+	useEffect(() => {
+		if (!needsScroll) return;
+
+		let rafId: number | null = null;
+
+		const updateScroll = () => {
+			rafId = null;
+			const nextX = window.scrollX;
+			const nextY = window.scrollY;
+			setScroll((prev) =>
+				prev.x === nextX && prev.y === nextY ? prev : { x: nextX, y: nextY },
+			);
+		};
+
+		const handleScroll = () => {
+			if (rafId === null) {
+				rafId = window.requestAnimationFrame(updateScroll);
+			}
+		};
+
+		updateScroll();
+		window.addEventListener('scroll', handleScroll, { passive: true });
+		return () => {
+			if (rafId !== null) window.cancelAnimationFrame(rafId);
+			window.removeEventListener('scroll', handleScroll);
+		};
+	}, [needsScroll]);
+
+	// Привязка к выбранному DOM-контейнеру при ресайзе окна или самого элемента
+	const syncWithTrackedElement = useCallback((el: HTMLElement) => {
+		if (!document.body.contains(el)) {
+			setTrackedElement(null);
+			setTrackedElementLabel(null);
+			return;
+		}
+		const info = extractContainerInfo(el);
+		setTrackedElementLabel(info.label);
+		setGuidesState((prev) => ({
+			...prev,
+			columns: {
+				...prev.columns,
+				...containerInfoToColumnsPatch(info, prev.columns),
+			},
+		}));
+	}, []);
 
 	useEffect(() => {
-		try {
-			window.localStorage.setItem(
-				LAYOUT_GUIDES_STORAGE_KEY,
-				JSON.stringify(guidesState),
-			);
-		} catch {
-			// Ignore storage quota or security errors
+		if (!trackedElement) return;
+
+		let rafId: number | null = null;
+		const handleResize = () => {
+			if (rafId !== null) return;
+			rafId = window.requestAnimationFrame(() => {
+				rafId = null;
+				syncWithTrackedElement(trackedElement);
+			});
+		};
+
+		const observer = new ResizeObserver(handleResize);
+		observer.observe(trackedElement);
+		window.addEventListener('resize', handleResize, { passive: true });
+
+		return () => {
+			if (rafId !== null) window.cancelAnimationFrame(rafId);
+			observer.disconnect();
+			window.removeEventListener('resize', handleResize);
+		};
+	}, [trackedElement, syncWithTrackedElement]);
+
+	const applyDetectedContainer = useCallback(
+		(info: DetectedContainerInfo, markAsCustom: boolean) => {
+			setTrackedElement(info.element);
+			setTrackedElementLabel(info.label);
+			setHasCustomSiteSettings(markAsCustom);
+			if (!markAsCustom) {
+				clearSiteCustomState();
+			}
+			setGuidesState((prev) => ({
+				...prev,
+				enabled: true,
+				type: 'columns',
+				columns: {
+					...prev.columns,
+					...containerInfoToColumnsPatch(info, prev.columns),
+				},
+			}));
+		},
+		[],
+	);
+
+	const handleAutoDetect = useCallback(() => {
+		const detected = autoDetectPageContainer();
+		if (detected) {
+			applyDetectedContainer(detected, false);
 		}
-	}, [guidesState]);
+	}, [applyDetectedContainer]);
 
-	const handleToggle = (enabled: boolean) => {
+	const handleToggle = useCallback((enabled: boolean) => {
 		setGuidesState((prev) => ({ ...prev, enabled }));
-	};
+	}, []);
 
-	const handleTypeChange = (type: GuideType) => {
-		setGuidesState((prev) => ({ ...prev, type, enabled: true }));
-	};
-
-	const handleColumnsChange = (patch: Partial<LinearGuideSettings>) => {
+	const handleTypeChange = useCallback((type: GuideType) => {
+		setHasCustomSiteSettings(true);
 		setGuidesState((prev) => ({
 			...prev,
-			columns: { ...prev.columns, ...patch },
+			type,
+			enabled: true,
 		}));
-	};
+	}, []);
 
-	const handleRowsChange = (patch: Partial<LinearGuideSettings>) => {
-		setGuidesState((prev) => ({
-			...prev,
-			rows: { ...prev.rows, ...patch },
-		}));
-	};
+	// Глобальные горячие клавиши (Shift+G, Shift+I, Shift+A, Shift+C, Shift+1/2/3)
+	useEffect(() => {
+		const handleKeyDown = (e: KeyboardEvent) => {
+			const shadowActive =
+				portalContainer.getRootNode() instanceof ShadowRoot
+					? (portalContainer.getRootNode() as ShadowRoot).activeElement
+					: null;
+			if (isEditableTarget(e.target) || isEditableTarget(shadowActive)) {
+				return;
+			}
 
-	const handleGridChange = (patch: Partial<GridGuideSettings>) => {
+			// Shift + G (как в Figma) или Ctrl + ; — вкл/выкл направляющие
+			if (
+				(e.shiftKey && !e.ctrlKey && !e.metaKey && e.code === 'KeyG') ||
+				((e.ctrlKey || e.metaKey) && e.code === 'Semicolon')
+			) {
+				e.preventDefault();
+				setGuidesState((prev) => ({ ...prev, enabled: !prev.enabled }));
+				return;
+			}
+
+			// Shift + I — режим Inspect & Measure
+			if (e.shiftKey && !e.ctrlKey && !e.metaKey && e.code === 'KeyI') {
+				e.preventDefault();
+				setIsPickingContainer(false);
+				setIsInspectActive((prev) => !prev);
+				return;
+			}
+
+			// Shift + A — автоопределение контейнера
+			if (e.shiftKey && !e.ctrlKey && !e.metaKey && e.code === 'KeyA') {
+				e.preventDefault();
+				handleAutoDetect();
+				return;
+			}
+
+			// Shift + C — выбор контейнера кликом (Pick Container)
+			if (e.shiftKey && !e.ctrlKey && !e.metaKey && e.code === 'KeyC') {
+				e.preventDefault();
+				setIsInspectActive(false);
+				setIsPickingContainer((prev) => !prev);
+				return;
+			}
+
+			// Shift + 1 / 2 / 3 — быстрое переключение типа сетки (Columns / Rows / Grid)
+			if (e.shiftKey && !e.ctrlKey && !e.metaKey) {
+				if (e.code === 'Digit1') {
+					e.preventDefault();
+					handleTypeChange('columns');
+				} else if (e.code === 'Digit2') {
+					e.preventDefault();
+					handleTypeChange('rows');
+				} else if (e.code === 'Digit3') {
+					e.preventDefault();
+					handleTypeChange('grid');
+				}
+			}
+		};
+
+		window.addEventListener('keydown', handleKeyDown);
+		return () => window.removeEventListener('keydown', handleKeyDown);
+	}, [handleAutoDetect, handleTypeChange, portalContainer]);
+
+	const handleColumnsChange = useCallback(
+		(patch: Partial<LinearGuideSettings>) => {
+			setHasCustomSiteSettings(true);
+			if (
+				'maxSize' in patch ||
+				'margin' in patch ||
+				'offset' in patch ||
+				'alignment' in patch
+			) {
+				setTrackedElement(null);
+				setTrackedElementLabel(null);
+			}
+			setGuidesState((prev) => ({
+				...prev,
+				columns: { ...prev.columns, ...patch },
+			}));
+		},
+		[],
+	);
+
+	const handleRowsChange = useCallback(
+		(patch: Partial<LinearGuideSettings>) => {
+			setHasCustomSiteSettings(true);
+			setGuidesState((prev) => ({
+				...prev,
+				rows: { ...prev.rows, ...patch },
+			}));
+		},
+		[],
+	);
+
+	const handleGridChange = useCallback((patch: Partial<GridGuideSettings>) => {
+		setHasCustomSiteSettings(true);
 		setGuidesState((prev) => ({
 			...prev,
 			grid: { ...prev.grid, ...patch },
 		}));
-	};
+	}, []);
 
-	const handleReset = () => {
-		setGuidesState((prev) => {
-			if (prev.type === 'columns') {
-				return { ...prev, columns: DEFAULT_COLUMNS_SETTINGS };
-			}
-			if (prev.type === 'rows') {
-				return { ...prev, rows: DEFAULT_ROWS_SETTINGS };
-			}
-			return { ...prev, grid: DEFAULT_GRID_SETTINGS };
-		});
-	};
+	const handleClearTrackedElement = useCallback(() => {
+		setTrackedElement(null);
+		setTrackedElementLabel(null);
+	}, []);
+
+	/**
+	 * Полный сброс кастомных настроек сайта:
+	 * очищает сохраненное в localStorage для этого сайта и заново запускает автодетект
+	 * (или выставляет дефолтные настройки, если контейнер не найден).
+	 */
+	const handleReset = useCallback(() => {
+		clearSiteCustomState();
+		setHasCustomSiteSettings(false);
+		const fresh = runAutoDetectOrDefaults();
+		setTrackedElement(fresh.trackedElement);
+		setTrackedElementLabel(fresh.trackedElementLabel);
+		setGuidesState((prev) => ({
+			...fresh.state,
+			type: prev.type,
+		}));
+	}, []);
 
 	return (
 		<CSPProvider disableStyleElements>
@@ -208,17 +300,52 @@ export function App({ portalContainer, onClose }: AppProps) {
 				<PortalContext.Provider value={portalContainer}>
 					<TooltipProvider>
 						<div className="fixed inset-0 pointer-events-none select-none text-foreground">
-							{/* СЛОЙ 1: Сетка (Columns / Rows / Grid) */}
-							<LayoutGuidesOverlay state={guidesState} />
+							{/* СЛОЙ 1: Сетка (строго один активный тип: Columns, Rows или Grid) */}
+							<LayoutGuidesOverlay state={guidesState} scroll={scroll} />
 
-							{/* СЛОЙ 2: Единый Dock */}
+							{/* СЛОЙ 2: Измерение отступов по Alt или в режиме Inspect (как в Figma) */}
+							{!isPickingContainer && (
+								<InspectMeasureOverlay
+									active={isInspectActive}
+									onSnapToElement={(el) =>
+										applyDetectedContainer(extractContainerInfo(el), true)
+									}
+									onCancel={() => setIsInspectActive(false)}
+								/>
+							)}
+
+							{/* СЛОЙ 3: Интерактивный выбор контейнера для сетки */}
+							<ContainerPickerOverlay
+								active={isPickingContainer}
+								onSelect={(info) => {
+									setIsPickingContainer(false);
+									applyDetectedContainer(info, true);
+								}}
+								onCancel={() => setIsPickingContainer(false)}
+							/>
+
+							{/* СЛОЙ 4: Единый Dock */}
 							<Dock
 								state={guidesState}
+								isInspectActive={isInspectActive}
+								isPickingContainer={isPickingContainer}
+								trackedElementLabel={trackedElementLabel}
+								hasCustomSiteSettings={hasCustomSiteSettings}
 								onToggle={handleToggle}
+								onToggleInspect={(active) => {
+									setIsPickingContainer(false);
+									setIsInspectActive(active);
+								}}
 								onTypeChange={handleTypeChange}
 								onColumnsChange={handleColumnsChange}
 								onRowsChange={handleRowsChange}
 								onGridChange={handleGridChange}
+								onAutoDetect={handleAutoDetect}
+								onTogglePickContainer={() => {
+									setIsInspectActive(false);
+									setIsPickingContainer((prev) => !prev);
+								}}
+								onClearTrackedElement={handleClearTrackedElement}
 								onReset={handleReset}
 								onClose={onClose}
 							/>

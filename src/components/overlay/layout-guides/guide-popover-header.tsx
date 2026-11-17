@@ -1,4 +1,5 @@
-import { RotateCcw, X } from 'lucide-react';
+import { cn } from 'cn';
+import { Crosshair, RotateCcw, WandSparkles, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
 	Select,
@@ -13,29 +14,36 @@ import {
 	TooltipContent,
 	TooltipTrigger,
 } from '@/components/ui/tooltip';
-import type { GuideType } from '@/types/layout-guides';
+import type { GuideType, LayoutGuidesState } from '@/types/layout-guides';
 import { GUIDE_TYPES } from './constants';
 
 export interface GuidePopoverHeaderProps {
-	type: GuideType;
+	state: LayoutGuidesState;
 	canReset: boolean;
+	isPickingContainer: boolean;
 	onTypeChange: (type: GuideType) => void;
+	onAutoDetect: () => void;
+	onTogglePickContainer: () => void;
 	onReset: () => void;
 	onClose: () => void;
 }
 
 export function GuidePopoverHeader({
-	type,
+	state,
 	canReset,
+	isPickingContainer,
 	onTypeChange,
+	onAutoDetect,
+	onTogglePickContainer,
 	onReset,
 	onClose,
 }: GuidePopoverHeaderProps) {
 	return (
 		<div className="flex items-center justify-between border-b px-3 py-2.5">
+			{/* Левая часть: выбор типа сетки (Columns / Rows / Grid) */}
 			<Select
 				items={GUIDE_TYPES}
-				value={type}
+				value={state.type}
 				onValueChange={(val) => onTypeChange(val as GuideType)}
 			>
 				<SelectTrigger className="h-7 w-auto gap-1.5 px-2.5 text-xs font-medium">
@@ -52,7 +60,50 @@ export function GuidePopoverHeader({
 				</SelectContent>
 			</Select>
 
+			{/* Правая часть: Auto-detect, Pick container, Reset, Close */}
 			<div className="flex items-center gap-0.5">
+				<Tooltip>
+					<TooltipTrigger
+						render={
+							<Button
+								variant="ghost"
+								size="icon"
+								className="size-6 text-muted-foreground hover:text-foreground"
+								onClick={onAutoDetect}
+								aria-label="Auto-detect page container"
+							>
+								<WandSparkles className="size-3.5" />
+							</Button>
+						}
+					/>
+					<TooltipContent className="w-fit whitespace-nowrap">
+						Auto-detect container (Shift+A)
+					</TooltipContent>
+				</Tooltip>
+
+				<Tooltip>
+					<TooltipTrigger
+						render={
+							<Button
+								variant={isPickingContainer ? 'default' : 'ghost'}
+								size="icon"
+								className={cn(
+									'size-6',
+									!isPickingContainer &&
+										'text-muted-foreground hover:text-foreground',
+								)}
+								onClick={onTogglePickContainer}
+								aria-label="Pick container on page"
+							>
+								<Crosshair className="size-3.5" />
+							</Button>
+						}
+					/>
+					<TooltipContent className="w-fit whitespace-nowrap">
+						Pick container on page (Shift+C)
+					</TooltipContent>
+				</Tooltip>
+
 				<Tooltip>
 					<TooltipTrigger
 						render={
@@ -69,7 +120,7 @@ export function GuidePopoverHeader({
 						}
 					/>
 					<TooltipContent className="w-fit whitespace-nowrap">
-						Reset to defaults
+						Reset site settings (back to auto-detect)
 					</TooltipContent>
 				</Tooltip>
 

@@ -17,34 +17,34 @@ import {
 	PopoverTrigger,
 } from '@/components/ui/popover';
 import { Toggle } from '@/components/ui/toggle';
+import {
+	Tooltip,
+	TooltipContent,
+	TooltipTrigger,
+} from '@/components/ui/tooltip';
+import {
+	isGridModified,
+	isLinearModified,
+	normalizeHexColor,
+} from '@/lib/guide-utils';
 import type {
 	BaseGuideSettings,
 	LayoutGuidesToolProps,
-	LinearGuideSettings,
 } from '@/types/layout-guides';
-
-function isLinearModified(
-	current: LinearGuideSettings,
-	defaults: LinearGuideSettings,
-): boolean {
-	return (
-		current.count !== defaults.count ||
-		current.color.toUpperCase() !== defaults.color.toUpperCase() ||
-		current.opacity !== defaults.opacity ||
-		current.alignment !== defaults.alignment ||
-		current.itemSize !== defaults.itemSize ||
-		current.margin !== defaults.margin ||
-		current.gutter !== defaults.gutter
-	);
-}
 
 export function LayoutGuidesTool({
 	state,
+	isPickingContainer,
+	trackedElementLabel,
+	hasCustomSiteSettings,
 	onToggle,
 	onTypeChange,
 	onColumnsChange,
 	onRowsChange,
 	onGridChange,
+	onAutoDetect,
+	onTogglePickContainer,
+	onClearTrackedElement,
 	onReset,
 }: LayoutGuidesToolProps) {
 	const [open, setOpen] = useState(false);
@@ -55,14 +55,13 @@ export function LayoutGuidesTool({
 	const activeSettings = state[state.type];
 
 	const canReset =
-		state.type === 'columns'
-			? isLinearModified(state.columns, DEFAULT_COLUMNS_SETTINGS)
+		hasCustomSiteSettings ||
+		(state.type === 'columns'
+			? isLinearModified(state.columns, DEFAULT_COLUMNS_SETTINGS) ||
+				trackedElementLabel !== null
 			: state.type === 'rows'
 				? isLinearModified(state.rows, DEFAULT_ROWS_SETTINGS)
-				: state.grid.size !== DEFAULT_GRID_SETTINGS.size ||
-					state.grid.color.toUpperCase() !==
-						DEFAULT_GRID_SETTINGS.color.toUpperCase() ||
-					state.grid.opacity !== DEFAULT_GRID_SETTINGS.opacity;
+				: isGridModified(state.grid, DEFAULT_GRID_SETTINGS));
 
 	const updateActiveBase = (patch: Partial<BaseGuideSettings>) => {
 		if (state.type === 'columns') onColumnsChange(patch);
@@ -70,11 +69,7 @@ export function LayoutGuidesTool({
 		else onGridChange(patch);
 	};
 
-	// Нормализация HEX для отображения без '#' как в Figma и валидации для превью
-	const cleanHex = activeSettings.color.replace(/^#/, '').toUpperCase();
-	const validCssHex = /^[0-9A-F]{6}$/i.test(cleanHex)
-		? `#${cleanHex}`
-		: '#FF0000';
+	const { cleanHex, validCssHex } = normalizeHexColor(activeSettings.color);
 
 	const handleHexChange = (raw: string) => {
 		const sanitized = raw.replace(/[^0-9a-fA-F]/g, '').slice(0, 6);
@@ -89,13 +84,22 @@ export function LayoutGuidesTool({
 
 	return (
 		<div className="flex items-center">
-			<Toggle
-				aria-label="Toggle layout guides"
-				pressed={state.enabled}
-				onPressedChange={onToggle}
-			>
-				<ActiveIcon />
-			</Toggle>
+			<Tooltip>
+				<TooltipTrigger
+					render={
+						<Toggle
+							aria-label="Toggle layout guides"
+							pressed={state.enabled}
+							onPressedChange={onToggle}
+						>
+							<ActiveIcon />
+						</Toggle>
+					}
+				/>
+				<TooltipContent className="w-fit whitespace-nowrap">
+					Toggle layout guides (Shift+G)
+				</TooltipContent>
+			</Tooltip>
 
 			<Popover open={open} onOpenChange={setOpen}>
 				<PopoverTrigger
@@ -105,11 +109,17 @@ export function LayoutGuidesTool({
 						</Button>
 					}
 				/>
-				<PopoverContent align="start" className="w-64 p-0">
+				<PopoverContent align="start" className="w-68 p-0">
 					<GuidePopoverHeader
-						type={state.type}
+						state={state}
 						canReset={canReset}
+						isPickingContainer={isPickingContainer}
 						onTypeChange={onTypeChange}
+						onAutoDetect={onAutoDetect}
+						onTogglePickContainer={() => {
+							setOpen(false);
+							onTogglePickContainer();
+						}}
 						onReset={onReset}
 						onClose={() => setOpen(false)}
 					/>
@@ -117,8 +127,8 @@ export function LayoutGuidesTool({
 					<FieldGroup className="gap-2 p-3">
 						{state.type === 'grid' ? (
 							<GridGuideFields
-								size={state.grid.size}
-								onSizeChange={(size) => onGridChange({ size })}
+								settings={state.grid}
+								onChange={onGridChange}
 								cleanHex={cleanHex}
 								validCssHex={validCssHex}
 								opacity={state.grid.opacity}
@@ -129,6 +139,12 @@ export function LayoutGuidesTool({
 							<LinearGuideFields
 								mode={state.type}
 								settings={state[state.type]}
+								trackedElementLabel={
+									state.type === 'columns' ? trackedElementLabel : null
+								}
+								onClearTrackedElement={
+									state.type === 'columns' ? onClearTrackedElement : undefined
+								}
 								onChange={
 									state.type === 'columns' ? onColumnsChange : onRowsChange
 								}

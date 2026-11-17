@@ -1,6 +1,6 @@
 # Chrome Web Store Listing — FrameIt
 
-> Last Updated: 2026-11-14
+> Last Updated: 2026-11-17
 
 ## Store Listing
 
@@ -8,40 +8,43 @@
 FrameIt
 
 **Short Description** [REQUIRED]
-Overlay customizable column, row, and pixel layout grids onto any live website.
+Figma-style layout grids, smart container detection, and live element spacing inspector for any website.
 
 **Detailed Description** [REQUIRED]
-FrameIt overlays customizable layout grids directly onto any live webpage so frontend developers and UI/UX designers can verify alignment, columns, gutters, and spacing in the browser.
+FrameIt brings Figma-grade layout grids, smart container detection, and redline distance measurements directly onto any live webpage so frontend developers and UI/UX designers can verify alignment, responsive containers, gutters, and spacing in the browser.
 
 FEATURES
-• Column & Row Guides — Configure track count, alignment (start, center, end, or stretch), track width/height, outer margins, and gutter spacing.
-• Pixel Grid Overlay — Display a uniform square pixel grid of any custom size to verify baseline and modular spacing.
-• Custom Appearance — Adjust guide colors and opacity independently for columns, rows, and pixel grids so overlays remain clearly visible on both light and dark websites.
-• Floating On-Page Dock — Quickly toggle guides on or off and switch between grid modes right from the page, with automatic light and dark theme adaptation.
-• Clean & Non-Intrusive — Overlays render above the page without altering website layout, styles, or mouse interactions.
+• Smart Container Auto-Detection — Automatically detects the website's main content container (max-width, inline padding, CSS Grid columns/gaps, and sidebar offsets) on launch, falling back to clean defaults when no container is present.
+• Interactive Container Picker (Shift+C) — Click any container, sidebar, or card on the page to snap the grid directly to that element. Automatically adapts column count (2, 4, 6, 8, or 12 columns) to the element's width and stays synced on resize.
+• Web-Native Column, Row & Pixel Grids — Configure track count, alignment (stretch, center, start, end), container Max Width with presets (768px–1536px), inner margin/padding, gutter spacing, X/Y offsets, and viewport-fixed vs. scroll-linked positioning.
+• Multi-Layer Overlays — Switch cleanly between Columns, Rows, and Pixel Grid, or explicitly enable multiple grid layers simultaneously.
+• Inspect & Figma Redline Measurements (Hold Alt or Shift+I) — Hold Alt to measure pixel distances between elements and their parent containers, view element dimensions, and highlight inner paddings. Click to pin any element and measure exact X/Y distances to any other element on the page.
+• Figma-Style Scrubbable Inputs & Shortcuts — Drag field labels horizontally to adjust numbers on the fly, and control everything with keyboard shortcuts (Shift+G, Shift+I, Shift+A, Shift+C, Shift+1/2/3).
+• Clean & Non-Intrusive — Renders inside an isolated Shadow DOM with automatic light and dark theme adaptation without altering website layout or styles.
 
 HOW TO USE
 
 1. Open any webpage you want to inspect.
-2. Click the FrameIt icon in your browser toolbar to toggle the overlay dock on the current tab.
-3. Click the grid toggle in the dock to show or hide layout guides, or open the dropdown menu to customize columns, rows, or pixel grid settings.
+2. Click the FrameIt icon in your browser toolbar to launch the overlay dock. FrameIt will automatically detect and snap to the page's main container.
+3. Use the Layout Guides popover to customize Columns, Rows, or Pixel Grid, click the wand icon (Shift+A) to re-detect, or use the crosshair (Shift+C) to snap to any element on the page.
+4. Hold Alt (or press Shift+I) and hover over elements to measure pixel distances and paddings.
 
 PRIVACY
 FrameIt runs 100% locally in your browser. It does not collect, store, or transmit any personal data, browsing history, or website content.
 
 PERMISSIONS
-• activeTab & scripting — Used solely to display and toggle the layout grid overlay on the currently active tab when you click the extension icon.
+• activeTab & scripting — Used solely to display and toggle the layout grid and inspect overlay on the currently active tab when you click the extension icon.
 
 SUPPORT
 Found a bug or have a feature request? Open an issue at https://github.com/itsrodio/frame-it/issues
 
-Version 0.1.0 — Initial release with customizable column, row, and pixel grid overlays and an on-page control dock.
+Version 0.2.0 — Added automatic container detection on launch, interactive container picker with adaptive column counts, Figma-style Alt/Inspect distance measurements, Max Width presets, X/Y offsets, scroll-linked grids, scrubbable inputs, and keyboard shortcuts.
 
 **Category** [REQUIRED]
 Developer Tools
 
 **Single Purpose** [REQUIRED]
-Overlays customizable column, row, and pixel layout grids onto the active webpage to verify visual alignment and spacing.
+Overlays customizable column, row, and pixel layout grids and measures element spacing on the active webpage to verify visual alignment.
 
 **Primary Language** [REQUIRED]
 English
@@ -59,8 +62,9 @@ English
 
 ### Screenshot Notes
 
-- **Screenshot 1**: Live website with a 12-column stretch grid overlay active and the FrameIt settings popover open showing Columns configuration (count, margin, gutter, color/opacity).
-- **Screenshot 2**: Pixel grid / Rows overlay mode demonstrating custom color and opacity adjustments on a dark-themed website.
+- **Screenshot 1**: Live website with an auto-detected 12-column grid snapped to the main `max-w` container and the FrameIt settings popover open showing Max Width, Margin, Gutter, and Offset controls.
+- **Screenshot 2**: Inspect & Measure mode (`Alt` / `Shift+I`) showing redline pixel distances between two page elements and inner padding highlights.
+- **Screenshot 3**: Interactive Container Picker (`Shift+C`) highlighting a sidebar container and automatically adapting to a 4-column grid.
 
 ## Permissions Justification
 
@@ -107,12 +111,13 @@ https://github.com/itsrodio/frame-it
 
 ## Version History
 
-| Version | Date       | Changes                                                                                            | Status |
-| ------- | ---------- | -------------------------------------------------------------------------------------------------- | ------ |
-| 0.1.0   | 2026-11-14 | Initial MVP release: customizable column, row, and pixel grid overlays with floating on-page dock. | Draft  |
+| Version | Date       | Changes                                                                                                                                                                                                 | Status |
+| ------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------ |
+| 0.2.0   | 2026-11-17 | Smart container auto-detection by default, interactive container picker with adaptive column counts, Inspect & Alt distance redlines, Max Width presets, X/Y offsets, scroll-linked grids, and hotkeys. | Draft  |
+| 0.1.0   | 2026-11-14 | Initial MVP release: customizable column, row, and pixel grid overlays with floating on-page dock.                                                                                                      | Draft  |
 
 ## Review Notes
 
 ### Known Issues / Limitations
 
-- The Inspect tool button in the dock is currently disabled and marked "Currently not available" (scheduled for a future update).
+- Browser internal pages (`chrome://`, Chrome Web Store) restrict content script execution by design.

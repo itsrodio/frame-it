@@ -1,8 +1,8 @@
 {
 	"name": "frame-it",
-	"description": "Overlay customizable column, row, and pixel layout grids onto any live website.",
+	"description": "Figma-style layout grids, smart container detection, and live element spacing inspector for any website.",
 	"private": true,
-	"version": "0.1.0",
+	"version": "0.2.0",
 	"type": "module",
 	"scripts": {
 		"dev": "wxt",

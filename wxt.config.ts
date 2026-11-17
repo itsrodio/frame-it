@@ -15,7 +15,7 @@ export default defineConfig({
 	manifest: {
 		name: 'FrameIt',
 		description:
-			'Overlay customizable column, row, and pixel layout grids onto any live website.',
+			'Figma-style layout grids, smart container detection, and live element spacing inspector for any website.',
 		permissions: ['activeTab', 'scripting'],
 		action: {},
 		web_accessible_resources: [

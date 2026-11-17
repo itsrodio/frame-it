@@ -2,11 +2,20 @@ import ReactDOM from 'react-dom/client';
 import '@/assets/tailwind.css';
 import { App } from '@/App';
 
+declare global {
+	interface Window {
+		__frameItInjected?: boolean;
+	}
+}
+
 export default defineContentScript({
 	registration: 'runtime',
 	cssInjectionMode: 'ui',
 
 	async main(ctx) {
+		if (window.__frameItInjected) return;
+		window.__frameItInjected = true;
+
 		let isMounted = false;
 
 		const closeOverlay = () => {
@@ -20,10 +29,10 @@ export default defineContentScript({
 			position: 'overlay',
 			zIndex: 2147483647,
 			onMount: (container) => {
-				// Создаем обертку для React внутри Shadow DOM
+				// Create React wrapper inside Shadow DOM
 				const wrapper = document.createElement('div');
 				wrapper.id = 'frameit-root';
-				// Задаем тему синхронно до вставки в DOM, чтобы избежать моргания (FOUC)
+				// Set the theme synchronously before insertion into the DOM to avoid a flash of unstyled content (FOUC).
 				wrapper.classList.add(
 					window.matchMedia('(prefers-color-scheme: dark)').matches
 						? 'dark'
@@ -32,7 +41,7 @@ export default defineContentScript({
 				container.append(wrapper);
 
 				const root = ReactDOM.createRoot(wrapper);
-				// Передаем wrapper в App, чтобы Portal'ы (Tooltip/Dropdown) рендерились внутри Shadow DOM
+				// pass the wrapper to App so that Portals (Tooltip/Dropdown) are rendered inside the Shadow DOM.
 				root.render(<App portalContainer={wrapper} onClose={closeOverlay} />);
 				return root;
 			},
@@ -45,7 +54,7 @@ export default defineContentScript({
 		isMounted = true;
 
 		browser.runtime.onMessage.addListener((msg) => {
-			if (msg.type === 'TOGGLE_OVERLAY') {
+			if (msg?.type === 'TOGGLE_OVERLAY') {
 				if (isMounted) {
 					closeOverlay();
 				} else {

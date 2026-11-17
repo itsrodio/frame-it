@@ -1,5 +1,5 @@
 import { X } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import {
 	Tooltip,
@@ -16,6 +16,18 @@ interface CloseToolProps {
 export function CloseTool({ onClose }: CloseToolProps) {
 	const [isHolding, setIsHolding] = useState(false);
 	const [isCompleted, setIsCompleted] = useState(false);
+
+	useEffect(() => {
+		if (!isHolding || isCompleted) return;
+
+		const timer = window.setTimeout(() => {
+			setIsCompleted(true);
+			navigator.vibrate?.(15);
+			onClose();
+		}, HOLD_DURATION_MS);
+
+		return () => window.clearTimeout(timer);
+	}, [isHolding, isCompleted, onClose]);
 
 	const startHold = () => {
 		if (isCompleted) return;
@@ -48,15 +60,6 @@ export function CloseTool({ onClose }: CloseToolProps) {
 		}
 	};
 
-	const handleTransitionEnd = (e: React.TransitionEvent<HTMLSpanElement>) => {
-		// Срабатываем строго по завершению заполнения и только при активном удержании
-		if (e.propertyName === 'transform' && isHolding && !isCompleted) {
-			setIsCompleted(true);
-			navigator.vibrate?.(15);
-			onClose();
-		}
-	};
-
 	return (
 		<Tooltip>
 			<TooltipTrigger
@@ -77,7 +80,6 @@ export function CloseTool({ onClose }: CloseToolProps) {
 						{/* Радиальная заливка из центра */}
 						<span
 							aria-hidden="true"
-							onTransitionEnd={handleTransitionEnd}
 							className="pointer-events-none absolute inset-0 rounded-full bg-destructive/20 transition-transform"
 							style={{
 								transform: isHolding ? 'scale(1.5)' : 'scale(0)',
