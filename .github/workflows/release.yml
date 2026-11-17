@@ -6,16 +6,16 @@ on:
   workflow_dispatch:
     inputs:
       tag_name:
-        description: "Существующий тег релиза для пересборки артефактов (например, v0.2.0)"
+        description: "Existing release tag to rebuild assets for (e.g. v0.2.0)"
         required: true
-        default: "v0.2.0"
+        type: string
 
 permissions:
   contents: write
   pull-requests: write
 
 jobs:
-  # 1. Автоматическое версионирование, CHANGELOG.md и создание Release PR / GitHub Release
+  # 1. Automated versioning, CHANGELOG.md, and Release PR / GitHub Release creation
   release-please:
     name: Release Please
     if: github.event_name == 'push'
@@ -29,14 +29,14 @@ jobs:
         with:
           release-type: node
 
-  # 2. Сборка для Chrome (Edge, Brave, Opera, Arc) и Firefox на Linux-раннере
+  # 2. Build for Chrome (Edge, Brave, Opera, Arc) and Firefox on Linux runner
   build-webextensions:
     name: Build Chrome & Firefox
     needs: release-please
     if: ${{ always() && (needs.release-please.outputs.release_created == 'true' || github.event_name == 'workflow_dispatch') }}
     runs-on: ubuntu-latest
     env:
-      TAG_NAME: ${{ needs.release-please.outputs.tag_name || inputs.tag_name }}
+      TAG_NAME: ${{ inputs.tag_name || needs.release-please.outputs.tag_name }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -60,14 +60,14 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-  # 3. Сборка .app для Safari на macOS-раннере (ad-hoc подпись)
+  # 3. Build macOS .app for Safari on macOS runner (ad-hoc signed)
   build-safari:
     name: Build Safari (macOS)
     needs: release-please
     if: ${{ always() && (needs.release-please.outputs.release_created == 'true' || github.event_name == 'workflow_dispatch') }}
     runs-on: macos-latest
     env:
-      TAG_NAME: ${{ needs.release-please.outputs.tag_name || inputs.tag_name }}
+      TAG_NAME: ${{ inputs.tag_name || needs.release-please.outputs.tag_name }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -90,7 +90,7 @@ jobs:
           xcrun safari-web-extension-converter .output/safari-mv3 \
             --project-location .output/safari-xcode \
             --app-name "Frame It" \
-            --bundle-identifier "com.itsrodio.frame-it" \
+            --bundle-identifier "com.itsrodio.Frame-It" \
             --macos-only \
             --no-open \
             --no-prompt
