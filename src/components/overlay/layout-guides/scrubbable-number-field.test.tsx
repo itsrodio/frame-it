@@ -90,13 +90,120 @@ describe('ScrubbableNumberField', () => {
     expect(onChange).toHaveBeenLastCalledWith(17);
 
     act(() => {
-      window.dispatchEvent(new MouseEvent('mousemove', { clientX: 200 }));
+      window.dispatchEvent(
+        new MouseEvent('mousemove', { clientX: 114, shiftKey: true }),
+      );
     });
-    // Clamped to max 24
+    // deltaX = 14 -> round(14/2)=7 * 10 = 70 -> clamped to max 24
     expect(onChange).toHaveBeenLastCalledWith(24);
 
     act(() => {
       window.dispatchEvent(new MouseEvent('mouseup'));
     });
+  });
+
+  it('ignores non-left click and disabled state for scrubbing and keyboard', () => {
+    const onChange = vi.fn();
+
+    act(() => {
+      root.render(
+        <ScrubbableNumberField
+          id="test-disabled"
+          label="Disabled"
+          value={10}
+          disabled={true}
+          displayValue="Auto"
+          onChange={onChange}
+        />,
+      );
+    });
+
+    const label = container.querySelector('label') as HTMLLabelElement;
+    const input = container.querySelector('#test-disabled') as HTMLInputElement;
+    expect(input.type).toBe('text');
+    expect(input.value).toBe('Auto');
+
+    act(() => {
+      label.dispatchEvent(
+        new MouseEvent('mousedown', { button: 0, clientX: 100, bubbles: true }),
+      );
+      window.dispatchEvent(new MouseEvent('mousemove', { clientX: 150 }));
+      input.dispatchEvent(
+        new KeyboardEvent('keydown', { key: 'ArrowUp', bubbles: true }),
+      );
+    });
+
+    expect(onChange).not.toHaveBeenCalled();
+  });
+
+  it('handles typing, draft commit on blur/Enter, clamping out-of-bounds draft, and Escape cancel', () => {
+    const onChange = vi.fn();
+    const setNativeValue = (el: HTMLInputElement, val: string) => {
+      const setter = Object.getOwnPropertyDescriptor(
+        window.HTMLInputElement.prototype,
+        'value',
+      )?.set;
+      setter?.call(el, val);
+      el.dispatchEvent(new Event('input', { bubbles: true }));
+    };
+
+    act(() => {
+      root.render(
+        <ScrubbableNumberField
+          id="test-draft"
+          label="Margin"
+          value={20}
+          min={5}
+          max={100}
+          onChange={onChange}
+        />,
+      );
+    });
+
+    const input = container.querySelector('#test-draft') as HTMLInputElement;
+
+    // Focus and type an in-range value -> immediate onChange
+    act(() => {
+      input.focus();
+      setNativeValue(input, '45');
+    });
+    expect(onChange).toHaveBeenLastCalledWith(45);
+
+    // Type an out-of-range value -> does not trigger onChange until blur clamps it
+    onChange.mockClear();
+    act(() => {
+      setNativeValue(input, '250');
+    });
+    expect(onChange).not.toHaveBeenCalled();
+
+    // Press Enter -> blurs and commits clamped value (100)
+    act(() => {
+      input.dispatchEvent(
+        new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }),
+      );
+      input.blur();
+    });
+    expect(onChange).toHaveBeenLastCalledWith(100);
+
+    // Type empty or '-' and blur -> discards draft without calling onChange
+    onChange.mockClear();
+    act(() => {
+      input.focus();
+      setNativeValue(input, '-');
+      input.blur();
+    });
+    expect(onChange).not.toHaveBeenCalled();
+
+    // Type draft and press Escape -> resets draft state
+    onChange.mockClear();
+    act(() => {
+      setNativeValue(input, '999');
+    });
+    act(() => {
+      input.dispatchEvent(
+        new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }),
+      );
+    });
+    expect(input.value).toBe('20');
   });
 });
