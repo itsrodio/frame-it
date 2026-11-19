@@ -1,10 +1,10 @@
 import { ChevronDown, Grid2X2 } from 'lucide-react';
 import { useState } from 'react';
 import {
-	DEFAULT_COLUMNS_SETTINGS,
-	DEFAULT_GRID_SETTINGS,
-	DEFAULT_ROWS_SETTINGS,
-	GUIDE_TYPES,
+  DEFAULT_COLUMNS_SETTINGS,
+  DEFAULT_GRID_SETTINGS,
+  DEFAULT_ROWS_SETTINGS,
+  GUIDE_TYPES,
 } from '@/components/overlay/layout-guides/constants';
 import { GridGuideFields } from '@/components/overlay/layout-guides/grid-guide-fields';
 import { GuidePopoverHeader } from '@/components/overlay/layout-guides/guide-popover-header';
@@ -12,152 +12,152 @@ import { LinearGuideFields } from '@/components/overlay/layout-guides/linear-gui
 import { Button } from '@/components/ui/button';
 import { FieldGroup } from '@/components/ui/field';
 import {
-	Popover,
-	PopoverContent,
-	PopoverTrigger,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
 } from '@/components/ui/popover';
 import { Toggle } from '@/components/ui/toggle';
 import {
-	Tooltip,
-	TooltipContent,
-	TooltipTrigger,
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
 } from '@/components/ui/tooltip';
 import {
-	isGridModified,
-	isLinearModified,
-	normalizeHexColor,
+  isGridModified,
+  isLinearModified,
+  normalizeHexColor,
 } from '@/lib/guide-utils';
 import type {
-	BaseGuideSettings,
-	LayoutGuidesToolProps,
+  BaseGuideSettings,
+  LayoutGuidesToolProps,
 } from '@/types/layout-guides';
 
 export function LayoutGuidesTool({
-	state,
-	isPickingContainer,
-	trackedElementLabel,
-	hasCustomSiteSettings,
-	onToggle,
-	onTypeChange,
-	onColumnsChange,
-	onRowsChange,
-	onGridChange,
-	onAutoDetect,
-	onTogglePickContainer,
-	onClearTrackedElement,
-	onReset,
+  state,
+  isPickingContainer,
+  trackedElementLabel,
+  hasCustomSiteSettings,
+  onToggle,
+  onTypeChange,
+  onColumnsChange,
+  onRowsChange,
+  onGridChange,
+  onAutoDetect,
+  onTogglePickContainer,
+  onClearTrackedElement,
+  onReset,
 }: LayoutGuidesToolProps) {
-	const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(false);
 
-	const ActiveIcon =
-		GUIDE_TYPES.find((item) => item.value === state.type)?.icon ?? Grid2X2;
+  const ActiveIcon =
+    GUIDE_TYPES.find((item) => item.value === state.type)?.icon ?? Grid2X2;
 
-	const activeSettings = state[state.type];
+  const activeSettings = state[state.type];
 
-	const canReset =
-		hasCustomSiteSettings ||
-		(state.type === 'columns'
-			? isLinearModified(state.columns, DEFAULT_COLUMNS_SETTINGS) ||
-				trackedElementLabel !== null
-			: state.type === 'rows'
-				? isLinearModified(state.rows, DEFAULT_ROWS_SETTINGS)
-				: isGridModified(state.grid, DEFAULT_GRID_SETTINGS));
+  const canReset =
+    hasCustomSiteSettings ||
+    (state.type === 'columns'
+      ? isLinearModified(state.columns, DEFAULT_COLUMNS_SETTINGS) ||
+        trackedElementLabel !== null
+      : state.type === 'rows'
+        ? isLinearModified(state.rows, DEFAULT_ROWS_SETTINGS)
+        : isGridModified(state.grid, DEFAULT_GRID_SETTINGS));
 
-	const updateActiveBase = (patch: Partial<BaseGuideSettings>) => {
-		if (state.type === 'columns') onColumnsChange(patch);
-		else if (state.type === 'rows') onRowsChange(patch);
-		else onGridChange(patch);
-	};
+  const updateActiveBase = (patch: Partial<BaseGuideSettings>) => {
+    if (state.type === 'columns') onColumnsChange(patch);
+    else if (state.type === 'rows') onRowsChange(patch);
+    else onGridChange(patch);
+  };
 
-	const { cleanHex, validCssHex } = normalizeHexColor(activeSettings.color);
+  const { cleanHex, validCssHex } = normalizeHexColor(activeSettings.color);
 
-	const handleHexChange = (raw: string) => {
-		const sanitized = raw.replace(/[^0-9a-fA-F]/g, '').slice(0, 6);
-		updateActiveBase({ color: `#${sanitized}` });
-	};
+  const handleHexChange = (raw: string) => {
+    const sanitized = raw.replace(/[^0-9a-fA-F]/g, '').slice(0, 6);
+    updateActiveBase({ color: `#${sanitized}` });
+  };
 
-	const handleOpacityChange = (raw: string) => {
-		const num = Number(raw);
-		if (Number.isNaN(num)) return;
-		updateActiveBase({ opacity: Math.max(0, Math.min(100, num)) });
-	};
+  const handleOpacityChange = (raw: string) => {
+    const num = Number(raw);
+    if (Number.isNaN(num)) return;
+    updateActiveBase({ opacity: Math.max(0, Math.min(100, num)) });
+  };
 
-	return (
-		<div className="flex items-center">
-			<Tooltip>
-				<TooltipTrigger
-					render={
-						<Toggle
-							aria-label="Toggle layout guides"
-							pressed={state.enabled}
-							onPressedChange={onToggle}
-						>
-							<ActiveIcon />
-						</Toggle>
-					}
-				/>
-				<TooltipContent className="w-fit whitespace-nowrap">
-					Toggle layout guides (Shift+G)
-				</TooltipContent>
-			</Tooltip>
+  return (
+    <div className="flex items-center">
+      <Tooltip>
+        <TooltipTrigger
+          render={
+            <Toggle
+              aria-label="Toggle layout guides"
+              pressed={state.enabled}
+              onPressedChange={onToggle}
+            >
+              <ActiveIcon />
+            </Toggle>
+          }
+        />
+        <TooltipContent className="w-fit whitespace-nowrap">
+          Toggle layout guides (Shift+G)
+        </TooltipContent>
+      </Tooltip>
 
-			<Popover open={open} onOpenChange={setOpen}>
-				<PopoverTrigger
-					render={
-						<Button variant="ghost" className="px-1">
-							<ChevronDown className="size-3" />
-						</Button>
-					}
-				/>
-				<PopoverContent align="start" className="w-68 p-0">
-					<GuidePopoverHeader
-						state={state}
-						canReset={canReset}
-						isPickingContainer={isPickingContainer}
-						onTypeChange={onTypeChange}
-						onAutoDetect={onAutoDetect}
-						onTogglePickContainer={() => {
-							setOpen(false);
-							onTogglePickContainer();
-						}}
-						onReset={onReset}
-						onClose={() => setOpen(false)}
-					/>
+      <Popover open={open} onOpenChange={setOpen}>
+        <PopoverTrigger
+          render={
+            <Button variant="ghost" className="px-1">
+              <ChevronDown className="size-3" />
+            </Button>
+          }
+        />
+        <PopoverContent align="start" className="w-68 p-0">
+          <GuidePopoverHeader
+            state={state}
+            canReset={canReset}
+            isPickingContainer={isPickingContainer}
+            onTypeChange={onTypeChange}
+            onAutoDetect={onAutoDetect}
+            onTogglePickContainer={() => {
+              setOpen(false);
+              onTogglePickContainer();
+            }}
+            onReset={onReset}
+            onClose={() => setOpen(false)}
+          />
 
-					<FieldGroup className="gap-2 p-3">
-						{state.type === 'grid' ? (
-							<GridGuideFields
-								settings={state.grid}
-								onChange={onGridChange}
-								cleanHex={cleanHex}
-								validCssHex={validCssHex}
-								opacity={state.grid.opacity}
-								onHexChange={handleHexChange}
-								onOpacityChange={handleOpacityChange}
-							/>
-						) : (
-							<LinearGuideFields
-								mode={state.type}
-								settings={state[state.type]}
-								trackedElementLabel={
-									state.type === 'columns' ? trackedElementLabel : null
-								}
-								onClearTrackedElement={
-									state.type === 'columns' ? onClearTrackedElement : undefined
-								}
-								onChange={
-									state.type === 'columns' ? onColumnsChange : onRowsChange
-								}
-								cleanHex={cleanHex}
-								validCssHex={validCssHex}
-								opacity={activeSettings.opacity}
-								onHexChange={handleHexChange}
-								onOpacityChange={handleOpacityChange}
-							/>
-						)}
-					</FieldGroup>
-				</PopoverContent>
-			</Popover>
-		</div>
-	);
+          <FieldGroup className="gap-2 p-3">
+            {state.type === 'grid' ? (
+              <GridGuideFields
+                settings={state.grid}
+                onChange={onGridChange}
+                cleanHex={cleanHex}
+                validCssHex={validCssHex}
+                opacity={state.grid.opacity}
+                onHexChange={handleHexChange}
+                onOpacityChange={handleOpacityChange}
+              />
+            ) : (
+              <LinearGuideFields
+                mode={state.type}
+                settings={state[state.type]}
+                trackedElementLabel={
+                  state.type === 'columns' ? trackedElementLabel : null
+                }
+                onClearTrackedElement={
+                  state.type === 'columns' ? onClearTrackedElement : undefined
+                }
+                onChange={
+                  state.type === 'columns' ? onColumnsChange : onRowsChange
+                }
+                cleanHex={cleanHex}
+                validCssHex={validCssHex}
+                opacity={activeSettings.opacity}
+                onHexChange={handleHexChange}
+                onOpacityChange={handleOpacityChange}
+              />
+            )}
+          </FieldGroup>
+        </PopoverContent>
+      </Popover>
+    </div>
+  );
 }

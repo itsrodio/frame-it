@@ -1,0 +1,51 @@
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { fakeBrowser } from 'wxt/testing/fake-browser';
+import type { ContentScriptContext } from 'wxt/utils/content-script-context';
+import content from '@/entrypoints/content';
+
+describe('content entrypoint', () => {
+  beforeEach(() => {
+    fakeBrowser.reset();
+    delete window.__frameItInjected;
+    document.body.innerHTML = '';
+  });
+
+  it('mounts shadow root UI once and toggles it via TOGGLE_OVERLAY message', async () => {
+    const mountSpy = vi.fn();
+    const removeSpy = vi.fn();
+
+    vi.spyOn(
+      await import('wxt/utils/content-script-ui/shadow-root'),
+      'createShadowRootUi',
+    ).mockResolvedValue({
+      mount: mountSpy,
+      remove: removeSpy,
+    } as unknown as Awaited<ReturnType<typeof createShadowRootUi>>);
+
+    const ctx = {} as ContentScriptContext;
+    await content.main(ctx);
+
+    expect(window.__frameItInjected).toBe(true);
+    expect(mountSpy).toHaveBeenCalledTimes(1);
+
+    // Calling main a second time should no-op due to __frameItInjected guard
+    await content.main(ctx);
+    expect(mountSpy).toHaveBeenCalledTimes(1);
+
+    // First TOGGLE_OVERLAY closes the mounted UI
+    await fakeBrowser.runtime.onMessage.trigger(
+      { type: 'TOGGLE_OVERLAY' },
+      {},
+      vi.fn(),
+    );
+    expect(removeSpy).toHaveBeenCalledTimes(1);
+
+    // Second TOGGLE_OVERLAY mounts it back
+    await fakeBrowser.runtime.onMessage.trigger(
+      { type: 'TOGGLE_OVERLAY' },
+      {},
+      vi.fn(),
+    );
+    expect(mountSpy).toHaveBeenCalledTimes(2);
+  });
+});

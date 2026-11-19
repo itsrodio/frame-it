@@ -11,6 +11,8 @@ pre-push:
   commands:
     type-check:
       run: pnpm compile
+    test:
+      run: pnpm test --run
 
 commit-msg:
   commands:
