@@ -18,7 +18,8 @@
     "lint": "biome lint .",
     "check": "biome check .",
     "check:write": "biome check --write .",
-    "test": "vitest"
+    "test": "vitest",
+    "test:e2e": "playwright test"
   },
   "dependencies": {
     "@base-ui/react": "^1.9.0",
@@ -37,6 +38,8 @@
     "@biomejs/biome": "2.6.6",
     "@commitlint/cli": "^21.2.4",
     "@commitlint/config-conventional": "^21.2.4",
+    "@playwright/test": "^1.65.1",
+    "@types/node": "^26.6.6",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "@vitest/coverage-v8": "5.1.0",
