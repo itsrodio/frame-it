@@ -11,5 +11,15 @@ export default defineConfig({
     exclude: [...configDefaults.exclude, 'e2e/**'],
     mockReset: true,
     restoreMocks: true,
+    coverage: {
+      provider: 'v8',
+      include: ['src/**/*.{ts,tsx}'],
+      exclude: [
+        'src/**/*.test.{ts,tsx}',
+        'src/components/ui/**',
+        'src/types/**',
+        'src/assets/**',
+      ],
+    },
   },
 });

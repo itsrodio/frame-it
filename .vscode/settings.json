@@ -8,5 +8,15 @@
   "[typescriptreact]": {
     "editor.defaultFormatter": "biomejs.biome"
   },
-  "js/ts.preferences.importModuleSpecifier": "non-relative"
+  "js/ts.preferences.importModuleSpecifier": "non-relative",
+  "files.associations": {
+    "src/assets/tailwind.css": "tailwindcss"
+  },
+  "search.exclude": {
+    "**/.output": true,
+    "**/.wxt": true,
+    "**/coverage": true,
+    "**/playwright-report": true,
+    "**/test-results": true
+  }
 }
