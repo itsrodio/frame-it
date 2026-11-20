@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.0](https://github.com/itsrodio/frame-it/compare/v0.2.0...v0.3.0) (2026-11-20)
+
+
+### Features
+
+* add localization for 9 languages and extension options page ([#4](https://github.com/itsrodio/frame-it/issues/4)) ([c9c88ed](https://github.com/itsrodio/frame-it/commit/c9c88edc5c1de2ee400f02893cf3c0ed256dda99))
+
 ## 0.2.0 (2026-11-17)
 
 
