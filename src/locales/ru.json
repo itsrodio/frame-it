@@ -1,0 +1,92 @@
+{
+  "extName": "FrameIt",
+  "extDescription": "Модульные сетки в стиле Figma, умное определение контейнеров и инспектор отступов элементов в реальном времени для любого сайта.",
+  "dock": {
+    "inspect": {
+      "ariaLabel": "Инспектор и измерение расстояний",
+      "tooltip": "Инспектор и замеры (Shift+I или удерживайте Alt)"
+    },
+    "guides": {
+      "toggleAriaLabel": "Переключить направляющие сетки",
+      "toggleTooltip": "Переключить направляющие (Shift+G)"
+    },
+    "close": {
+      "ariaLabel": "Удерживайте, чтобы закрыть FrameIt",
+      "holdToClose": "Удерживайте для закрытия",
+      "keepHolding": "Продолжайте удерживать..."
+    }
+  },
+  "picker": {
+    "snapHint": "Кликните по любому контейнеру на странице, чтобы привязать сетку",
+    "cancelBeforeKey": "Нажмите",
+    "cancelAfterKey": "для отмены",
+    "badgePadding": "(паддинг $1px)",
+    "badgeCols": "$1 кол."
+  },
+  "inspect": {
+    "clickKey": "Клик",
+    "lockElement": "закрепить элемент",
+    "measureDistances": "замерить расстояния",
+    "shiftClickKey": "Shift+Клик",
+    "snapGrid": "привязать сетку к контейнеру",
+    "exit": "выход"
+  },
+  "guides": {
+    "types": {
+      "columns": "Колонки",
+      "rows": "Строки",
+      "grid": "Сетка"
+    },
+    "alignments": {
+      "stretch": "Растянуть",
+      "center": "По центру",
+      "left": "Слева",
+      "right": "Справа",
+      "top": "Сверху",
+      "bottom": "Снизу"
+    },
+    "presets": {
+      "autoViewport": "Авто (100% экрана)",
+      "full": "На весь",
+      "standard": "Стандарт",
+      "desktopFigma": "Десктоп Figma"
+    },
+    "header": {
+      "autoDetectAriaLabel": "Автоопределение контейнера страницы",
+      "autoDetectTooltip": "Автоопределение контейнера (Shift+A)",
+      "pickContainerAriaLabel": "Выбрать контейнер на странице",
+      "pickContainerTooltip": "Выбрать контейнер на странице (Shift+C)",
+      "resetAriaLabel": "Сбросить настройки",
+      "resetTooltip": "Сбросить настройки сайта (вернуться к автоопределению)",
+      "closeAriaLabel": "Закрыть"
+    },
+    "fields": {
+      "unlinkElement": "Отвязать от элемента",
+      "count": "Кол-во",
+      "color": "Цвет",
+      "pickColorAriaLabel": "Выбрать цвет направляющих",
+      "opacityAriaLabel": "Непрозрачность направляющих",
+      "type": "Тип",
+      "maxWidth": "Макс. Ш",
+      "maxHeight": "Макс. В",
+      "maxSizeTooltip": "Максимальная ширина контейнера сетки (например, 1280px)",
+      "maxSizePlaceholder": "Авто (100%)",
+      "maxWidthPresetsAriaLabel": "Пресеты максимальной ширины",
+      "width": "Ширина",
+      "height": "Высота",
+      "auto": "Авто",
+      "margin": "Поля",
+      "gutter": "Отступ",
+      "offset": "Смещение",
+      "size": "Размер",
+      "offsetX": "Смещ. X",
+      "offsetY": "Смещ. Y",
+      "position": "Позиция",
+      "scrubHint": "Тяните по горизонтали для изменения (удерживайте Shift для ×10)"
+    },
+    "position": {
+      "scrollWithPage": "Скролл со стр.",
+      "fixedToViewport": "Фикс. на экране"
+    }
+  }
+}

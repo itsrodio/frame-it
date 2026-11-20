@@ -21,7 +21,7 @@ export function ColorOpacityField({
         htmlFor="guide-color"
         className="w-2/5 text-xs text-muted-foreground"
       >
-        Color
+        {i18n.t('guides.fields.color')}
       </FieldLabel>
 
       {/* Составной контрол: [Swatch | HEX | Opacity %] */}
@@ -55,7 +55,7 @@ export function ColorOpacityField({
             value={validCssHex}
             onChange={(e) => onHexChange(e.target.value)}
             className="sr-only"
-            aria-label="Pick guide color"
+            aria-label={i18n.t('guides.fields.pickColorAriaLabel')}
           />
         </label>
 
@@ -77,7 +77,7 @@ export function ColorOpacityField({
             max={100}
             value={opacity}
             onChange={(e) => onOpacityChange(e.target.value)}
-            aria-label="Guide opacity"
+            aria-label={i18n.t('guides.fields.opacityAriaLabel')}
             className="w-7 bg-transparent text-right text-xs outline-none [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
           />
           <span className="ml-0.5 text-xs text-muted-foreground">%</span>

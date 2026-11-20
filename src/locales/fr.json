@@ -1,0 +1,92 @@
+{
+  "extName": "FrameIt",
+  "extDescription": "Grilles de mise en page style Figma, détection intelligente des conteneurs et inspecteur d'espacement en direct pour tout site web.",
+  "dock": {
+    "inspect": {
+      "ariaLabel": "Inspecter et mesurer les distances",
+      "tooltip": "Inspecter et mesurer (Shift+I ou maintenir Alt)"
+    },
+    "guides": {
+      "toggleAriaLabel": "Afficher/masquer les guides de mise en page",
+      "toggleTooltip": "Afficher/masquer les guides (Shift+G)"
+    },
+    "close": {
+      "ariaLabel": "Maintenir pour fermer FrameIt",
+      "holdToClose": "Maintenir pour fermer",
+      "keepHolding": "Continuez de maintenir..."
+    }
+  },
+  "picker": {
+    "snapHint": "Cliquez sur n'importe quel conteneur de la page pour aligner les guides",
+    "cancelBeforeKey": "Appuyez sur",
+    "cancelAfterKey": "pour annuler",
+    "badgePadding": "(pad $1px)",
+    "badgeCols": "$1 col."
+  },
+  "inspect": {
+    "clickKey": "Clic",
+    "lockElement": "verrouiller l'élément",
+    "measureDistances": "mesurer les distances",
+    "shiftClickKey": "Shift+Clic",
+    "snapGrid": "aligner la grille sur le conteneur",
+    "exit": "quitter"
+  },
+  "guides": {
+    "types": {
+      "columns": "Colonnes",
+      "rows": "Lignes",
+      "grid": "Grille"
+    },
+    "alignments": {
+      "stretch": "Étirer",
+      "center": "Centre",
+      "left": "Gauche",
+      "right": "Droite",
+      "top": "Haut",
+      "bottom": "Bas"
+    },
+    "presets": {
+      "autoViewport": "Auto (100 % fenêtre)",
+      "full": "Plein",
+      "standard": "Standard",
+      "desktopFigma": "Bureau Figma"
+    },
+    "header": {
+      "autoDetectAriaLabel": "Détecter automatiquement le conteneur",
+      "autoDetectTooltip": "Détecter le conteneur (Shift+A)",
+      "pickContainerAriaLabel": "Choisir un conteneur sur la page",
+      "pickContainerTooltip": "Choisir un conteneur sur la page (Shift+C)",
+      "resetAriaLabel": "Réinitialiser les paramètres",
+      "resetTooltip": "Réinitialiser les paramètres du site (retour à la détection auto)",
+      "closeAriaLabel": "Fermer"
+    },
+    "fields": {
+      "unlinkElement": "Détacher de l'élément",
+      "count": "Nombre",
+      "color": "Couleur",
+      "pickColorAriaLabel": "Choisir la couleur des guides",
+      "opacityAriaLabel": "Opacité des guides",
+      "type": "Type",
+      "maxWidth": "Larg. max",
+      "maxHeight": "Haut. max",
+      "maxSizeTooltip": "Largeur maximale du conteneur pour la grille (ex. 1280px)",
+      "maxSizePlaceholder": "Auto (100 %)",
+      "maxWidthPresetsAriaLabel": "Préréglages de largeur maximale",
+      "width": "Largeur",
+      "height": "Hauteur",
+      "auto": "Auto",
+      "margin": "Marge",
+      "gutter": "Gouttière",
+      "offset": "Décalage",
+      "size": "Taille",
+      "offsetX": "Décalage X",
+      "offsetY": "Décalage Y",
+      "position": "Position",
+      "scrubHint": "Faites glisser horizontalement pour ajuster (Shift pour 10x)"
+    },
+    "position": {
+      "scrollWithPage": "Défiler avec page",
+      "fixedToViewport": "Fixé à l'écran"
+    }
+  }
+}

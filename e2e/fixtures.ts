@@ -107,8 +107,10 @@ export const test = base.extend<{
 
     const context = await chromium.launchPersistentContext(userDataDir, {
       channel: 'chromium',
+      locale: 'en-US',
       viewport: { width: 1440, height: 900 },
       args: [
+        '--lang=en-US',
         `--disable-extensions-except=${pathToExtension}`,
         `--load-extension=${pathToExtension}`,
       ],

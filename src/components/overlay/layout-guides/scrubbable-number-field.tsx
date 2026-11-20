@@ -115,11 +115,7 @@ export function ScrubbableNumberField({
       <FieldLabel
         htmlFor={id}
         onMouseDown={handleLabelMouseDown}
-        title={
-          disabled
-            ? undefined
-            : 'Drag horizontally to adjust (hold Shift for 10x)'
-        }
+        title={disabled ? undefined : i18n.t('guides.fields.scrubHint')}
         className={cn(
           'w-2/5 text-xs text-muted-foreground select-none',
           !disabled &&

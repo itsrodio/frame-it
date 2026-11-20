@@ -8,6 +8,7 @@ export default defineConfig({
   },
   test: {
     environment: 'happy-dom',
+    setupFiles: ['./src/test-setup.ts'],
     exclude: [...configDefaults.exclude, 'e2e/**'],
     mockReset: true,
     restoreMocks: true,
@@ -16,6 +17,7 @@ export default defineConfig({
       include: ['src/**/*.{ts,tsx}'],
       exclude: [
         'src/**/*.test.{ts,tsx}',
+        'src/test-setup.ts',
         'src/components/ui/**',
         'src/types/**',
         'src/assets/**',

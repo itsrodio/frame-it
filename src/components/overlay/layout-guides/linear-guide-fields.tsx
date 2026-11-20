@@ -27,9 +27,9 @@ import {
   type ColorOpacityFieldProps,
 } from './color-opacity-field';
 import {
-  COLUMN_ALIGNMENTS,
-  MAX_WIDTH_PRESETS,
-  ROW_ALIGNMENTS,
+  getColumnAlignments,
+  getMaxWidthPresets,
+  getRowAlignments,
 } from './constants';
 import { ScrubbableNumberField } from './scrubbable-number-field';
 
@@ -51,7 +51,8 @@ export function LinearGuideFields({
 }: LinearGuideFieldsProps) {
   const isColumns = mode === 'columns';
   const isStretch = settings.alignment === 'stretch';
-  const alignments = isColumns ? COLUMN_ALIGNMENTS : ROW_ALIGNMENTS;
+  const alignments = isColumns ? getColumnAlignments() : getRowAlignments();
+  const maxWidthPresets = getMaxWidthPresets();
   const [maxSizeDraft, setMaxSizeDraft] = useState<string | null>(null);
 
   const handleAlignmentChange = (alignment: GuideAlignment) => {
@@ -92,8 +93,8 @@ export function LinearGuideFields({
               size="icon-xs"
               className="size-5 shrink-0 text-muted-foreground hover:text-foreground"
               onClick={onClearTrackedElement}
-              title="Unlink from element"
-              aria-label="Unlink from element"
+              title={i18n.t('guides.fields.unlinkElement')}
+              aria-label={i18n.t('guides.fields.unlinkElement')}
             >
               <Link2Off className="size-3" />
             </Button>
@@ -103,7 +104,7 @@ export function LinearGuideFields({
 
       <ScrubbableNumberField
         id="guide-count"
-        label="Count"
+        label={i18n.t('guides.fields.count')}
         value={settings.count}
         min={1}
         max={48}
@@ -117,7 +118,7 @@ export function LinearGuideFields({
           htmlFor="guide-alignment"
           className="w-2/5 text-xs text-muted-foreground"
         >
-          Type
+          {i18n.t('guides.fields.type')}
         </FieldLabel>
         <div className="w-3/5">
           <Select
@@ -148,16 +149,18 @@ export function LinearGuideFields({
         <FieldLabel
           htmlFor="guide-max-size"
           className="w-2/5 text-xs text-muted-foreground"
-          title="Maximum container width for the grid (e.g. 1280px)"
+          title={i18n.t('guides.fields.maxSizeTooltip')}
         >
-          {isColumns ? 'Max W' : 'Max H'}
+          {isColumns
+            ? i18n.t('guides.fields.maxWidth')
+            : i18n.t('guides.fields.maxHeight')}
         </FieldLabel>
         <div className="flex w-3/5 items-center gap-1">
           <Input
             id="guide-max-size"
             type="number"
             min={60}
-            placeholder="Auto (100%)"
+            placeholder={i18n.t('guides.fields.maxSizePlaceholder')}
             value={
               maxSizeDraft !== null ? maxSizeDraft : (settings.maxSize ?? '')
             }
@@ -198,14 +201,16 @@ export function LinearGuideFields({
                     variant="outline"
                     size="icon-xs"
                     className="h-7 w-6 shrink-0"
-                    aria-label="Max width presets"
+                    aria-label={i18n.t(
+                      'guides.fields.maxWidthPresetsAriaLabel',
+                    )}
                   >
                     <ChevronDown className="size-3 text-muted-foreground" />
                   </Button>
                 }
               />
               <DropdownMenuContent align="end" className="w-44">
-                {MAX_WIDTH_PRESETS.map((preset) => (
+                {maxWidthPresets.map((preset) => (
                   <DropdownMenuItem
                     key={preset.label}
                     onClick={() => {
@@ -228,18 +233,22 @@ export function LinearGuideFields({
 
       <ScrubbableNumberField
         id="guide-item-size"
-        label={isColumns ? 'Width' : 'Height'}
+        label={
+          isColumns
+            ? i18n.t('guides.fields.width')
+            : i18n.t('guides.fields.height')
+        }
         value={settings.itemSize ?? 64}
         min={1}
         max={2000}
         disabled={isStretch}
-        displayValue={isStretch ? 'Auto' : undefined}
+        displayValue={isStretch ? i18n.t('guides.fields.auto') : undefined}
         onChange={(itemSize) => onChange({ itemSize })}
       />
 
       <ScrubbableNumberField
         id="guide-margin"
-        label="Margin"
+        label={i18n.t('guides.fields.margin')}
         value={settings.margin}
         min={0}
         max={1000}
@@ -248,7 +257,7 @@ export function LinearGuideFields({
 
       <ScrubbableNumberField
         id="guide-gutter"
-        label="Gutter"
+        label={i18n.t('guides.fields.gutter')}
         value={settings.gutter}
         min={0}
         max={500}
@@ -257,7 +266,7 @@ export function LinearGuideFields({
 
       <ScrubbableNumberField
         id="guide-offset"
-        label="Offset"
+        label={i18n.t('guides.fields.offset')}
         value={settings.offset}
         min={-2000}
         max={2000}
@@ -266,7 +275,7 @@ export function LinearGuideFields({
 
       <Field orientation="horizontal">
         <FieldLabel className="w-2/5 text-xs text-muted-foreground">
-          Position
+          {i18n.t('guides.fields.position')}
         </FieldLabel>
         <div className="flex w-3/5 items-center gap-1">
           <Toggle
@@ -279,12 +288,12 @@ export function LinearGuideFields({
             {settings.followScroll ? (
               <>
                 <Scroll className="size-3" />
-                Scroll with page
+                {i18n.t('guides.position.scrollWithPage')}
               </>
             ) : (
               <>
                 <Lock className="size-3" />
-                Fixed to viewport
+                {i18n.t('guides.position.fixedToViewport')}
               </>
             )}
           </Toggle>

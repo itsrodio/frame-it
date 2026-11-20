@@ -1,0 +1,92 @@
+{
+  "extName": "FrameIt",
+  "extDescription": "适用于任何网站的 Figma 风格布局网格、智能容器检测和实时元素间距检查器。",
+  "dock": {
+    "inspect": {
+      "ariaLabel": "检查并测量间距",
+      "tooltip": "检查并测量 (Shift+I 或按住 Alt)"
+    },
+    "guides": {
+      "toggleAriaLabel": "切换布局参考线",
+      "toggleTooltip": "切换布局参考线 (Shift+G)"
+    },
+    "close": {
+      "ariaLabel": "长按关闭 FrameIt",
+      "holdToClose": "长按关闭",
+      "keepHolding": "继续按住..."
+    }
+  },
+  "picker": {
+    "snapHint": "点击页面上的任意容器以吸附布局参考线",
+    "cancelBeforeKey": "按",
+    "cancelAfterKey": "取消",
+    "badgePadding": "(内边距 $1px)",
+    "badgeCols": "$1 列"
+  },
+  "inspect": {
+    "clickKey": "点击",
+    "lockElement": "锁定元素",
+    "measureDistances": "测量间距",
+    "shiftClickKey": "Shift+点击",
+    "snapGrid": "将网格吸附到容器",
+    "exit": "退出"
+  },
+  "guides": {
+    "types": {
+      "columns": "列",
+      "rows": "行",
+      "grid": "网格"
+    },
+    "alignments": {
+      "stretch": "拉伸",
+      "center": "居中",
+      "left": "左对齐",
+      "right": "右对齐",
+      "top": "顶部对齐",
+      "bottom": "底部对齐"
+    },
+    "presets": {
+      "autoViewport": "自动 (100% 视口)",
+      "full": "全宽",
+      "standard": "标准",
+      "desktopFigma": "Figma 桌面端"
+    },
+    "header": {
+      "autoDetectAriaLabel": "自动检测页面容器",
+      "autoDetectTooltip": "自动检测容器 (Shift+A)",
+      "pickContainerAriaLabel": "在页面上选择容器",
+      "pickContainerTooltip": "在页面上选择容器 (Shift+C)",
+      "resetAriaLabel": "重置设置",
+      "resetTooltip": "重置当前网站设置 (恢复自动检测)",
+      "closeAriaLabel": "关闭"
+    },
+    "fields": {
+      "unlinkElement": "取消关联元素",
+      "count": "数量",
+      "color": "颜色",
+      "pickColorAriaLabel": "选择参考线颜色",
+      "opacityAriaLabel": "参考线不透明度",
+      "type": "对齐",
+      "maxWidth": "最大宽度",
+      "maxHeight": "最大高度",
+      "maxSizeTooltip": "网格的最大容器宽度 (例如 1280px)",
+      "maxSizePlaceholder": "自动 (100%)",
+      "maxWidthPresetsAriaLabel": "最大宽度预设",
+      "width": "宽度",
+      "height": "高度",
+      "auto": "自动",
+      "margin": "边距",
+      "gutter": "间距",
+      "offset": "偏移",
+      "size": "大小",
+      "offsetX": "X 偏移",
+      "offsetY": "Y 偏移",
+      "position": "位置",
+      "scrubHint": "水平拖动以调整数值 (按住 Shift 步进 10 倍)"
+    },
+    "position": {
+      "scrollWithPage": "随页面滚动",
+      "fixedToViewport": "固定于视口"
+    }
+  }
+}

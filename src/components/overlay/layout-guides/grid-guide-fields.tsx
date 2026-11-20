@@ -22,7 +22,7 @@ export function GridGuideFields({
     <>
       <ScrubbableNumberField
         id="guide-size"
-        label="Size"
+        label={i18n.t('guides.fields.size')}
         value={settings.size}
         min={2}
         max={256}
@@ -33,7 +33,7 @@ export function GridGuideFields({
 
       <ScrubbableNumberField
         id="guide-grid-offset-x"
-        label="Offset X"
+        label={i18n.t('guides.fields.offsetX')}
         value={settings.offsetX}
         min={-500}
         max={500}
@@ -42,7 +42,7 @@ export function GridGuideFields({
 
       <ScrubbableNumberField
         id="guide-grid-offset-y"
-        label="Offset Y"
+        label={i18n.t('guides.fields.offsetY')}
         value={settings.offsetY}
         min={-500}
         max={500}
@@ -51,7 +51,7 @@ export function GridGuideFields({
 
       <Field orientation="horizontal">
         <FieldLabel className="w-2/5 text-xs text-muted-foreground">
-          Position
+          {i18n.t('guides.fields.position')}
         </FieldLabel>
         <div className="flex w-3/5 items-center gap-1">
           <Toggle
@@ -64,12 +64,12 @@ export function GridGuideFields({
             {settings.followScroll ? (
               <>
                 <Scroll className="size-3" />
-                Scroll with page
+                {i18n.t('guides.position.scrollWithPage')}
               </>
             ) : (
               <>
                 <Lock className="size-3" />
-                Fixed to viewport
+                {i18n.t('guides.position.fixedToViewport')}
               </>
             )}
           </Toggle>

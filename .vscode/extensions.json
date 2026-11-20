@@ -4,6 +4,7 @@
     "vitest.explorer",
     "ms-playwright.playwright",
     "bradlc.vscode-tailwindcss",
-    "editorconfig.editorconfig"
+    "editorconfig.editorconfig",
+    "lokalise.i18n-ally"
   ]
 }

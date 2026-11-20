@@ -1,0 +1,92 @@
+{
+  "extName": "FrameIt",
+  "extDescription": "Figma-style layout grids, smart container detection, and live element spacing inspector for any website.",
+  "dock": {
+    "inspect": {
+      "ariaLabel": "Inspect & measure distances",
+      "tooltip": "Inspect & measure (Shift+I or hold Alt)"
+    },
+    "guides": {
+      "toggleAriaLabel": "Toggle layout guides",
+      "toggleTooltip": "Toggle layout guides (Shift+G)"
+    },
+    "close": {
+      "ariaLabel": "Hold to close FrameIt",
+      "holdToClose": "Hold to close",
+      "keepHolding": "Keep holding..."
+    }
+  },
+  "picker": {
+    "snapHint": "Click any container on the page to snap layout guides",
+    "cancelBeforeKey": "Press",
+    "cancelAfterKey": "to cancel",
+    "badgePadding": "(pad $1px)",
+    "badgeCols": "$1 cols"
+  },
+  "inspect": {
+    "clickKey": "Click",
+    "lockElement": "element to lock",
+    "measureDistances": "measure distances",
+    "shiftClickKey": "Shift+Click",
+    "snapGrid": "snap grid to container",
+    "exit": "exit"
+  },
+  "guides": {
+    "types": {
+      "columns": "Columns",
+      "rows": "Rows",
+      "grid": "Grid"
+    },
+    "alignments": {
+      "stretch": "Stretch",
+      "center": "Center",
+      "left": "Left",
+      "right": "Right",
+      "top": "Top",
+      "bottom": "Bottom"
+    },
+    "presets": {
+      "autoViewport": "Auto (100% viewport)",
+      "full": "Full",
+      "standard": "Standard",
+      "desktopFigma": "Desktop Figma"
+    },
+    "header": {
+      "autoDetectAriaLabel": "Auto-detect page container",
+      "autoDetectTooltip": "Auto-detect container (Shift+A)",
+      "pickContainerAriaLabel": "Pick container on page",
+      "pickContainerTooltip": "Pick container on page (Shift+C)",
+      "resetAriaLabel": "Reset settings",
+      "resetTooltip": "Reset site settings (back to auto-detect)",
+      "closeAriaLabel": "Close"
+    },
+    "fields": {
+      "unlinkElement": "Unlink from element",
+      "count": "Count",
+      "color": "Color",
+      "pickColorAriaLabel": "Pick guide color",
+      "opacityAriaLabel": "Guide opacity",
+      "type": "Type",
+      "maxWidth": "Max W",
+      "maxHeight": "Max H",
+      "maxSizeTooltip": "Maximum container width for the grid (e.g. 1280px)",
+      "maxSizePlaceholder": "Auto (100%)",
+      "maxWidthPresetsAriaLabel": "Max width presets",
+      "width": "Width",
+      "height": "Height",
+      "auto": "Auto",
+      "margin": "Margin",
+      "gutter": "Gutter",
+      "offset": "Offset",
+      "size": "Size",
+      "offsetX": "Offset X",
+      "offsetY": "Offset Y",
+      "position": "Position",
+      "scrubHint": "Drag horizontally to adjust (hold Shift for 10x)"
+    },
+    "position": {
+      "scrollWithPage": "Scroll with page",
+      "fixedToViewport": "Fixed to viewport"
+    }
+  }
+}

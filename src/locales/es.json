@@ -1,0 +1,92 @@
+{
+  "extName": "FrameIt",
+  "extDescription": "Cuadrículas de diseño estilo Figma, detección inteligente de contenedores e inspector de espaciado en vivo para cualquier sitio web.",
+  "dock": {
+    "inspect": {
+      "ariaLabel": "Inspeccionar y medir distancias",
+      "tooltip": "Inspeccionar y medir (Shift+I o mantener Alt)"
+    },
+    "guides": {
+      "toggleAriaLabel": "Alternar guías de diseño",
+      "toggleTooltip": "Alternar guías de diseño (Shift+G)"
+    },
+    "close": {
+      "ariaLabel": "Mantener para cerrar FrameIt",
+      "holdToClose": "Mantener para cerrar",
+      "keepHolding": "Sigue manteniendo..."
+    }
+  },
+  "picker": {
+    "snapHint": "Haz clic en cualquier contenedor de la página para ajustar las guías",
+    "cancelBeforeKey": "Pulsa",
+    "cancelAfterKey": "para cancelar",
+    "badgePadding": "(pad $1px)",
+    "badgeCols": "$1 cols"
+  },
+  "inspect": {
+    "clickKey": "Clic",
+    "lockElement": "para fijar elemento",
+    "measureDistances": "medir distancias",
+    "shiftClickKey": "Shift+Clic",
+    "snapGrid": "ajustar cuadrícula al contenedor",
+    "exit": "salir"
+  },
+  "guides": {
+    "types": {
+      "columns": "Columnas",
+      "rows": "Filas",
+      "grid": "Cuadrícula"
+    },
+    "alignments": {
+      "stretch": "Estirar",
+      "center": "Centro",
+      "left": "Izquierda",
+      "right": "Derecha",
+      "top": "Arriba",
+      "bottom": "Abajo"
+    },
+    "presets": {
+      "autoViewport": "Auto (100% ventana)",
+      "full": "Completo",
+      "standard": "Estándar",
+      "desktopFigma": "Escritorio Figma"
+    },
+    "header": {
+      "autoDetectAriaLabel": "Detectar contenedor automáticamente",
+      "autoDetectTooltip": "Detectar contenedor (Shift+A)",
+      "pickContainerAriaLabel": "Elegir contenedor en la página",
+      "pickContainerTooltip": "Elegir contenedor en la página (Shift+C)",
+      "resetAriaLabel": "Restablecer ajustes",
+      "resetTooltip": "Restablecer ajustes del sitio (volver a autodetección)",
+      "closeAriaLabel": "Cerrar"
+    },
+    "fields": {
+      "unlinkElement": "Desvincular del elemento",
+      "count": "Cantidad",
+      "color": "Color",
+      "pickColorAriaLabel": "Elegir color de guía",
+      "opacityAriaLabel": "Opacidad de guía",
+      "type": "Tipo",
+      "maxWidth": "Ancho máx.",
+      "maxHeight": "Alto máx.",
+      "maxSizeTooltip": "Ancho máximo del contenedor para la cuadrícula (ej. 1280px)",
+      "maxSizePlaceholder": "Auto (100%)",
+      "maxWidthPresetsAriaLabel": "Ajustes predefinidos de ancho máximo",
+      "width": "Ancho",
+      "height": "Alto",
+      "auto": "Auto",
+      "margin": "Margen",
+      "gutter": "Espacio",
+      "offset": "Desplaz.",
+      "size": "Tamaño",
+      "offsetX": "Desplaz. X",
+      "offsetY": "Desplaz. Y",
+      "position": "Posición",
+      "scrubHint": "Arrastra horizontalmente para ajustar (mantén Shift para 10x)"
+    },
+    "position": {
+      "scrollWithPage": "Con la página",
+      "fixedToViewport": "Fijo en pantalla"
+    }
+  }
+}

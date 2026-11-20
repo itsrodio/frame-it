@@ -1,6 +1,6 @@
 # Chrome Web Store Listing — FrameIt
 
-> Last Updated: 2026-11-17
+> Last Updated: 2026-11-20
 
 ## Store Listing
 
@@ -47,7 +47,19 @@ Developer Tools
 Overlays customizable column, row, and pixel layout grids and measures element spacing on the active webpage to verify visual alignment.
 
 **Primary Language** [REQUIRED]
-English
+English (`en`)
+
+**Supported Locales (`_locales/`)**
+
+- `en` — English: Figma-style layout grids, smart container detection, and live element spacing inspector for any website.
+- `es` — Español: Cuadrículas de diseño estilo Figma, detección inteligente de contenedores e inspector de espaciado en vivo para cualquier sitio web.
+- `zh_CN` — 简体中文: 适用于任何网站的 Figma 风格布局网格、智能容器检测和实时元素间距检查器。
+- `pt_BR` — Português (Brasil): Grades de layout estilo Figma, detecção inteligente de contêineres e inspetor de espaçamento ao vivo para qualquer site.
+- `de` — Deutsch: Layout-Raster im Figma-Stil, intelligente Container-Erkennung und Live-Abstandsinspektor für jede Website.
+- `fr` — Français: Grilles de mise en page style Figma, détection intelligente des conteneurs et inspecteur d'espacement en direct pour tout site web.
+- `ru` — Русский: Модульные сетки в стиле Figma, умное определение контейнеров и инспектор отступов элементов в реальном времени для любого сайта.
+- `ja` — 日本語: あらゆるWebサイトで使える、Figma風のレイアウトグリッド、スマートコンテナ検出、リアルタイム要素間隔インスペクター。
+- `ko` — 한국어: 모든 웹사이트를 위한 Figma 스타일 레이아웃 그리드, 스마트 컨테이너 감지 및 실시간 요소 간격 인스펙터.
 
 ## Graphics & Assets
 

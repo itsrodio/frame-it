@@ -1,0 +1,92 @@
+{
+  "extName": "FrameIt",
+  "extDescription": "Layout-Raster im Figma-Stil, intelligente Container-Erkennung und Live-Abstandsinspektor für jede Website.",
+  "dock": {
+    "inspect": {
+      "ariaLabel": "Abstände prüfen und messen",
+      "tooltip": "Prüfen & messen (Shift+I oder Alt halten)"
+    },
+    "guides": {
+      "toggleAriaLabel": "Layout-Hilfslinien umschalten",
+      "toggleTooltip": "Layout-Hilfslinien umschalten (Shift+G)"
+    },
+    "close": {
+      "ariaLabel": "Gedrückt halten, um FrameIt zu schließen",
+      "holdToClose": "Halten zum Schließen",
+      "keepHolding": "Weiter gedrückt halten..."
+    }
+  },
+  "picker": {
+    "snapHint": "Klicken Sie auf einen Container auf der Seite, um Hilfslinien auszurichten",
+    "cancelBeforeKey": "Drücken Sie",
+    "cancelAfterKey": "zum Abbrechen",
+    "badgePadding": "(Pad $1px)",
+    "badgeCols": "$1 Sp."
+  },
+  "inspect": {
+    "clickKey": "Klick",
+    "lockElement": "Element fixieren",
+    "measureDistances": "Abstände messen",
+    "shiftClickKey": "Shift+Klick",
+    "snapGrid": "Raster an Container anpassen",
+    "exit": "Beenden"
+  },
+  "guides": {
+    "types": {
+      "columns": "Spalten",
+      "rows": "Zeilen",
+      "grid": "Raster"
+    },
+    "alignments": {
+      "stretch": "Strecken",
+      "center": "Zentriert",
+      "left": "Links",
+      "right": "Rechts",
+      "top": "Oben",
+      "bottom": "Unten"
+    },
+    "presets": {
+      "autoViewport": "Auto (100% Viewport)",
+      "full": "Voll",
+      "standard": "Standard",
+      "desktopFigma": "Desktop Figma"
+    },
+    "header": {
+      "autoDetectAriaLabel": "Seiten-Container automatisch erkennen",
+      "autoDetectTooltip": "Container automatisch erkennen (Shift+A)",
+      "pickContainerAriaLabel": "Container auf der Seite auswählen",
+      "pickContainerTooltip": "Container auf der Seite auswählen (Shift+C)",
+      "resetAriaLabel": "Einstellungen zurücksetzen",
+      "resetTooltip": "Website-Einstellungen zurücksetzen (zurück zur Auto-Erkennung)",
+      "closeAriaLabel": "Schließen"
+    },
+    "fields": {
+      "unlinkElement": "Verknüpfung mit Element lösen",
+      "count": "Anzahl",
+      "color": "Farbe",
+      "pickColorAriaLabel": "Hilfslinienfarbe wählen",
+      "opacityAriaLabel": "Hilfslinien-Deckkraft",
+      "type": "Typ",
+      "maxWidth": "Max. B",
+      "maxHeight": "Max. H",
+      "maxSizeTooltip": "Maximale Containerbreite für das Raster (z. B. 1280px)",
+      "maxSizePlaceholder": "Auto (100%)",
+      "maxWidthPresetsAriaLabel": "Voreinstellungen für maximale Breite",
+      "width": "Breite",
+      "height": "Höhe",
+      "auto": "Auto",
+      "margin": "Rand",
+      "gutter": "Abstand",
+      "offset": "Versatz",
+      "size": "Größe",
+      "offsetX": "Versatz X",
+      "offsetY": "Versatz Y",
+      "position": "Position",
+      "scrubHint": "Horizontal ziehen zum Anpassen (Shift halten für 10x)"
+    },
+    "position": {
+      "scrollWithPage": "Mit Seite scrollen",
+      "fixedToViewport": "Am Viewport fixiert"
+    }
+  }
+}

@@ -1,0 +1,92 @@
+{
+  "extName": "FrameIt",
+  "extDescription": "모든 웹사이트를 위한 Figma 스타일 레이아웃 그리드, 스마트 컨테이너 감지 및 실시간 요소 간격 인스펙터.",
+  "dock": {
+    "inspect": {
+      "ariaLabel": "간격 검사 및 측정",
+      "tooltip": "검사 및 측정 (Shift+I 또는 Alt 길게 누르기)"
+    },
+    "guides": {
+      "toggleAriaLabel": "레이아웃 가이드 전환",
+      "toggleTooltip": "레이아웃 가이드 전환 (Shift+G)"
+    },
+    "close": {
+      "ariaLabel": "길게 눌러 FrameIt 닫기",
+      "holdToClose": "길게 눌러 닫기",
+      "keepHolding": "계속 누르고 계세요..."
+    }
+  },
+  "picker": {
+    "snapHint": "페이지의 아무 컨테이너나 클릭하여 레이아웃 가이드를 스냅하세요",
+    "cancelBeforeKey": "취소하려면",
+    "cancelAfterKey": "키",
+    "badgePadding": "(여백 $1px)",
+    "badgeCols": "$1열"
+  },
+  "inspect": {
+    "clickKey": "클릭",
+    "lockElement": "하여 요소 고정",
+    "measureDistances": "거리 측정",
+    "shiftClickKey": "Shift+클릭",
+    "snapGrid": "컨테이너에 그리드 스냅",
+    "exit": "종료"
+  },
+  "guides": {
+    "types": {
+      "columns": "열",
+      "rows": "행",
+      "grid": "그리드"
+    },
+    "alignments": {
+      "stretch": "채우기",
+      "center": "가운데",
+      "left": "왼쪽",
+      "right": "오른쪽",
+      "top": "위쪽",
+      "bottom": "아래쪽"
+    },
+    "presets": {
+      "autoViewport": "자동 (뷰포트 100%)",
+      "full": "전체",
+      "standard": "표준",
+      "desktopFigma": "데스크톱 Figma"
+    },
+    "header": {
+      "autoDetectAriaLabel": "페이지 컨테이너 자동 감지",
+      "autoDetectTooltip": "컨테이너 자동 감지 (Shift+A)",
+      "pickContainerAriaLabel": "페이지에서 컨테이너 선택",
+      "pickContainerTooltip": "페이지에서 컨테이너 선택 (Shift+C)",
+      "resetAriaLabel": "설정 초기화",
+      "resetTooltip": "사이트 설정 초기화 (자동 감지로 복귀)",
+      "closeAriaLabel": "닫기"
+    },
+    "fields": {
+      "unlinkElement": "요소 연결 해제",
+      "count": "개수",
+      "color": "색상",
+      "pickColorAriaLabel": "가이드 색상 선택",
+      "opacityAriaLabel": "가이드 불투명도",
+      "type": "유형",
+      "maxWidth": "최대 너비",
+      "maxHeight": "최대 높이",
+      "maxSizeTooltip": "그리드의 최대 컨테이너 너비 (예: 1280px)",
+      "maxSizePlaceholder": "자동 (100%)",
+      "maxWidthPresetsAriaLabel": "최대 너비 프리셋",
+      "width": "너비",
+      "height": "높이",
+      "auto": "자동",
+      "margin": "여백",
+      "gutter": "간격",
+      "offset": "오프셋",
+      "size": "크기",
+      "offsetX": "X 오프셋",
+      "offsetY": "Y 오프셋",
+      "position": "위치",
+      "scrubHint": "좌우로 드래그하여 조절 (Shift 키를 누르면 10배)"
+    },
+    "position": {
+      "scrollWithPage": "페이지와 함께 스크롤",
+      "fixedToViewport": "화면에 고정"
+    }
+  }
+}

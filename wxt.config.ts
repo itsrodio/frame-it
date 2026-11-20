@@ -13,9 +13,9 @@ const replaceRem = (str: string, baseValue = 16) =>
 // See https://wxt.dev/api/reference/wxt/interfaces/inlineconfig.html
 export default defineConfig({
   manifest: {
-    name: 'FrameIt',
-    description:
-      'Figma-style layout grids, smart container detection, and live element spacing inspector for any website.',
+    name: '__MSG_extName__',
+    description: '__MSG_extDescription__',
+    default_locale: 'en',
     permissions: ['activeTab', 'scripting'],
     action: {},
     web_accessible_resources: [
@@ -26,7 +26,11 @@ export default defineConfig({
     ],
   },
   srcDir: 'src',
-  modules: ['@wxt-dev/module-react', '@wxt-dev/auto-icons'],
+  modules: [
+    '@wxt-dev/module-react',
+    '@wxt-dev/auto-icons',
+    '@wxt-dev/i18n/module',
+  ],
   vite: () => ({
     plugins: [tailwindcss()],
     css: {

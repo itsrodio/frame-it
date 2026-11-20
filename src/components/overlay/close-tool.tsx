@@ -67,7 +67,7 @@ export function CloseTool({ onClose }: CloseToolProps) {
           <Button
             variant="ghost"
             size="icon"
-            aria-label="Hold to close FrameIt"
+            aria-label={i18n.t('dock.close.ariaLabel')}
             data-holding={isHolding || undefined}
             onPointerDown={handlePointerDown}
             onPointerUp={cancelHold}
@@ -104,7 +104,9 @@ export function CloseTool({ onClose }: CloseToolProps) {
         }
       />
       <TooltipContent className="w-fit whitespace-nowrap">
-        {isHolding ? 'Keep holding...' : 'Hold to close'}
+        {isHolding
+          ? i18n.t('dock.close.keepHolding')
+          : i18n.t('dock.close.holdToClose')}
       </TooltipContent>
     </Tooltip>
   );

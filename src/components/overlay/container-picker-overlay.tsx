@@ -140,11 +140,11 @@ export function ContainerPickerOverlay({
     <div className="fixed inset-0 pointer-events-none z-40">
       {/* Подсказка сверху экрана */}
       <div className="fixed top-4 left-1/2 -translate-x-1/2 rounded-full bg-popover/95 px-3.5 py-1.5 text-xs font-medium text-popover-foreground shadow-lg ring-1 ring-border backdrop-blur-xs">
-        Click any container on the page to snap layout guides • Press{' '}
+        {i18n.t('picker.snapHint')} • {i18n.t('picker.cancelBeforeKey')}{' '}
         <kbd className="rounded bg-muted px-1 py-0.5 font-mono text-[10px]">
           Esc
         </kbd>{' '}
-        to cancel
+        {i18n.t('picker.cancelAfterKey')}
       </div>
 
       {hoveredInfo && (
@@ -178,12 +178,12 @@ export function ContainerPickerOverlay({
             <span>{Math.round(hoveredInfo.rect.width)}px</span>
             {hoveredInfo.paddingInline > 0 && (
               <span className="opacity-85">
-                (pad {hoveredInfo.paddingInline}px)
+                {i18n.t('picker.badgePadding', [hoveredInfo.paddingInline])}
               </span>
             )}
             {hoveredInfo.columnCount && (
               <span className="rounded bg-background/20 px-1 text-[10px]">
-                {hoveredInfo.columnCount} cols
+                {i18n.t('picker.badgeCols', [hoveredInfo.columnCount])}
               </span>
             )}
           </div>
