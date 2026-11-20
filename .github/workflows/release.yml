@@ -38,7 +38,7 @@ jobs:
     env:
       TAG_NAME: ${{ inputs.tag_name || needs.release-please.outputs.tag_name }}
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
         with:
           ref: ${{ env.TAG_NAME }}
       - uses: pnpm/action-setup@v4
@@ -69,7 +69,7 @@ jobs:
     env:
       TAG_NAME: ${{ inputs.tag_name || needs.release-please.outputs.tag_name }}
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
         with:
           ref: ${{ env.TAG_NAME }}
       - uses: pnpm/action-setup@v4
