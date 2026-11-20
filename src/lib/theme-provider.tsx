@@ -2,6 +2,7 @@ import {
   createContext,
   type ReactNode,
   useContext,
+  useEffect,
   useLayoutEffect,
   useState,
 } from 'react';
@@ -30,6 +31,10 @@ export function ThemeProvider({
   container,
 }: ThemeProviderProps) {
   const [theme, setTheme] = useState<Theme>(defaultTheme);
+
+  useEffect(() => {
+    setTheme(defaultTheme);
+  }, [defaultTheme]);
 
   useLayoutEffect(() => {
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');

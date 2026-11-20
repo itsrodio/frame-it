@@ -13,7 +13,8 @@
     "close": {
       "ariaLabel": "Gedrückt halten, um FrameIt zu schließen",
       "holdToClose": "Halten zum Schließen",
-      "keepHolding": "Weiter gedrückt halten..."
+      "keepHolding": "Weiter gedrückt halten...",
+      "clickToClose": "FrameIt schließen"
     }
   },
   "picker": {
@@ -87,6 +88,61 @@
     "position": {
       "scrollWithPage": "Mit Seite scrollen",
       "fixedToViewport": "Am Viewport fixiert"
+    }
+  },
+  "options": {
+    "title": "FrameIt-Einstellungen",
+    "subtitle": "Konfigurieren Sie Sprache, Erscheinungsbild, Startverhalten, Tastenkürzel und Standard-Layoutraster.",
+    "savedBadge": "Automatisch gespeichert",
+    "resetAll": "Alles zurücksetzen",
+    "general": {
+      "title": "Allgemein & Erscheinungsbild",
+      "description": "Wählen Sie die Oberflächensprache und das Farbschema für das Dock und die Einstellungen.",
+      "language": "Sprache",
+      "languageDescription": "Sprache der Erweiterung festlegen oder der Browsersprache folgen.",
+      "languageAuto": "Auto (Browser-Standard)",
+      "theme": "Design",
+      "themeDescription": "Farbschema für das schwebende Dock, Popovers und die Einstellungsseite.",
+      "themeSystem": "System",
+      "themeLight": "Hell",
+      "themeDark": "Dunkel"
+    },
+    "behavior": {
+      "title": "Start & Verhalten",
+      "description": "Steuern Sie, wie FrameIt beim Öffnen auf einer Webseite initialisiert wird.",
+      "autoDetectOnLaunch": "Container beim Start automatisch erkennen",
+      "autoDetectOnLaunchDescription": "Erkennt beim Start automatisch den Hauptcontainer der Seite und richtet das Raster daran aus.",
+      "guidesEnabledByDefault": "Hilfslinien beim Start anzeigen",
+      "guidesEnabledByDefaultDescription": "Zeigt das Layoutraster sofort an, wenn FrameIt aktiviert wird.",
+      "defaultGuideType": "Standard-Hilfslinientyp",
+      "defaultGuideTypeDescription": "Anfänglicher Rastermodus, wenn keine seitenspezifische Konfiguration gespeichert ist.",
+      "rememberSiteSettings": "Einstellungen pro Website merken",
+      "rememberSiteSettingsDescription": "Speichert Ihre Rasteranpassungen automatisch für jede Website.",
+      "holdToClose": "Gedrückt halten zum Schließen",
+      "holdToCloseDescription": "Erfordert 450 ms Gedrückthalten der Schließen-Schaltfläche gegen versehentliches Schließen.",
+      "enabled": "Aktiviert",
+      "disabled": "Deaktiviert"
+    },
+    "hotkeys": {
+      "title": "Tastenkürzel",
+      "description": "Klicken Sie auf ein Tastenkürzel, um eine neue Kombination aufzunehmen. Esc zum Abbrechen.",
+      "enableHotkeys": "Tastenkürzel aktivieren",
+      "enableHotkeysDescription": "Globale Tastenkürzel auf der aktiven Webseite erlauben, solange FrameIt geöffnet ist.",
+      "resetHotkeys": "Tastenkürzel zurücksetzen",
+      "pressKeys": "Tasten drücken...",
+      "toggleGuides": "Layout-Hilfslinien umschalten",
+      "toggleInspect": "Prüfen & Messen umschalten",
+      "autoDetect": "Seiten-Container automatisch erkennen",
+      "pickContainer": "Container auf der Seite auswählen",
+      "switchColumns": "Zu Spalten wechseln",
+      "switchRows": "Zu Zeilen wechseln",
+      "switchGrid": "Zu Raster wechseln"
+    },
+    "defaults": {
+      "title": "Standard-Layoutraster",
+      "description": "Standardwerte für Spalten, Zeilen und Raster beim Öffnen von FrameIt auf einer neuen Website.",
+      "resetDefaults": "Raster-Standards zurücksetzen",
+      "preview": "Live-Vorschau"
     }
   }
 }

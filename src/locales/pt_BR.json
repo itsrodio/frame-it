@@ -13,7 +13,8 @@
     "close": {
       "ariaLabel": "Segure para fechar o FrameIt",
       "holdToClose": "Segure para fechar",
-      "keepHolding": "Continue segurando..."
+      "keepHolding": "Continue segurando...",
+      "clickToClose": "Fechar FrameIt"
     }
   },
   "picker": {
@@ -87,6 +88,61 @@
     "position": {
       "scrollWithPage": "Rolar c/ página",
       "fixedToViewport": "Fixo na tela"
+    }
+  },
+  "options": {
+    "title": "Configurações do FrameIt",
+    "subtitle": "Configure idioma, aparência, comportamento inicial, atalhos de teclado e grades de layout padrão.",
+    "savedBadge": "Salvo automaticamente",
+    "resetAll": "Redefinir tudo para o padrão",
+    "general": {
+      "title": "Geral e Aparência",
+      "description": "Escolha o idioma da interface e o tema de cores para a barra flutuante e configurações.",
+      "language": "Idioma",
+      "languageDescription": "Substitua o idioma da extensão ou siga o idioma padrão do navegador.",
+      "languageAuto": "Auto (Padrão do navegador)",
+      "theme": "Tema",
+      "themeDescription": "Esquema de cores para a barra flutuante, popovers e página de configurações.",
+      "themeSystem": "Sistema",
+      "themeLight": "Claro",
+      "themeDark": "Escuro"
+    },
+    "behavior": {
+      "title": "Inicialização e Comportamento",
+      "description": "Controle como o FrameIt é iniciado ao abri-lo em uma página da web.",
+      "autoDetectOnLaunch": "Detectar contêiner ao iniciar",
+      "autoDetectOnLaunchDescription": "Detecta e ajusta automaticamente ao contêiner principal da página ao iniciar.",
+      "guidesEnabledByDefault": "Mostrar guias de layout ao iniciar",
+      "guidesEnabledByDefaultDescription": "Renderiza a grade de layout imediatamente quando o FrameIt é ativado.",
+      "defaultGuideType": "Tipo de guia padrão",
+      "defaultGuideTypeDescription": "Modo de guia inicial quando nenhuma configuração do site estiver salva.",
+      "rememberSiteSettings": "Lembrar configurações por site",
+      "rememberSiteSettingsDescription": "Salva automaticamente suas personalizações de grade para cada site.",
+      "holdToClose": "Segurar para fechar",
+      "holdToCloseDescription": "Exige segurar o botão de fechar por 450 ms para evitar fechamento acidental.",
+      "enabled": "Ativado",
+      "disabled": "Desativado"
+    },
+    "hotkeys": {
+      "title": "Atalhos de Teclado",
+      "description": "Clique em qualquer atalho para gravar uma nova combinação de teclas. Pressione Esc para cancelar.",
+      "enableHotkeys": "Ativar atalhos de teclado",
+      "enableHotkeysDescription": "Permite atalhos globais na página ativa enquanto o FrameIt estiver aberto.",
+      "resetHotkeys": "Redefinir atalhos",
+      "pressKeys": "Pressione as teclas...",
+      "toggleGuides": "Alternar guias de layout",
+      "toggleInspect": "Alternar Inspecionar e Medir",
+      "autoDetect": "Detectar contêiner da página",
+      "pickContainer": "Selecionar contêiner na página",
+      "switchColumns": "Mudar para Colunas",
+      "switchRows": "Mudar para Linhas",
+      "switchGrid": "Mudar para Grade"
+    },
+    "defaults": {
+      "title": "Guias de Layout Padrão",
+      "description": "Configurações padrão para Colunas, Linhas e Grade ao abrir o FrameIt em um novo site.",
+      "resetDefaults": "Redefinir padrões de guias",
+      "preview": "Pré-visualização"
     }
   }
 }

@@ -13,7 +13,8 @@
     "close": {
       "ariaLabel": "長押しして FrameIt を閉じる",
       "holdToClose": "長押しで閉じる",
-      "keepHolding": "そのまま長押し..."
+      "keepHolding": "そのまま長押し...",
+      "clickToClose": "FrameIt を閉じる"
     }
   },
   "picker": {
@@ -87,6 +88,61 @@
     "position": {
       "scrollWithPage": "ページとスクロール",
       "fixedToViewport": "画面に固定"
+    }
+  },
+  "options": {
+    "title": "FrameIt 設定",
+    "subtitle": "表示言語、テーマ、起動時の動作、キーボードショートカット、デフォルトのレイアウトグリッドを設定します。",
+    "savedBadge": "自動保存済み",
+    "resetAll": "すべて初期設定に戻す",
+    "general": {
+      "title": "一般と外観",
+      "description": "オーバーレイドックと設定画面の表示言語およびカラーテーマを選択します。",
+      "language": "言語",
+      "languageDescription": "拡張機能の表示言語を指定するか、ブラウザの言語設定に従います。",
+      "languageAuto": "自動 (ブラウザのデフォルト)",
+      "theme": "テーマ",
+      "themeDescription": "フローティングドック、ポップオーバー、設定ページの配色テーマ。",
+      "themeSystem": "システム",
+      "themeLight": "ライト",
+      "themeDark": "ダーク"
+    },
+    "behavior": {
+      "title": "起動と動作",
+      "description": "Webページ上で FrameIt を起動した際の初期動作を設定します。",
+      "autoDetectOnLaunch": "起動時にコンテナを自動検出",
+      "autoDetectOnLaunchDescription": "起動時にページのメインコンテナを自動検出してグリッドをスナップします。",
+      "guidesEnabledByDefault": "起動時にレイアウトガイドを表示",
+      "guidesEnabledByDefaultDescription": "FrameIt の起動と同時にレイアウトグリッドを描画します。",
+      "defaultGuideType": "デフォルトのガイドタイプ",
+      "defaultGuideTypeDescription": "サイトごとの設定が保存されていない場合の初期ガイドモード。",
+      "rememberSiteSettings": "サイトごとの設定を記憶",
+      "rememberSiteSettingsDescription": "カスタマイズしたグリッド設定を各Webサイトごとに自動保存します。",
+      "holdToClose": "長押しでドックを閉じる",
+      "holdToCloseDescription": "誤操作を防ぐため、閉じるボタンの 450ミリ秒長押しを必須にします。",
+      "enabled": "有効",
+      "disabled": "無効"
+    },
+    "hotkeys": {
+      "title": "キーボードショートカット",
+      "description": "ショートカットをクリックして新しいキーの組み合わせを登録します。Esc キーでキャンセルします。",
+      "enableHotkeys": "キーボードショートカットを有効化",
+      "enableHotkeysDescription": "FrameIt の表示中にページ上でグローバルショートカットを使用可能にします。",
+      "resetHotkeys": "ショートカットをリセット",
+      "pressKeys": "キーを押してください...",
+      "toggleGuides": "レイアウトガイドの切り替え",
+      "toggleInspect": "検査と測定モードの切り替え",
+      "autoDetect": "ページのコンテナを自動検出",
+      "pickContainer": "ページ上のコンテナを選択",
+      "switchColumns": "カラムに切り替え",
+      "switchRows": "行に切り替え",
+      "switchGrid": "グリッドに切り替え"
+    },
+    "defaults": {
+      "title": "デフォルトのレイアウトガイド",
+      "description": "新しいWebサイトで FrameIt を開いた際のカラム、行、グリッドの初期設定。",
+      "resetDefaults": "ガイド初期値をリセット",
+      "preview": "ライブプレビュー"
     }
   }
 }

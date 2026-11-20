@@ -3,6 +3,10 @@ import ReactDOM from 'react-dom/client';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { App } from '@/App';
 import { LAYOUT_GUIDES_STORAGE_KEY } from '@/components/overlay/layout-guides/constants';
+import {
+  DEFAULT_EXTENSION_SETTINGS,
+  saveExtensionSettings,
+} from '@/lib/settings-storage';
 
 describe('App', () => {
   let portalContainer: HTMLDivElement;
@@ -388,5 +392,62 @@ describe('App', () => {
     });
     expect(window.localStorage.getItem(LAYOUT_GUIDES_STORAGE_KEY)).toBeNull();
     rafSpy.mockRestore();
+  });
+
+  it('applies live ExtensionSettings updates (language, custom hotkeys, holdToClose=false)', async () => {
+    const onClose = vi.fn();
+
+    await act(async () => {
+      root.render(<App portalContainer={portalContainer} onClose={onClose} />);
+    });
+
+    await act(async () => {
+      await saveExtensionSettings({
+        ...DEFAULT_EXTENSION_SETTINGS,
+        language: 'ru',
+        behavior: {
+          ...DEFAULT_EXTENSION_SETTINGS.behavior,
+          holdToClose: false,
+          rememberSiteSettings: false,
+        },
+        hotkeys: {
+          ...DEFAULT_EXTENSION_SETTINGS.hotkeys,
+          toggleGuides: {
+            code: 'KeyM',
+            shift: true,
+            ctrlOrMeta: false,
+            alt: false,
+          },
+        },
+      });
+    });
+
+    const toggleGuidesBtn = portalContainer.querySelector(
+      'button[aria-label="Переключить направляющие сетки"]',
+    ) as HTMLButtonElement;
+    expect(toggleGuidesBtn).not.toBeNull();
+    expect(toggleGuidesBtn.getAttribute('aria-pressed')).toBe('true');
+
+    // Custom hotkey Shift+M toggles guides
+    act(() => {
+      window.dispatchEvent(
+        new KeyboardEvent('keydown', {
+          code: 'KeyM',
+          shiftKey: true,
+          bubbles: true,
+        }),
+      );
+    });
+    expect(toggleGuidesBtn.getAttribute('aria-pressed')).toBe('false');
+
+    // Single click on Close button works when holdToClose is false
+    const closeBtn = portalContainer.querySelector(
+      'button[aria-label="Закрыть FrameIt"]',
+    ) as HTMLButtonElement;
+    expect(closeBtn).not.toBeNull();
+    act(() => {
+      closeBtn.click();
+    });
+    expect(onClose).toHaveBeenCalledTimes(1);
   });
 });

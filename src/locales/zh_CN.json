@@ -13,7 +13,8 @@
     "close": {
       "ariaLabel": "长按关闭 FrameIt",
       "holdToClose": "长按关闭",
-      "keepHolding": "继续按住..."
+      "keepHolding": "继续按住...",
+      "clickToClose": "关闭 FrameIt"
     }
   },
   "picker": {
@@ -87,6 +88,61 @@
     "position": {
       "scrollWithPage": "随页面滚动",
       "fixedToViewport": "固定于视口"
+    }
+  },
+  "options": {
+    "title": "FrameIt 设置",
+    "subtitle": "配置界面语言、外观主题、启动行为、键盘快捷键以及默认布局网格。",
+    "savedBadge": "已自动保存",
+    "resetAll": "全部恢复默认",
+    "general": {
+      "title": "常规与外观",
+      "description": "选择悬浮工具栏与设置页面的界面语言和颜色主题。",
+      "language": "语言",
+      "languageDescription": "自定义扩展界面语言，或跟随浏览器默认语言。",
+      "languageAuto": "自动 (跟随浏览器)",
+      "theme": "主题",
+      "themeDescription": "悬浮工具栏、弹出面板和设置页面的配色方案。",
+      "themeSystem": "跟随系统",
+      "themeLight": "浅色",
+      "themeDark": "深色"
+    },
+    "behavior": {
+      "title": "启动与行为",
+      "description": "控制在网页上启动 FrameIt 时的默认行为。",
+      "autoDetectOnLaunch": "启动时自动检测容器",
+      "autoDetectOnLaunchDescription": "启动时自动检测网页主内容容器并吸附网格。",
+      "guidesEnabledByDefault": "启动时显示布局参考线",
+      "guidesEnabledByDefaultDescription": "激活 FrameIt 时立即渲染布局网格叠加层。",
+      "defaultGuideType": "默认参考线类型",
+      "defaultGuideTypeDescription": "当网站没有保存自定义配置时的初始参考线模式。",
+      "rememberSiteSettings": "记住各网站的独立设置",
+      "rememberSiteSettingsDescription": "自动为每个网站单独保存您的网格自定义参数。",
+      "holdToClose": "长按关闭工具栏",
+      "holdToCloseDescription": "需要按住关闭按钮 450 毫秒以防止误触关闭。",
+      "enabled": "已启用",
+      "disabled": "已禁用"
+    },
+    "hotkeys": {
+      "title": "键盘快捷键",
+      "description": "点击任意快捷键即可录制新的按键组合。按 Esc 取消录制。",
+      "enableHotkeys": "启用键盘快捷键",
+      "enableHotkeysDescription": "在 FrameIt 打开期间允许在当前网页上使用全局快捷键。",
+      "resetHotkeys": "重置快捷键",
+      "pressKeys": "请按下快捷键...",
+      "toggleGuides": "切换布局参考线",
+      "toggleInspect": "切换检查与测量模式",
+      "autoDetect": "自动检测页面容器",
+      "pickContainer": "在页面上选择容器",
+      "switchColumns": "切换到列 (Columns)",
+      "switchRows": "切换到行 (Rows)",
+      "switchGrid": "切换到网格 (Grid)"
+    },
+    "defaults": {
+      "title": "默认布局参考线",
+      "description": "在新网站上打开 FrameIt 时用于列、行和网格的默认后备参数。",
+      "resetDefaults": "重置参考线默认值",
+      "preview": "实时预览"
     }
   }
 }

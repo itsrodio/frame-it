@@ -1,5 +1,5 @@
 import { CSPProvider } from '@base-ui/react/csp-provider';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { ContainerPickerOverlay } from '@/components/overlay/container-picker-overlay';
 import { Dock } from '@/components/overlay/dock';
 import { InspectMeasureOverlay } from '@/components/overlay/inspect-measure-overlay';
@@ -17,7 +17,13 @@ import {
   runAutoDetectOrDefaults,
   saveSiteCustomState,
 } from '@/lib/guides-storage';
+import { matchesHotkey } from '@/lib/hotkeys';
 import { PortalContext } from '@/lib/portal-context';
+import {
+  getCachedSettings,
+  loadExtensionSettings,
+  subscribeExtensionSettings,
+} from '@/lib/settings-storage';
 import { ThemeProvider } from '@/lib/theme-provider';
 import type {
   DetectedContainerInfo,
@@ -26,6 +32,7 @@ import type {
   LayoutGuidesState,
   LinearGuideSettings,
 } from '@/types/layout-guides';
+import type { ExtensionSettings } from '@/types/settings';
 
 interface AppProps {
   portalContainer: HTMLElement;
@@ -33,7 +40,9 @@ interface AppProps {
 }
 
 export function App({ portalContainer, onClose }: AppProps) {
-  const [initialSetup] = useState(getInitialGuidesSetup);
+  const [settings, setSettings] =
+    useState<ExtensionSettings>(getCachedSettings);
+  const [initialSetup] = useState(() => getInitialGuidesSetup(settings));
   const [guidesState, setGuidesState] = useState<LayoutGuidesState>(
     initialSetup.state,
   );
@@ -49,12 +58,54 @@ export function App({ portalContainer, onClose }: AppProps) {
     initialSetup.trackedElementLabel,
   );
   const [scroll, setScroll] = useState({ x: 0, y: 0 });
+  const settingsRef = useRef(settings);
+  settingsRef.current = settings;
 
-  // Сохраняем настройки в localStorage ТОЛЬКО если пользователь сам что-то изменил на этом сайте
+  // Подгружаем глобальные настройки расширения из browser.storage.local и подписываемся на изменения
   useEffect(() => {
-    if (!hasCustomSiteSettings) return;
+    let active = true;
+
+    const applySettings = (nextSettings: ExtensionSettings) => {
+      if (!active) return;
+      if (
+        JSON.stringify(settingsRef.current) === JSON.stringify(nextSettings)
+      ) {
+        return;
+      }
+      settingsRef.current = nextSettings;
+      setSettings(nextSettings);
+      setHasCustomSiteSettings((currentHasCustom) => {
+        if (!currentHasCustom || !nextSettings.behavior.rememberSiteSettings) {
+          const setup = getInitialGuidesSetup(nextSettings);
+          setGuidesState(setup.state);
+          setTrackedElement(setup.trackedElement);
+          setTrackedElementLabel(setup.trackedElementLabel);
+          return setup.hasCustomSiteSettings;
+        }
+        return currentHasCustom;
+      });
+    };
+
+    void loadExtensionSettings().then(applySettings);
+    const unsubscribe = subscribeExtensionSettings(applySettings);
+
+    return () => {
+      active = false;
+      unsubscribe();
+    };
+  }, []);
+
+  // Сохраняем настройки в localStorage ТОЛЬКО если пользователь сам что-то изменил на этом сайте и включено rememberSiteSettings
+  useEffect(() => {
+    if (!hasCustomSiteSettings || !settings.behavior.rememberSiteSettings) {
+      return;
+    }
     saveSiteCustomState(guidesState);
-  }, [guidesState, hasCustomSiteSettings]);
+  }, [
+    guidesState,
+    hasCustomSiteSettings,
+    settings.behavior.rememberSiteSettings,
+  ]);
 
   const needsScroll =
     guidesState.enabled && guidesState[guidesState.type].followScroll;
@@ -170,8 +221,10 @@ export function App({ portalContainer, onClose }: AppProps) {
     }));
   }, []);
 
-  // Глобальные горячие клавиши (Shift+G, Shift+I, Shift+A, Shift+C, Shift+1/2/3)
+  // Глобальные горячие клавиши (настраиваемые через ExtensionSettings)
   useEffect(() => {
+    if (!settings.hotkeys.enabled) return;
+
     const handleKeyDown = (e: KeyboardEvent) => {
       const shadowActive =
         portalContainer.getRootNode() instanceof ShadowRoot
@@ -181,57 +234,60 @@ export function App({ portalContainer, onClose }: AppProps) {
         return;
       }
 
-      // Shift + G (как в Figma) или Ctrl + ; — вкл/выкл направляющие
+      const { hotkeys } = settings;
+
+      // Shift + G (или кастомный хоткей) или Ctrl + ; (как в Figma) — вкл/выкл направляющие
       if (
-        (e.shiftKey && !e.ctrlKey && !e.metaKey && e.code === 'KeyG') ||
-        ((e.ctrlKey || e.metaKey) && e.code === 'Semicolon')
+        matchesHotkey(e, hotkeys.toggleGuides) ||
+        ((e.ctrlKey || e.metaKey) &&
+          !e.shiftKey &&
+          !e.altKey &&
+          e.code === 'Semicolon')
       ) {
         e.preventDefault();
         setGuidesState((prev) => ({ ...prev, enabled: !prev.enabled }));
         return;
       }
 
-      // Shift + I — режим Inspect & Measure
-      if (e.shiftKey && !e.ctrlKey && !e.metaKey && e.code === 'KeyI') {
+      // Режим Inspect & Measure
+      if (matchesHotkey(e, hotkeys.toggleInspect)) {
         e.preventDefault();
         setIsPickingContainer(false);
         setIsInspectActive((prev) => !prev);
         return;
       }
 
-      // Shift + A — автоопределение контейнера
-      if (e.shiftKey && !e.ctrlKey && !e.metaKey && e.code === 'KeyA') {
+      // Автоопределение контейнера
+      if (matchesHotkey(e, hotkeys.autoDetect)) {
         e.preventDefault();
         handleAutoDetect();
         return;
       }
 
-      // Shift + C — выбор контейнера кликом (Pick Container)
-      if (e.shiftKey && !e.ctrlKey && !e.metaKey && e.code === 'KeyC') {
+      // Выбор контейнера кликом (Pick Container)
+      if (matchesHotkey(e, hotkeys.pickContainer)) {
         e.preventDefault();
         setIsInspectActive(false);
         setIsPickingContainer((prev) => !prev);
         return;
       }
 
-      // Shift + 1 / 2 / 3 — быстрое переключение типа сетки (Columns / Rows / Grid)
-      if (e.shiftKey && !e.ctrlKey && !e.metaKey) {
-        if (e.code === 'Digit1') {
-          e.preventDefault();
-          handleTypeChange('columns');
-        } else if (e.code === 'Digit2') {
-          e.preventDefault();
-          handleTypeChange('rows');
-        } else if (e.code === 'Digit3') {
-          e.preventDefault();
-          handleTypeChange('grid');
-        }
+      // Быстрое переключение типа сетки (Columns / Rows / Grid)
+      if (matchesHotkey(e, hotkeys.switchColumns)) {
+        e.preventDefault();
+        handleTypeChange('columns');
+      } else if (matchesHotkey(e, hotkeys.switchRows)) {
+        e.preventDefault();
+        handleTypeChange('rows');
+      } else if (matchesHotkey(e, hotkeys.switchGrid)) {
+        e.preventDefault();
+        handleTypeChange('grid');
       }
     };
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [handleAutoDetect, handleTypeChange, portalContainer]);
+  }, [handleAutoDetect, handleTypeChange, portalContainer, settings]);
 
   const handleColumnsChange = useCallback(
     (patch: Partial<LinearGuideSettings>) => {
@@ -280,23 +336,23 @@ export function App({ portalContainer, onClose }: AppProps) {
   /**
    * Полный сброс кастомных настроек сайта:
    * очищает сохраненное в localStorage для этого сайта и заново запускает автодетект
-   * (или выставляет дефолтные настройки, если контейнер не найден).
+   * (или выставляет дефолтные настройки расширения).
    */
   const handleReset = useCallback(() => {
     clearSiteCustomState();
     setHasCustomSiteSettings(false);
-    const fresh = runAutoDetectOrDefaults();
+    const fresh = runAutoDetectOrDefaults(settings);
     setTrackedElement(fresh.trackedElement);
     setTrackedElementLabel(fresh.trackedElementLabel);
     setGuidesState((prev) => ({
       ...fresh.state,
       type: prev.type,
     }));
-  }, []);
+  }, [settings]);
 
   return (
     <CSPProvider disableStyleElements>
-      <ThemeProvider defaultTheme="system" container={portalContainer}>
+      <ThemeProvider defaultTheme={settings.theme} container={portalContainer}>
         <PortalContext.Provider value={portalContainer}>
           <TooltipProvider>
             <div className="fixed inset-0 pointer-events-none select-none text-foreground">
@@ -331,6 +387,7 @@ export function App({ portalContainer, onClose }: AppProps) {
                 isPickingContainer={isPickingContainer}
                 trackedElementLabel={trackedElementLabel}
                 hasCustomSiteSettings={hasCustomSiteSettings}
+                holdToClose={settings.behavior.holdToClose}
                 onToggle={handleToggle}
                 onToggleInspect={(active) => {
                   setIsPickingContainer(false);

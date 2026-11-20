@@ -13,7 +13,8 @@
     "close": {
       "ariaLabel": "Mantener para cerrar FrameIt",
       "holdToClose": "Mantener para cerrar",
-      "keepHolding": "Sigue manteniendo..."
+      "keepHolding": "Sigue manteniendo...",
+      "clickToClose": "Cerrar FrameIt"
     }
   },
   "picker": {
@@ -87,6 +88,61 @@
     "position": {
       "scrollWithPage": "Con la página",
       "fixedToViewport": "Fijo en pantalla"
+    }
+  },
+  "options": {
+    "title": "Ajustes de FrameIt",
+    "subtitle": "Configura el idioma, la apariencia, el comportamiento de inicio, los atajos de teclado y las cuadrículas predeterminadas.",
+    "savedBadge": "Guardado automáticamente",
+    "resetAll": "Restablecer todo",
+    "general": {
+      "title": "General y apariencia",
+      "description": "Elige el idioma de la interfaz y el tema de color para la barra flotante y los ajustes.",
+      "language": "Idioma",
+      "languageDescription": "Cambia el idioma de la extensión o sigue el idioma de tu navegador.",
+      "languageAuto": "Auto (Idioma del navegador)",
+      "theme": "Tema",
+      "themeDescription": "Esquema de color para el dock flotante, los paneles y la página de ajustes.",
+      "themeSystem": "Sistema",
+      "themeLight": "Claro",
+      "themeDark": "Oscuro"
+    },
+    "behavior": {
+      "title": "Inicio y comportamiento",
+      "description": "Controla cómo se inicia FrameIt al abrirlo en una página web.",
+      "autoDetectOnLaunch": "Detectar contenedor al iniciar",
+      "autoDetectOnLaunchDescription": "Detecta y ajusta automáticamente la cuadrícula al contenedor principal de la página al iniciar.",
+      "guidesEnabledByDefault": "Mostrar guías al iniciar",
+      "guidesEnabledByDefaultDescription": "Muestra la superposición de cuadrícula inmediatamente al activar FrameIt.",
+      "defaultGuideType": "Tipo de guía predeterminado",
+      "defaultGuideTypeDescription": "Modo de guía inicial cuando no hay configuración guardada para el sitio.",
+      "rememberSiteSettings": "Recordar ajustes por sitio",
+      "rememberSiteSettingsDescription": "Guarda automáticamente tus personalizaciones de cuadrícula en cada sitio web.",
+      "holdToClose": "Mantener pulsado para cerrar",
+      "holdToCloseDescription": "Requiere mantener pulsado el botón de cierre durante 450 ms para evitar cierres accidentales.",
+      "enabled": "Activado",
+      "disabled": "Desactivado"
+    },
+    "hotkeys": {
+      "title": "Atajos de teclado",
+      "description": "Haz clic en cualquier atajo para grabar una nueva combinación. Pulsa Esc para cancelar.",
+      "enableHotkeys": "Habilitar atajos de teclado",
+      "enableHotkeysDescription": "Permite atajos globales en la página activa mientras FrameIt está abierto.",
+      "resetHotkeys": "Restablecer atajos",
+      "pressKeys": "Pulsa teclas...",
+      "toggleGuides": "Alternar guías de diseño",
+      "toggleInspect": "Alternar Inspeccionar y medir",
+      "autoDetect": "Detectar contenedor de la página",
+      "pickContainer": "Elegir contenedor en la página",
+      "switchColumns": "Cambiar a Columnas",
+      "switchRows": "Cambiar a Filas",
+      "switchGrid": "Cambiar a Cuadrícula"
+    },
+    "defaults": {
+      "title": "Guías de diseño predeterminadas",
+      "description": "Valores predeterminados para Columnas, Filas y Cuadrícula al abrir FrameIt en un sitio nuevo.",
+      "resetDefaults": "Restablecer valores de guías",
+      "preview": "Vista previa"
     }
   }
 }

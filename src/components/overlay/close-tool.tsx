@@ -11,14 +11,15 @@ const HOLD_DURATION_MS = 450;
 
 interface CloseToolProps {
   onClose: () => void;
+  holdToClose?: boolean;
 }
 
-export function CloseTool({ onClose }: CloseToolProps) {
+export function CloseTool({ onClose, holdToClose = true }: CloseToolProps) {
   const [isHolding, setIsHolding] = useState(false);
   const [isCompleted, setIsCompleted] = useState(false);
 
   useEffect(() => {
-    if (!isHolding || isCompleted) return;
+    if (!holdToClose || !isHolding || isCompleted) return;
 
     const timer = window.setTimeout(() => {
       setIsCompleted(true);
@@ -27,25 +28,29 @@ export function CloseTool({ onClose }: CloseToolProps) {
     }, HOLD_DURATION_MS);
 
     return () => window.clearTimeout(timer);
-  }, [isHolding, isCompleted, onClose]);
+  }, [holdToClose, isHolding, isCompleted, onClose]);
 
   const startHold = () => {
+    if (!holdToClose) return;
     if (isCompleted) return;
     setIsHolding(true);
   };
 
   const cancelHold = () => {
+    if (!holdToClose) return;
     if (isCompleted) return;
     setIsHolding(false);
   };
 
   const handlePointerDown = (e: React.PointerEvent<HTMLButtonElement>) => {
+    if (!holdToClose) return;
     if (e.button !== 0) return;
     e.currentTarget.setPointerCapture(e.pointerId);
     startHold();
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLButtonElement>) => {
+    if (!holdToClose) return;
     if (e.repeat) return;
     if (e.key === ' ' || e.key === 'Enter') {
       e.preventDefault();
@@ -54,9 +59,16 @@ export function CloseTool({ onClose }: CloseToolProps) {
   };
 
   const handleKeyUp = (e: React.KeyboardEvent<HTMLButtonElement>) => {
+    if (!holdToClose) return;
     if (e.key === ' ' || e.key === 'Enter') {
       e.preventDefault();
       cancelHold();
+    }
+  };
+
+  const handleClick = () => {
+    if (!holdToClose) {
+      onClose();
     }
   };
 
@@ -67,8 +79,13 @@ export function CloseTool({ onClose }: CloseToolProps) {
           <Button
             variant="ghost"
             size="icon"
-            aria-label={i18n.t('dock.close.ariaLabel')}
+            aria-label={
+              holdToClose
+                ? i18n.t('dock.close.ariaLabel')
+                : i18n.t('dock.close.clickToClose')
+            }
             data-holding={isHolding || undefined}
+            onClick={handleClick}
             onPointerDown={handlePointerDown}
             onPointerUp={cancelHold}
             onPointerCancel={cancelHold}
@@ -104,9 +121,11 @@ export function CloseTool({ onClose }: CloseToolProps) {
         }
       />
       <TooltipContent className="w-fit whitespace-nowrap">
-        {isHolding
-          ? i18n.t('dock.close.keepHolding')
-          : i18n.t('dock.close.holdToClose')}
+        {!holdToClose
+          ? i18n.t('dock.close.clickToClose')
+          : isHolding
+            ? i18n.t('dock.close.keepHolding')
+            : i18n.t('dock.close.holdToClose')}
       </TooltipContent>
     </Tooltip>
   );

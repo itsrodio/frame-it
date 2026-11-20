@@ -34,6 +34,7 @@ FrameIt runs 100% locally in your browser. It does not collect, store, or transm
 
 PERMISSIONS
 • activeTab & scripting — Used solely to display and toggle the layout grid and inspect overlay on the currently active tab when you click the extension icon.
+• storage — Used locally to save your extension preferences (language override, theme, custom keyboard shortcuts, and default grid settings) configured on the Options page.
 
 SUPPORT
 Found a bug or have a feature request? Open an issue at https://github.com/itsrodio/frame-it/issues
@@ -84,6 +85,8 @@ English (`en`)
 | ----------- | ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `activeTab` | permissions | Grants temporary access to the currently active tab only when the user clicks the FrameIt toolbar icon, allowing the extension to toggle the layout grid overlay on that page without requesting broad host permissions. |
 | `scripting` | permissions | Required to inject the on-page layout grid overlay and floating control dock into the active tab when the user clicks the extension toolbar icon.                                                                        |
+| `storage`   | permissions | Stores the user's extension preferences (interface language, theme, keyboard shortcuts, launch behavior, and default layout guide settings) locally via `chrome.storage.local`.                                          |
+| `storage`   | permissions | Stores the user's extension preferences (interface language, theme, keyboard shortcuts, launch behavior, and default layout guide settings) locally via `chrome.storage.local`.                                          |
 
 ## Privacy & Data Use
 

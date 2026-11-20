@@ -13,7 +13,8 @@
     "close": {
       "ariaLabel": "Maintenir pour fermer FrameIt",
       "holdToClose": "Maintenir pour fermer",
-      "keepHolding": "Continuez de maintenir..."
+      "keepHolding": "Continuez de maintenir...",
+      "clickToClose": "Fermer FrameIt"
     }
   },
   "picker": {
@@ -87,6 +88,61 @@
     "position": {
       "scrollWithPage": "Défiler avec page",
       "fixedToViewport": "Fixé à l'écran"
+    }
+  },
+  "options": {
+    "title": "Paramètres FrameIt",
+    "subtitle": "Configurez la langue, l'apparence, le comportement au lancement, les raccourcis clavier et les grilles par défaut.",
+    "savedBadge": "Enregistré automatiquement",
+    "resetAll": "Tout réinitialiser",
+    "general": {
+      "title": "Général et apparence",
+      "description": "Choisissez la langue de l'interface et le thème de couleur pour la barre flottante et les paramètres.",
+      "language": "Langue",
+      "languageDescription": "Remplacez la langue de l'extension ou suivez la langue de votre navigateur.",
+      "languageAuto": "Auto (Langue du navigateur)",
+      "theme": "Thème",
+      "themeDescription": "Schéma de couleurs pour le dock flottant, les popovers et la page de paramètres.",
+      "themeSystem": "Système",
+      "themeLight": "Clair",
+      "themeDark": "Sombre"
+    },
+    "behavior": {
+      "title": "Lancement et comportement",
+      "description": "Contrôlez comment FrameIt s'initialise lorsque vous l'ouvrez sur une page web.",
+      "autoDetectOnLaunch": "Détecter le conteneur au lancement",
+      "autoDetectOnLaunchDescription": "Détecte et s'aligne automatiquement sur le conteneur principal de la page au démarrage.",
+      "guidesEnabledByDefault": "Afficher les guides au lancement",
+      "guidesEnabledByDefaultDescription": "Affiche immédiatement la grille de mise en page lorsque FrameIt est activé.",
+      "defaultGuideType": "Type de guide par défaut",
+      "defaultGuideTypeDescription": "Mode de guide initial lorsqu'aucune configuration par site n'est enregistrée.",
+      "rememberSiteSettings": "Mémoriser les paramètres par site",
+      "rememberSiteSettingsDescription": "Enregistre automatiquement vos personnalisations de grille pour chaque site web.",
+      "holdToClose": "Maintenir pour fermer le dock",
+      "holdToCloseDescription": "Exige de maintenir le bouton de fermeture pendant 450 ms pour éviter les fermetures accidentelles.",
+      "enabled": "Activé",
+      "disabled": "Désactivé"
+    },
+    "hotkeys": {
+      "title": "Raccourcis clavier",
+      "description": "Cliquez sur un raccourci pour enregistrer une nouvelle combinaison. Appuyez sur Échap pour annuler.",
+      "enableHotkeys": "Activer les raccourcis clavier",
+      "enableHotkeysDescription": "Autoriser les raccourcis globaux sur la page active lorsque FrameIt est ouvert.",
+      "resetHotkeys": "Réinitialiser les raccourcis",
+      "pressKeys": "Appuyez sur des touches...",
+      "toggleGuides": "Afficher/masquer les guides",
+      "toggleInspect": "Activer/désactiver Inspecter et mesurer",
+      "autoDetect": "Détecter le conteneur de la page",
+      "pickContainer": "Choisir un conteneur sur la page",
+      "switchColumns": "Passer aux Colonnes",
+      "switchRows": "Passer aux Lignes",
+      "switchGrid": "Passer à la Grille"
+    },
+    "defaults": {
+      "title": "Guides de mise en page par défaut",
+      "description": "Paramètres par défaut pour Colonnes, Lignes et Grille lors de l'ouverture sur un nouveau site.",
+      "resetDefaults": "Réinitialiser les guides par défaut",
+      "preview": "Aperçu en direct"
     }
   }
 }

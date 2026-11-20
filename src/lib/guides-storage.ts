@@ -1,40 +1,54 @@
-import {
-  DEFAULT_COLUMNS_SETTINGS,
-  DEFAULT_GRID_SETTINGS,
-  DEFAULT_LAYOUT_GUIDES_STATE,
-  DEFAULT_ROWS_SETTINGS,
-  LAYOUT_GUIDES_STORAGE_KEY,
-} from '@/components/overlay/layout-guides/constants';
+import { LAYOUT_GUIDES_STORAGE_KEY } from '@/components/overlay/layout-guides/constants';
 import {
   autoDetectPageContainer,
   containerInfoToColumnsPatch,
 } from '@/lib/container-detector';
+import { getCachedSettings } from '@/lib/settings-storage';
 import type { LayoutGuidesState } from '@/types/layout-guides';
+import type { ExtensionSettings } from '@/types/settings';
 
 const LEGACY_STORAGE_KEY = 'frameit:layout-guides';
 
-export function runAutoDetectOrDefaults(): {
+export function buildDefaultGuidesState(
+  settings: ExtensionSettings = getCachedSettings(),
+): LayoutGuidesState {
+  return {
+    enabled: settings.behavior.guidesEnabledByDefault,
+    type: settings.behavior.defaultGuideType,
+    columns: { ...settings.defaultGuides.columns },
+    rows: { ...settings.defaultGuides.rows },
+    grid: { ...settings.defaultGuides.grid },
+  };
+}
+
+export function runAutoDetectOrDefaults(
+  settings: ExtensionSettings = getCachedSettings(),
+): {
   state: LayoutGuidesState;
   trackedElement: HTMLElement | null;
   trackedElementLabel: string | null;
 } {
-  const detected = autoDetectPageContainer();
-  if (detected) {
-    return {
-      state: {
-        ...DEFAULT_LAYOUT_GUIDES_STATE,
-        columns: {
-          ...DEFAULT_COLUMNS_SETTINGS,
-          ...containerInfoToColumnsPatch(detected, DEFAULT_COLUMNS_SETTINGS),
+  const baseState = buildDefaultGuidesState(settings);
+
+  if (settings.behavior.autoDetectOnLaunch) {
+    const detected = autoDetectPageContainer();
+    if (detected) {
+      return {
+        state: {
+          ...baseState,
+          columns: {
+            ...baseState.columns,
+            ...containerInfoToColumnsPatch(detected, baseState.columns),
+          },
         },
-      },
-      trackedElement: detected.element,
-      trackedElementLabel: detected.label,
-    };
+        trackedElement: detected.element,
+        trackedElementLabel: detected.label,
+      };
+    }
   }
 
   return {
-    state: DEFAULT_LAYOUT_GUIDES_STATE,
+    state: baseState,
     trackedElement: null,
     trackedElementLabel: null,
   };
@@ -42,59 +56,64 @@ export function runAutoDetectOrDefaults(): {
 
 /**
  * При открытии на сайте:
- * 1. Если пользователь уже менял настройки на этом сайте (есть запись в localStorage),
+ * 1. Если включено сохранение настроек для сайта и пользователь уже менял настройки на этом сайте,
  *    восстанавливаем его кастомные настройки и НЕ перезатираем их автодетектом.
- * 2. Если кастомных настроек для сайта нет (или был сделан Reset) —
- *    запускаем автодетект контейнера (с фоллбэком на дефолтные настройки).
+ * 2. Иначе запускаем автодетект контейнера (если включён) или берём дефолтные настройки расширения.
  */
-export function getInitialGuidesSetup(): {
+export function getInitialGuidesSetup(
+  settings: ExtensionSettings = getCachedSettings(),
+): {
   state: LayoutGuidesState;
   trackedElement: HTMLElement | null;
   trackedElementLabel: string | null;
   hasCustomSiteSettings: boolean;
 } {
+  const baseState = buildDefaultGuidesState(settings);
+
   try {
     window.localStorage.removeItem(LEGACY_STORAGE_KEY);
 
-    const raw = window.localStorage.getItem(LAYOUT_GUIDES_STORAGE_KEY);
-    if (raw) {
-      const parsed = JSON.parse(raw) as Partial<LayoutGuidesState>;
-      return {
-        state: {
-          enabled:
-            typeof parsed.enabled === 'boolean'
-              ? parsed.enabled
-              : DEFAULT_LAYOUT_GUIDES_STATE.enabled,
-          type:
-            parsed.type === 'columns' ||
-            parsed.type === 'rows' ||
-            parsed.type === 'grid'
-              ? parsed.type
-              : DEFAULT_LAYOUT_GUIDES_STATE.type,
-          columns: {
-            ...DEFAULT_COLUMNS_SETTINGS,
-            ...parsed.columns,
+    if (settings.behavior.rememberSiteSettings) {
+      const raw = window.localStorage.getItem(LAYOUT_GUIDES_STORAGE_KEY);
+      if (raw) {
+        const parsed = JSON.parse(raw) as Partial<LayoutGuidesState>;
+        return {
+          state: {
+            enabled:
+              typeof parsed.enabled === 'boolean'
+                ? parsed.enabled
+                : baseState.enabled,
+            type:
+              parsed.type === 'columns' ||
+              parsed.type === 'rows' ||
+              parsed.type === 'grid'
+                ? parsed.type
+                : baseState.type,
+            columns: {
+              ...baseState.columns,
+              ...parsed.columns,
+            },
+            rows: {
+              ...baseState.rows,
+              ...parsed.rows,
+            },
+            grid: {
+              ...baseState.grid,
+              ...parsed.grid,
+            },
           },
-          rows: {
-            ...DEFAULT_ROWS_SETTINGS,
-            ...parsed.rows,
-          },
-          grid: {
-            ...DEFAULT_GRID_SETTINGS,
-            ...parsed.grid,
-          },
-        },
-        trackedElement: null,
-        trackedElementLabel: null,
-        hasCustomSiteSettings: true,
-      };
+          trackedElement: null,
+          trackedElementLabel: null,
+          hasCustomSiteSettings: true,
+        };
+      }
     }
   } catch {
     // Ignore storage errors (e.g. sandboxed iframes or disabled cookies)
   }
 
   return {
-    ...runAutoDetectOrDefaults(),
+    ...runAutoDetectOrDefaults(settings),
     hasCustomSiteSettings: false,
   };
 }

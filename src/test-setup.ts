@@ -80,7 +80,12 @@ function installI18nMock(): void {
 
 installI18nMock();
 
-beforeEach(() => {
+beforeEach(async () => {
+  fakeBrowser.reset();
   currentLocale = 'en';
   installI18nMock();
+  const { DEFAULT_EXTENSION_SETTINGS, setCachedSettings } = await import(
+    '@/lib/settings-storage'
+  );
+  setCachedSettings(DEFAULT_EXTENSION_SETTINGS);
 });

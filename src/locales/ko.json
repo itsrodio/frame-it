@@ -13,7 +13,8 @@
     "close": {
       "ariaLabel": "길게 눌러 FrameIt 닫기",
       "holdToClose": "길게 눌러 닫기",
-      "keepHolding": "계속 누르고 계세요..."
+      "keepHolding": "계속 누르고 계세요...",
+      "clickToClose": "FrameIt 닫기"
     }
   },
   "picker": {
@@ -87,6 +88,61 @@
     "position": {
       "scrollWithPage": "페이지와 함께 스크롤",
       "fixedToViewport": "화면에 고정"
+    }
+  },
+  "options": {
+    "title": "FrameIt 설정",
+    "subtitle": "언어, 테마, 시작 동작, 키보드 단축키 및 기본 레이아웃 그리드를 설정합니다.",
+    "savedBadge": "자동 저장됨",
+    "resetAll": "모두 기본값으로 초기화",
+    "general": {
+      "title": "일반 및 외관",
+      "description": "오버레이 독과 설정 화면의 인터페이스 언어 및 색상 테마를 선택합니다.",
+      "language": "언어",
+      "languageDescription": "확장 프로그램 언어를 직접 지정하거나 브라우저 기본 언어를 따릅니다.",
+      "languageAuto": "자동 (브라우저 기본값)",
+      "theme": "테마",
+      "themeDescription": "플로팅 독, 팝오버 및 설정 페이지의 색상 테마입니다.",
+      "themeSystem": "시스템",
+      "themeLight": "라이트",
+      "themeDark": "다크"
+    },
+    "behavior": {
+      "title": "시작 및 동작",
+      "description": "웹페이지에서 FrameIt을 열 때 초기 동작 방식을 제어합니다.",
+      "autoDetectOnLaunch": "시작 시 컨테이너 자동 감지",
+      "autoDetectOnLaunchDescription": "시작할 때 페이지의 메인 콘텐츠 컨테이너를 자동으로 감지하여 그리드를 스냅합니다.",
+      "guidesEnabledByDefault": "시작 시 레이아웃 가이드 표시",
+      "guidesEnabledByDefaultDescription": "FrameIt이 활성화되면 즉시 레이아웃 그리드 오버레이를 표시합니다.",
+      "defaultGuideType": "기본 가이드 유형",
+      "defaultGuideTypeDescription": "사이트별 저장된 설정이 없을 때 사용할 초기 가이드 모드입니다.",
+      "rememberSiteSettings": "사이트별 설정 기억",
+      "rememberSiteSettingsDescription": "각 웹사이트마다 사용자 지정 그리드 설정을 자동으로 저장합니다.",
+      "holdToClose": "길게 눌러 독 닫기",
+      "holdToCloseDescription": "실수로 닫히는 것을 방지하기 위해 닫기 버튼을 450ms 동안 길게 누르도록 합니다.",
+      "enabled": "켜짐",
+      "disabled": "꺼짐"
+    },
+    "hotkeys": {
+      "title": "키보드 단축키",
+      "description": "단축키를 클릭하여 새 키 조합을 입력하세요. 취소하려면 Esc 키를 누르세요.",
+      "enableHotkeys": "키보드 단축키 사용",
+      "enableHotkeysDescription": "FrameIt이 열려 있는 동안 활성 웹페이지에서 전역 단축키를 허용합니다.",
+      "resetHotkeys": "단축키 초기화",
+      "pressKeys": "키를 누르세요...",
+      "toggleGuides": "레이아웃 가이드 전환",
+      "toggleInspect": "검사 및 측정 모드 전환",
+      "autoDetect": "페이지 컨테이너 자동 감지",
+      "pickContainer": "페이지에서 컨테이너 선택",
+      "switchColumns": "열(Columns)로 전환",
+      "switchRows": "행(Rows)으로 전환",
+      "switchGrid": "그리드(Grid)로 전환"
+    },
+    "defaults": {
+      "title": "기본 레이아웃 가이드",
+      "description": "새 웹사이트에서 FrameIt을 열 때 적용할 열, 행, 그리드의 기본 설정입니다.",
+      "resetDefaults": "가이드 기본값 초기화",
+      "preview": "실시간 미리보기"
     }
   }
 }
