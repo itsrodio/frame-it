@@ -88,7 +88,7 @@ export function LayoutGuidesTool({
         <TooltipTrigger
           render={
             <Toggle
-              aria-label="Toggle layout guides"
+              aria-label={i18n.t('dock.guides.toggleAriaLabel')}
               pressed={state.enabled}
               onPressedChange={onToggle}
             >
@@ -97,7 +97,7 @@ export function LayoutGuidesTool({
           }
         />
         <TooltipContent className="w-fit whitespace-nowrap">
-          Toggle layout guides (Shift+G)
+          {i18n.t('dock.guides.toggleTooltip')}
         </TooltipContent>
       </Tooltip>
 

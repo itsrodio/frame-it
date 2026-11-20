@@ -14,31 +14,57 @@ export const GUIDE_TYPES: GuideTypeOption[] = [
   { label: 'Grid', value: 'grid', icon: Grid2X2 },
 ];
 
-export const COLUMN_ALIGNMENTS: GuideAlignmentOption[] = [
-  { label: 'Stretch', value: 'stretch' },
-  { label: 'Center', value: 'center' },
-  { label: 'Left', value: 'start' },
-  { label: 'Right', value: 'end' },
-];
+export function getGuideTypes(): GuideTypeOption[] {
+  return [
+    { label: i18n.t('guides.types.columns'), value: 'columns', icon: Columns3 },
+    { label: i18n.t('guides.types.rows'), value: 'rows', icon: Rows3 },
+    { label: i18n.t('guides.types.grid'), value: 'grid', icon: Grid2X2 },
+  ];
+}
 
-export const ROW_ALIGNMENTS: GuideAlignmentOption[] = [
-  { label: 'Stretch', value: 'stretch' },
-  { label: 'Center', value: 'center' },
-  { label: 'Top', value: 'start' },
-  { label: 'Bottom', value: 'end' },
-];
+export function getColumnAlignments(): GuideAlignmentOption[] {
+  return [
+    { label: i18n.t('guides.alignments.stretch'), value: 'stretch' },
+    { label: i18n.t('guides.alignments.center'), value: 'center' },
+    { label: i18n.t('guides.alignments.left'), value: 'start' },
+    { label: i18n.t('guides.alignments.right'), value: 'end' },
+  ];
+}
 
-export const MAX_WIDTH_PRESETS: MaxSizePreset[] = [
-  { label: 'Auto (100% viewport)', sublabel: 'Full', value: null },
-  { label: '768 px', sublabel: 'md', value: 768 },
-  { label: '1024 px', sublabel: 'lg', value: 1024 },
-  { label: '1140 px', sublabel: 'Bootstrap lg', value: 1140 },
-  { label: '1200 px', sublabel: 'Standard', value: 1200 },
-  { label: '1280 px', sublabel: 'Tailwind xl', value: 1280 },
-  { label: '1320 px', sublabel: 'Bootstrap xxl', value: 1320 },
-  { label: '1440 px', sublabel: 'Desktop Figma', value: 1440 },
-  { label: '1536 px', sublabel: 'Tailwind 2xl', value: 1536 },
-];
+export function getRowAlignments(): GuideAlignmentOption[] {
+  return [
+    { label: i18n.t('guides.alignments.stretch'), value: 'stretch' },
+    { label: i18n.t('guides.alignments.center'), value: 'center' },
+    { label: i18n.t('guides.alignments.top'), value: 'start' },
+    { label: i18n.t('guides.alignments.bottom'), value: 'end' },
+  ];
+}
+
+export function getMaxWidthPresets(): MaxSizePreset[] {
+  return [
+    {
+      label: i18n.t('guides.presets.autoViewport'),
+      sublabel: i18n.t('guides.presets.full'),
+      value: null,
+    },
+    { label: '768 px', sublabel: 'md', value: 768 },
+    { label: '1024 px', sublabel: 'lg', value: 1024 },
+    { label: '1140 px', sublabel: 'Bootstrap lg', value: 1140 },
+    {
+      label: '1200 px',
+      sublabel: i18n.t('guides.presets.standard'),
+      value: 1200,
+    },
+    { label: '1280 px', sublabel: 'Tailwind xl', value: 1280 },
+    { label: '1320 px', sublabel: 'Bootstrap xxl', value: 1320 },
+    {
+      label: '1440 px',
+      sublabel: i18n.t('guides.presets.desktopFigma'),
+      value: 1440,
+    },
+    { label: '1536 px', sublabel: 'Tailwind 2xl', value: 1536 },
+  ];
+}
 
 export const DEFAULT_COLUMNS_SETTINGS: LinearGuideSettings = {
   count: 12,

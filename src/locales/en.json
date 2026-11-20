@@ -1,0 +1,148 @@
+{
+  "extName": "FrameIt",
+  "extDescription": "Figma-style layout grids, smart container detection, and live element spacing inspector for any website.",
+  "dock": {
+    "inspect": {
+      "ariaLabel": "Inspect & measure distances",
+      "tooltip": "Inspect & measure (Shift+I or hold Alt)"
+    },
+    "guides": {
+      "toggleAriaLabel": "Toggle layout guides",
+      "toggleTooltip": "Toggle layout guides (Shift+G)"
+    },
+    "close": {
+      "ariaLabel": "Hold to close FrameIt",
+      "holdToClose": "Hold to close",
+      "keepHolding": "Keep holding...",
+      "clickToClose": "Close FrameIt"
+    }
+  },
+  "picker": {
+    "snapHint": "Click any container on the page to snap layout guides",
+    "cancelBeforeKey": "Press",
+    "cancelAfterKey": "to cancel",
+    "badgePadding": "(pad $1px)",
+    "badgeCols": "$1 cols"
+  },
+  "inspect": {
+    "clickKey": "Click",
+    "lockElement": "element to lock",
+    "measureDistances": "measure distances",
+    "shiftClickKey": "Shift+Click",
+    "snapGrid": "snap grid to container",
+    "exit": "exit"
+  },
+  "guides": {
+    "types": {
+      "columns": "Columns",
+      "rows": "Rows",
+      "grid": "Grid"
+    },
+    "alignments": {
+      "stretch": "Stretch",
+      "center": "Center",
+      "left": "Left",
+      "right": "Right",
+      "top": "Top",
+      "bottom": "Bottom"
+    },
+    "presets": {
+      "autoViewport": "Auto (100% viewport)",
+      "full": "Full",
+      "standard": "Standard",
+      "desktopFigma": "Desktop Figma"
+    },
+    "header": {
+      "autoDetectAriaLabel": "Auto-detect page container",
+      "autoDetectTooltip": "Auto-detect container (Shift+A)",
+      "pickContainerAriaLabel": "Pick container on page",
+      "pickContainerTooltip": "Pick container on page (Shift+C)",
+      "resetAriaLabel": "Reset settings",
+      "resetTooltip": "Reset site settings (back to auto-detect)",
+      "closeAriaLabel": "Close"
+    },
+    "fields": {
+      "unlinkElement": "Unlink from element",
+      "count": "Count",
+      "color": "Color",
+      "pickColorAriaLabel": "Pick guide color",
+      "opacityAriaLabel": "Guide opacity",
+      "type": "Type",
+      "maxWidth": "Max W",
+      "maxHeight": "Max H",
+      "maxSizeTooltip": "Maximum container width for the grid (e.g. 1280px)",
+      "maxSizePlaceholder": "Auto (100%)",
+      "maxWidthPresetsAriaLabel": "Max width presets",
+      "width": "Width",
+      "height": "Height",
+      "auto": "Auto",
+      "margin": "Margin",
+      "gutter": "Gutter",
+      "offset": "Offset",
+      "size": "Size",
+      "offsetX": "Offset X",
+      "offsetY": "Offset Y",
+      "position": "Position",
+      "scrubHint": "Drag horizontally to adjust (hold Shift for 10x)"
+    },
+    "position": {
+      "scrollWithPage": "Scroll with page",
+      "fixedToViewport": "Fixed to viewport"
+    }
+  },
+  "options": {
+    "title": "FrameIt Settings",
+    "subtitle": "Configure language, appearance, launch behavior, keyboard shortcuts, and default layout grids.",
+    "savedBadge": "Saved automatically",
+    "resetAll": "Reset all to defaults",
+    "general": {
+      "title": "General & Appearance",
+      "description": "Choose the interface language and color theme for the overlay dock and settings.",
+      "language": "Language",
+      "languageDescription": "Override the extension interface language or follow your browser language.",
+      "languageAuto": "Auto (Browser default)",
+      "theme": "Theme",
+      "themeDescription": "Color scheme for the floating dock, popovers, and settings page.",
+      "themeSystem": "System",
+      "themeLight": "Light",
+      "themeDark": "Dark"
+    },
+    "behavior": {
+      "title": "Launch & Behavior",
+      "description": "Control how FrameIt initializes when you open it on a webpage.",
+      "autoDetectOnLaunch": "Auto-detect container on launch",
+      "autoDetectOnLaunchDescription": "Automatically detect and snap to the page's main content container on startup.",
+      "guidesEnabledByDefault": "Show layout guides on launch",
+      "guidesEnabledByDefaultDescription": "Render the layout grid overlay immediately when FrameIt is activated.",
+      "defaultGuideType": "Default guide type",
+      "defaultGuideTypeDescription": "Initial layout guide mode when no per-site configuration is saved.",
+      "rememberSiteSettings": "Remember per-site settings",
+      "rememberSiteSettingsDescription": "Automatically save your grid customizations in localStorage for each website.",
+      "holdToClose": "Hold to close dock",
+      "holdToCloseDescription": "Require holding the close button for 450ms to prevent accidental closure.",
+      "enabled": "Enabled",
+      "disabled": "Disabled"
+    },
+    "hotkeys": {
+      "title": "Keyboard Shortcuts",
+      "description": "Click any shortcut to record a new key combination. Press Esc to cancel recording.",
+      "enableHotkeys": "Enable keyboard shortcuts",
+      "enableHotkeysDescription": "Allow global keyboard shortcuts on the active webpage while FrameIt is open.",
+      "resetHotkeys": "Reset shortcuts",
+      "pressKeys": "Press keys...",
+      "toggleGuides": "Toggle layout guides",
+      "toggleInspect": "Toggle Inspect & Measure",
+      "autoDetect": "Auto-detect page container",
+      "pickContainer": "Pick container on page",
+      "switchColumns": "Switch to Columns",
+      "switchRows": "Switch to Rows",
+      "switchGrid": "Switch to Grid"
+    },
+    "defaults": {
+      "title": "Default Layout Guides",
+      "description": "Fallback settings for Columns, Rows, and Grid when opening FrameIt on a new website.",
+      "resetDefaults": "Reset guide defaults",
+      "preview": "Live Preview"
+    }
+  }
+}

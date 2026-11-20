@@ -1,0 +1,148 @@
+{
+  "extName": "FrameIt",
+  "extDescription": "あらゆるWebサイトで使える、Figma風のレイアウトグリッド、スマートコンテナ検出、リアルタイム要素間隔インスペクター。",
+  "dock": {
+    "inspect": {
+      "ariaLabel": "要素の検査と距離の測定",
+      "tooltip": "検査と測定 (Shift+I または Alt キーを長押し)"
+    },
+    "guides": {
+      "toggleAriaLabel": "レイアウトガイドの切り替え",
+      "toggleTooltip": "レイアウトガイドの切り替え (Shift+G)"
+    },
+    "close": {
+      "ariaLabel": "長押しして FrameIt を閉じる",
+      "holdToClose": "長押しで閉じる",
+      "keepHolding": "そのまま長押し...",
+      "clickToClose": "FrameIt を閉じる"
+    }
+  },
+  "picker": {
+    "snapHint": "ページ上の任意のコンテナをクリックしてレイアウトガイドをスナップ",
+    "cancelBeforeKey": "キャンセルは",
+    "cancelAfterKey": "キー",
+    "badgePadding": "(余白 $1px)",
+    "badgeCols": "$1 カラム"
+  },
+  "inspect": {
+    "clickKey": "クリック",
+    "lockElement": "で要素を固定",
+    "measureDistances": "距離を測定",
+    "shiftClickKey": "Shift+クリック",
+    "snapGrid": "グリッドをコンテナにスナップ",
+    "exit": "終了"
+  },
+  "guides": {
+    "types": {
+      "columns": "カラム",
+      "rows": "行",
+      "grid": "グリッド"
+    },
+    "alignments": {
+      "stretch": "ストレッチ",
+      "center": "中央",
+      "left": "左",
+      "right": "右",
+      "top": "上",
+      "bottom": "下"
+    },
+    "presets": {
+      "autoViewport": "自動 (画面幅 100%)",
+      "full": "全幅",
+      "standard": "標準",
+      "desktopFigma": "デスクトップ Figma"
+    },
+    "header": {
+      "autoDetectAriaLabel": "ページのコンテナを自動検出",
+      "autoDetectTooltip": "コンテナを自動検出 (Shift+A)",
+      "pickContainerAriaLabel": "ページ上のコンテナを選択",
+      "pickContainerTooltip": "ページ上のコンテナを選択 (Shift+C)",
+      "resetAriaLabel": "設定をリセット",
+      "resetTooltip": "サイト設定をリセット (自動検出に戻す)",
+      "closeAriaLabel": "閉じる"
+    },
+    "fields": {
+      "unlinkElement": "要素とのリンクを解除",
+      "count": "数",
+      "color": "カラー",
+      "pickColorAriaLabel": "ガイドの色を選択",
+      "opacityAriaLabel": "ガイドの不透明度",
+      "type": "タイプ",
+      "maxWidth": "最大幅",
+      "maxHeight": "最大高",
+      "maxSizeTooltip": "グリッドの最大コンテナ幅 (例: 1280px)",
+      "maxSizePlaceholder": "自動 (100%)",
+      "maxWidthPresetsAriaLabel": "最大幅のプリセット",
+      "width": "幅",
+      "height": "高さ",
+      "auto": "自動",
+      "margin": "マージン",
+      "gutter": "ガター",
+      "offset": "オフセット",
+      "size": "サイズ",
+      "offsetX": "X オフセット",
+      "offsetY": "Y オフセット",
+      "position": "位置",
+      "scrubHint": "左右にドラッグして調整 (Shift キーで 10 倍)"
+    },
+    "position": {
+      "scrollWithPage": "ページとスクロール",
+      "fixedToViewport": "画面に固定"
+    }
+  },
+  "options": {
+    "title": "FrameIt 設定",
+    "subtitle": "表示言語、テーマ、起動時の動作、キーボードショートカット、デフォルトのレイアウトグリッドを設定します。",
+    "savedBadge": "自動保存済み",
+    "resetAll": "すべて初期設定に戻す",
+    "general": {
+      "title": "一般と外観",
+      "description": "オーバーレイドックと設定画面の表示言語およびカラーテーマを選択します。",
+      "language": "言語",
+      "languageDescription": "拡張機能の表示言語を指定するか、ブラウザの言語設定に従います。",
+      "languageAuto": "自動 (ブラウザのデフォルト)",
+      "theme": "テーマ",
+      "themeDescription": "フローティングドック、ポップオーバー、設定ページの配色テーマ。",
+      "themeSystem": "システム",
+      "themeLight": "ライト",
+      "themeDark": "ダーク"
+    },
+    "behavior": {
+      "title": "起動と動作",
+      "description": "Webページ上で FrameIt を起動した際の初期動作を設定します。",
+      "autoDetectOnLaunch": "起動時にコンテナを自動検出",
+      "autoDetectOnLaunchDescription": "起動時にページのメインコンテナを自動検出してグリッドをスナップします。",
+      "guidesEnabledByDefault": "起動時にレイアウトガイドを表示",
+      "guidesEnabledByDefaultDescription": "FrameIt の起動と同時にレイアウトグリッドを描画します。",
+      "defaultGuideType": "デフォルトのガイドタイプ",
+      "defaultGuideTypeDescription": "サイトごとの設定が保存されていない場合の初期ガイドモード。",
+      "rememberSiteSettings": "サイトごとの設定を記憶",
+      "rememberSiteSettingsDescription": "カスタマイズしたグリッド設定を各Webサイトごとに自動保存します。",
+      "holdToClose": "長押しでドックを閉じる",
+      "holdToCloseDescription": "誤操作を防ぐため、閉じるボタンの 450ミリ秒長押しを必須にします。",
+      "enabled": "有効",
+      "disabled": "無効"
+    },
+    "hotkeys": {
+      "title": "キーボードショートカット",
+      "description": "ショートカットをクリックして新しいキーの組み合わせを登録します。Esc キーでキャンセルします。",
+      "enableHotkeys": "キーボードショートカットを有効化",
+      "enableHotkeysDescription": "FrameIt の表示中にページ上でグローバルショートカットを使用可能にします。",
+      "resetHotkeys": "ショートカットをリセット",
+      "pressKeys": "キーを押してください...",
+      "toggleGuides": "レイアウトガイドの切り替え",
+      "toggleInspect": "検査と測定モードの切り替え",
+      "autoDetect": "ページのコンテナを自動検出",
+      "pickContainer": "ページ上のコンテナを選択",
+      "switchColumns": "カラムに切り替え",
+      "switchRows": "行に切り替え",
+      "switchGrid": "グリッドに切り替え"
+    },
+    "defaults": {
+      "title": "デフォルトのレイアウトガイド",
+      "description": "新しいWebサイトで FrameIt を開いた際のカラム、行、グリッドの初期設定。",
+      "resetDefaults": "ガイド初期値をリセット",
+      "preview": "ライブプレビュー"
+    }
+  }
+}

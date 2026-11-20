@@ -1,0 +1,148 @@
+{
+  "extName": "FrameIt",
+  "extDescription": "Cuadrículas de diseño estilo Figma, detección inteligente de contenedores e inspector de espaciado en vivo para cualquier sitio web.",
+  "dock": {
+    "inspect": {
+      "ariaLabel": "Inspeccionar y medir distancias",
+      "tooltip": "Inspeccionar y medir (Shift+I o mantener Alt)"
+    },
+    "guides": {
+      "toggleAriaLabel": "Alternar guías de diseño",
+      "toggleTooltip": "Alternar guías de diseño (Shift+G)"
+    },
+    "close": {
+      "ariaLabel": "Mantener para cerrar FrameIt",
+      "holdToClose": "Mantener para cerrar",
+      "keepHolding": "Sigue manteniendo...",
+      "clickToClose": "Cerrar FrameIt"
+    }
+  },
+  "picker": {
+    "snapHint": "Haz clic en cualquier contenedor de la página para ajustar las guías",
+    "cancelBeforeKey": "Pulsa",
+    "cancelAfterKey": "para cancelar",
+    "badgePadding": "(pad $1px)",
+    "badgeCols": "$1 cols"
+  },
+  "inspect": {
+    "clickKey": "Clic",
+    "lockElement": "para fijar elemento",
+    "measureDistances": "medir distancias",
+    "shiftClickKey": "Shift+Clic",
+    "snapGrid": "ajustar cuadrícula al contenedor",
+    "exit": "salir"
+  },
+  "guides": {
+    "types": {
+      "columns": "Columnas",
+      "rows": "Filas",
+      "grid": "Cuadrícula"
+    },
+    "alignments": {
+      "stretch": "Estirar",
+      "center": "Centro",
+      "left": "Izquierda",
+      "right": "Derecha",
+      "top": "Arriba",
+      "bottom": "Abajo"
+    },
+    "presets": {
+      "autoViewport": "Auto (100% ventana)",
+      "full": "Completo",
+      "standard": "Estándar",
+      "desktopFigma": "Escritorio Figma"
+    },
+    "header": {
+      "autoDetectAriaLabel": "Detectar contenedor automáticamente",
+      "autoDetectTooltip": "Detectar contenedor (Shift+A)",
+      "pickContainerAriaLabel": "Elegir contenedor en la página",
+      "pickContainerTooltip": "Elegir contenedor en la página (Shift+C)",
+      "resetAriaLabel": "Restablecer ajustes",
+      "resetTooltip": "Restablecer ajustes del sitio (volver a autodetección)",
+      "closeAriaLabel": "Cerrar"
+    },
+    "fields": {
+      "unlinkElement": "Desvincular del elemento",
+      "count": "Cantidad",
+      "color": "Color",
+      "pickColorAriaLabel": "Elegir color de guía",
+      "opacityAriaLabel": "Opacidad de guía",
+      "type": "Tipo",
+      "maxWidth": "Ancho máx.",
+      "maxHeight": "Alto máx.",
+      "maxSizeTooltip": "Ancho máximo del contenedor para la cuadrícula (ej. 1280px)",
+      "maxSizePlaceholder": "Auto (100%)",
+      "maxWidthPresetsAriaLabel": "Ajustes predefinidos de ancho máximo",
+      "width": "Ancho",
+      "height": "Alto",
+      "auto": "Auto",
+      "margin": "Margen",
+      "gutter": "Espacio",
+      "offset": "Desplaz.",
+      "size": "Tamaño",
+      "offsetX": "Desplaz. X",
+      "offsetY": "Desplaz. Y",
+      "position": "Posición",
+      "scrubHint": "Arrastra horizontalmente para ajustar (mantén Shift para 10x)"
+    },
+    "position": {
+      "scrollWithPage": "Con la página",
+      "fixedToViewport": "Fijo en pantalla"
+    }
+  },
+  "options": {
+    "title": "Ajustes de FrameIt",
+    "subtitle": "Configura el idioma, la apariencia, el comportamiento de inicio, los atajos de teclado y las cuadrículas predeterminadas.",
+    "savedBadge": "Guardado automáticamente",
+    "resetAll": "Restablecer todo",
+    "general": {
+      "title": "General y apariencia",
+      "description": "Elige el idioma de la interfaz y el tema de color para la barra flotante y los ajustes.",
+      "language": "Idioma",
+      "languageDescription": "Cambia el idioma de la extensión o sigue el idioma de tu navegador.",
+      "languageAuto": "Auto (Idioma del navegador)",
+      "theme": "Tema",
+      "themeDescription": "Esquema de color para el dock flotante, los paneles y la página de ajustes.",
+      "themeSystem": "Sistema",
+      "themeLight": "Claro",
+      "themeDark": "Oscuro"
+    },
+    "behavior": {
+      "title": "Inicio y comportamiento",
+      "description": "Controla cómo se inicia FrameIt al abrirlo en una página web.",
+      "autoDetectOnLaunch": "Detectar contenedor al iniciar",
+      "autoDetectOnLaunchDescription": "Detecta y ajusta automáticamente la cuadrícula al contenedor principal de la página al iniciar.",
+      "guidesEnabledByDefault": "Mostrar guías al iniciar",
+      "guidesEnabledByDefaultDescription": "Muestra la superposición de cuadrícula inmediatamente al activar FrameIt.",
+      "defaultGuideType": "Tipo de guía predeterminado",
+      "defaultGuideTypeDescription": "Modo de guía inicial cuando no hay configuración guardada para el sitio.",
+      "rememberSiteSettings": "Recordar ajustes por sitio",
+      "rememberSiteSettingsDescription": "Guarda automáticamente tus personalizaciones de cuadrícula en cada sitio web.",
+      "holdToClose": "Mantener pulsado para cerrar",
+      "holdToCloseDescription": "Requiere mantener pulsado el botón de cierre durante 450 ms para evitar cierres accidentales.",
+      "enabled": "Activado",
+      "disabled": "Desactivado"
+    },
+    "hotkeys": {
+      "title": "Atajos de teclado",
+      "description": "Haz clic en cualquier atajo para grabar una nueva combinación. Pulsa Esc para cancelar.",
+      "enableHotkeys": "Habilitar atajos de teclado",
+      "enableHotkeysDescription": "Permite atajos globales en la página activa mientras FrameIt está abierto.",
+      "resetHotkeys": "Restablecer atajos",
+      "pressKeys": "Pulsa teclas...",
+      "toggleGuides": "Alternar guías de diseño",
+      "toggleInspect": "Alternar Inspeccionar y medir",
+      "autoDetect": "Detectar contenedor de la página",
+      "pickContainer": "Elegir contenedor en la página",
+      "switchColumns": "Cambiar a Columnas",
+      "switchRows": "Cambiar a Filas",
+      "switchGrid": "Cambiar a Cuadrícula"
+    },
+    "defaults": {
+      "title": "Guías de diseño predeterminadas",
+      "description": "Valores predeterminados para Columnas, Filas y Cuadrícula al abrir FrameIt en un sitio nuevo.",
+      "resetDefaults": "Restablecer valores de guías",
+      "preview": "Vista previa"
+    }
+  }
+}

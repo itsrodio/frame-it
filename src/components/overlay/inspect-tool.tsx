@@ -17,7 +17,7 @@ export function InspectTool({ active, onToggle }: InspectToolProps) {
       <TooltipTrigger
         render={
           <Toggle
-            aria-label="Inspect & measure distances"
+            aria-label={i18n.t('dock.inspect.ariaLabel')}
             pressed={active}
             onPressedChange={onToggle}
           >
@@ -26,7 +26,7 @@ export function InspectTool({ active, onToggle }: InspectToolProps) {
         }
       />
       <TooltipContent className="w-fit whitespace-nowrap">
-        Inspect & measure (Shift+I or hold Alt)
+        {i18n.t('dock.inspect.tooltip')}
       </TooltipContent>
     </Tooltip>
   );

@@ -1,0 +1,148 @@
+{
+  "extName": "FrameIt",
+  "extDescription": "Grades de layout estilo Figma, detecção inteligente de contêineres e inspetor de espaçamento ao vivo para qualquer site.",
+  "dock": {
+    "inspect": {
+      "ariaLabel": "Inspecionar e medir distâncias",
+      "tooltip": "Inspecionar e medir (Shift+I ou segure Alt)"
+    },
+    "guides": {
+      "toggleAriaLabel": "Alternar guias de layout",
+      "toggleTooltip": "Alternar guias de layout (Shift+G)"
+    },
+    "close": {
+      "ariaLabel": "Segure para fechar o FrameIt",
+      "holdToClose": "Segure para fechar",
+      "keepHolding": "Continue segurando...",
+      "clickToClose": "Fechar FrameIt"
+    }
+  },
+  "picker": {
+    "snapHint": "Clique em qualquer contêiner na página para ajustar as guias",
+    "cancelBeforeKey": "Pressione",
+    "cancelAfterKey": "para cancelar",
+    "badgePadding": "(pad $1px)",
+    "badgeCols": "$1 cols"
+  },
+  "inspect": {
+    "clickKey": "Clique",
+    "lockElement": "para fixar elemento",
+    "measureDistances": "medir distâncias",
+    "shiftClickKey": "Shift+Clique",
+    "snapGrid": "ajustar grade ao contêiner",
+    "exit": "sair"
+  },
+  "guides": {
+    "types": {
+      "columns": "Colunas",
+      "rows": "Linhas",
+      "grid": "Grade"
+    },
+    "alignments": {
+      "stretch": "Esticar",
+      "center": "Centro",
+      "left": "Esquerda",
+      "right": "Direita",
+      "top": "Topo",
+      "bottom": "Base"
+    },
+    "presets": {
+      "autoViewport": "Auto (100% da tela)",
+      "full": "Total",
+      "standard": "Padrão",
+      "desktopFigma": "Desktop Figma"
+    },
+    "header": {
+      "autoDetectAriaLabel": "Detectar contêiner da página automaticamente",
+      "autoDetectTooltip": "Detectar contêiner (Shift+A)",
+      "pickContainerAriaLabel": "Selecionar contêiner na página",
+      "pickContainerTooltip": "Selecionar contêiner na página (Shift+C)",
+      "resetAriaLabel": "Redefinir configurações",
+      "resetTooltip": "Redefinir configurações do site (voltar para detecção automática)",
+      "closeAriaLabel": "Fechar"
+    },
+    "fields": {
+      "unlinkElement": "Desvincular do elemento",
+      "count": "Quant.",
+      "color": "Cor",
+      "pickColorAriaLabel": "Escolher cor da guia",
+      "opacityAriaLabel": "Opacidade da guia",
+      "type": "Tipo",
+      "maxWidth": "Larg. máx.",
+      "maxHeight": "Alt. máx.",
+      "maxSizeTooltip": "Largura máxima do contêiner para a grade (ex.: 1280px)",
+      "maxSizePlaceholder": "Auto (100%)",
+      "maxWidthPresetsAriaLabel": "Predefinições de largura máxima",
+      "width": "Largura",
+      "height": "Altura",
+      "auto": "Auto",
+      "margin": "Margem",
+      "gutter": "Espaço",
+      "offset": "Desloc.",
+      "size": "Tamanho",
+      "offsetX": "Desloc. X",
+      "offsetY": "Desloc. Y",
+      "position": "Posição",
+      "scrubHint": "Arraste horizontalmente para ajustar (segure Shift para 10x)"
+    },
+    "position": {
+      "scrollWithPage": "Rolar c/ página",
+      "fixedToViewport": "Fixo na tela"
+    }
+  },
+  "options": {
+    "title": "Configurações do FrameIt",
+    "subtitle": "Configure idioma, aparência, comportamento inicial, atalhos de teclado e grades de layout padrão.",
+    "savedBadge": "Salvo automaticamente",
+    "resetAll": "Redefinir tudo para o padrão",
+    "general": {
+      "title": "Geral e Aparência",
+      "description": "Escolha o idioma da interface e o tema de cores para a barra flutuante e configurações.",
+      "language": "Idioma",
+      "languageDescription": "Substitua o idioma da extensão ou siga o idioma padrão do navegador.",
+      "languageAuto": "Auto (Padrão do navegador)",
+      "theme": "Tema",
+      "themeDescription": "Esquema de cores para a barra flutuante, popovers e página de configurações.",
+      "themeSystem": "Sistema",
+      "themeLight": "Claro",
+      "themeDark": "Escuro"
+    },
+    "behavior": {
+      "title": "Inicialização e Comportamento",
+      "description": "Controle como o FrameIt é iniciado ao abri-lo em uma página da web.",
+      "autoDetectOnLaunch": "Detectar contêiner ao iniciar",
+      "autoDetectOnLaunchDescription": "Detecta e ajusta automaticamente ao contêiner principal da página ao iniciar.",
+      "guidesEnabledByDefault": "Mostrar guias de layout ao iniciar",
+      "guidesEnabledByDefaultDescription": "Renderiza a grade de layout imediatamente quando o FrameIt é ativado.",
+      "defaultGuideType": "Tipo de guia padrão",
+      "defaultGuideTypeDescription": "Modo de guia inicial quando nenhuma configuração do site estiver salva.",
+      "rememberSiteSettings": "Lembrar configurações por site",
+      "rememberSiteSettingsDescription": "Salva automaticamente suas personalizações de grade para cada site.",
+      "holdToClose": "Segurar para fechar",
+      "holdToCloseDescription": "Exige segurar o botão de fechar por 450 ms para evitar fechamento acidental.",
+      "enabled": "Ativado",
+      "disabled": "Desativado"
+    },
+    "hotkeys": {
+      "title": "Atalhos de Teclado",
+      "description": "Clique em qualquer atalho para gravar uma nova combinação de teclas. Pressione Esc para cancelar.",
+      "enableHotkeys": "Ativar atalhos de teclado",
+      "enableHotkeysDescription": "Permite atalhos globais na página ativa enquanto o FrameIt estiver aberto.",
+      "resetHotkeys": "Redefinir atalhos",
+      "pressKeys": "Pressione as teclas...",
+      "toggleGuides": "Alternar guias de layout",
+      "toggleInspect": "Alternar Inspecionar e Medir",
+      "autoDetect": "Detectar contêiner da página",
+      "pickContainer": "Selecionar contêiner na página",
+      "switchColumns": "Mudar para Colunas",
+      "switchRows": "Mudar para Linhas",
+      "switchGrid": "Mudar para Grade"
+    },
+    "defaults": {
+      "title": "Guias de Layout Padrão",
+      "description": "Configurações padrão para Colunas, Linhas e Grade ao abrir o FrameIt em um novo site.",
+      "resetDefaults": "Redefinir padrões de guias",
+      "preview": "Pré-visualização"
+    }
+  }
+}

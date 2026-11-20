@@ -395,19 +395,22 @@ export function InspectMeasureOverlay({
       {active && (
         <div className="fixed top-4 left-1/2 -translate-x-1/2 flex items-center gap-2 rounded-full bg-popover/95 px-3.5 py-1.5 text-xs font-medium text-popover-foreground shadow-lg ring-1 ring-border backdrop-blur-xs">
           <span>
-            <strong className="font-semibold">Click</strong> element to lock •{' '}
+            <strong className="font-semibold">
+              {i18n.t('inspect.clickKey')}
+            </strong>{' '}
+            {i18n.t('inspect.lockElement')} •{' '}
             <kbd className="rounded bg-muted px-1 py-0.5 font-mono text-[10px]">
               Alt
             </kbd>{' '}
-            measure distances •{' '}
+            {i18n.t('inspect.measureDistances')} •{' '}
             <kbd className="rounded bg-muted px-1 py-0.5 font-mono text-[10px]">
-              Shift+Click
+              {i18n.t('inspect.shiftClickKey')}
             </kbd>{' '}
-            snap grid to container •{' '}
+            {i18n.t('inspect.snapGrid')} •{' '}
             <kbd className="rounded bg-muted px-1 py-0.5 font-mono text-[10px]">
               Esc
             </kbd>{' '}
-            exit
+            {i18n.t('inspect.exit')}
           </span>
         </div>
       )}

@@ -69,4 +69,27 @@ describe('CloseTool', () => {
 
     expect(onClose).toHaveBeenCalledTimes(1);
   });
+
+  it('closes immediately on single click when holdToClose is false', () => {
+    const onClose = vi.fn();
+
+    act(() => {
+      root.render(
+        <TooltipProvider>
+          <CloseTool onClose={onClose} holdToClose={false} />
+        </TooltipProvider>,
+      );
+    });
+
+    const btn = container.querySelector(
+      'button[aria-label="Close FrameIt"]',
+    ) as HTMLButtonElement;
+    expect(btn).not.toBeNull();
+
+    act(() => {
+      btn.click();
+    });
+
+    expect(onClose).toHaveBeenCalledTimes(1);
+  });
 });
