@@ -51,7 +51,26 @@
       "navParent": "Elternelement (↑)",
       "navChild": "Erstes Kindelement (↓)",
       "navPrev": "Vorheriges Geschwister (←)",
-      "navNext": "Nächstes Geschwister (→)"
+      "navNext": "Nächstes Geschwister (→)",
+      "copyFigma": "Für Figma kopieren (SVG)",
+      "copySvg": "SVG kopieren",
+      "pinCard": "Karte in Ecke anheften",
+      "floatCard": "Karte am Element",
+      "resetTweaks": "Live-Änderungen zurücksetzen"
+    },
+    "settings": {
+      "title": "Inspektor & Export",
+      "description": "Standardformat für Code-Export, Farbnotation, Einheiten, Kartenposition und Box-Modell-Overlays.",
+      "codeFormat": "Code-Format",
+      "colorFormat": "Farbformat",
+      "unitFormat": "Einheiten",
+      "cardPlacement": "Kartenposition",
+      "placementFloating": "Am Element",
+      "placementPinned": "In Ecke angeheftet",
+      "boxOverlays": "Box-Modell-Overlays",
+      "showPadding": "Padding",
+      "showMargin": "Margin",
+      "showGap": "Flex / Grid Gap"
     }
   },
   "guides": {

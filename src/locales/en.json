@@ -51,7 +51,26 @@
       "navParent": "Parent element (↑)",
       "navChild": "First child (↓)",
       "navPrev": "Previous sibling (←)",
-      "navNext": "Next sibling (→)"
+      "navNext": "Next sibling (→)",
+      "copyFigma": "Copy to Figma (SVG)",
+      "copySvg": "Copy SVG",
+      "pinCard": "Pin card to corner",
+      "floatCard": "Float card near element",
+      "resetTweaks": "Reset live tweaks"
+    },
+    "settings": {
+      "title": "Inspector & Export",
+      "description": "Configure default export format, color notation, units, card placement, and box-model overlays.",
+      "codeFormat": "Code format",
+      "colorFormat": "Color format",
+      "unitFormat": "Units",
+      "cardPlacement": "Card position",
+      "placementFloating": "Near element",
+      "placementPinned": "Pinned to corner",
+      "boxOverlays": "Box model overlays",
+      "showPadding": "Padding",
+      "showMargin": "Margin",
+      "showGap": "Flex / Grid Gap"
     }
   },
   "guides": {

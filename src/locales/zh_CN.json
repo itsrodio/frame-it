@@ -51,7 +51,26 @@
       "navParent": "父元素 (↑)",
       "navChild": "第一个子元素 (↓)",
       "navPrev": "上一个兄弟元素 (←)",
-      "navNext": "下一个兄弟元素 (→)"
+      "navNext": "下一个兄弟元素 (→)",
+      "copyFigma": "复制到 Figma (SVG)",
+      "copySvg": "复制 SVG",
+      "pinCard": "将卡片固定在角落",
+      "floatCard": "卡片跟随元素",
+      "resetTweaks": "重置实时修改"
+    },
+    "settings": {
+      "title": "检查器与导出",
+      "description": "配置代码导出格式、颜色表示法、单位、卡片位置以及盒模型高亮图层。",
+      "codeFormat": "代码格式",
+      "colorFormat": "颜色格式",
+      "unitFormat": "单位",
+      "cardPlacement": "卡片位置",
+      "placementFloating": "跟随元素",
+      "placementPinned": "固定在角落",
+      "boxOverlays": "盒模型高亮",
+      "showPadding": "Padding",
+      "showMargin": "Margin",
+      "showGap": "Flex / Grid Gap"
     }
   },
   "guides": {

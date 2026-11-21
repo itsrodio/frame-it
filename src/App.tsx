@@ -73,7 +73,7 @@ export function App({ portalContainer, onClose }: AppProps) {
     [],
   );
 
-  const { settings } = useExtensionSettings({
+  const { settings, persistSettings } = useExtensionSettings({
     onExternalChange: handleExternalSettingsChange,
   });
 
@@ -238,6 +238,13 @@ export function App({ portalContainer, onClose }: AppProps) {
               {!isPickingContainer && (
                 <InspectMeasureOverlay
                   active={isInspectActive}
+                  inspectSettings={settings.inspect}
+                  onUpdateInspectSettings={(patch) =>
+                    persistSettings((prev) => ({
+                      ...prev,
+                      inspect: { ...prev.inspect, ...patch },
+                    }))
+                  }
                   onSnapToElement={(el) =>
                     applyDetectedContainer(extractContainerInfo(el), true)
                   }

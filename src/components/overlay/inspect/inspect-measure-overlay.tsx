@@ -7,25 +7,42 @@ import {
   TargetOutlineBox,
 } from '@/components/overlay/inspect/inspect-elements';
 import { useInspectInteraction } from '@/components/overlay/inspect/use-inspect-interaction';
-import { calculateDistances, parsePadding } from '@/lib/inspect-geometry';
+import {
+  calculateDistances,
+  calculateFlexGridGaps,
+  parseMargin,
+  parsePadding,
+} from '@/lib/inspect-geometry';
+import { DEFAULT_EXTENSION_SETTINGS } from '@/lib/settings-storage';
+import type { ExtensionInspectSettings } from '@/types/settings';
 
 export interface InspectMeasureOverlayProps {
   active: boolean;
+  inspectSettings?: ExtensionInspectSettings;
+  onUpdateInspectSettings?: (patch: Partial<ExtensionInspectSettings>) => void;
   onSnapToElement?: (el: HTMLElement) => void;
   onCancel?: () => void;
 }
 
 export function InspectMeasureOverlay({
   active,
+  inspectSettings = DEFAULT_EXTENSION_SETTINGS.inspect,
+  onUpdateInspectSettings,
   onSnapToElement,
   onCancel,
 }: InspectMeasureOverlayProps) {
-  const { selectedEl, hoveredEl, isAltPressed, navigateDom, clearSelection } =
-    useInspectInteraction({
-      active,
-      onSnapToElement,
-      onCancel,
-    });
+  const {
+    selectedEl,
+    hoveredEl,
+    isAltPressed,
+    navigateDom,
+    clearSelection,
+    selectElement,
+  } = useInspectInteraction({
+    active,
+    onSnapToElement,
+    onCancel,
+  });
 
   const isVisible = active || isAltPressed;
   if (!isVisible) return null;
@@ -46,7 +63,19 @@ export function InspectMeasureOverlay({
 
   const sourceRect = sourceEl?.getBoundingClientRect() ?? null;
   const targetRect = targetEl?.getBoundingClientRect() ?? null;
-  const hoveredPadding = validHovered ? parsePadding(validHovered) : null;
+
+  const hoveredPadding =
+    validHovered && inspectSettings.showPadding
+      ? parsePadding(validHovered)
+      : null;
+  const hoveredMargin =
+    validHovered && inspectSettings.showMargin
+      ? parseMargin(validHovered)
+      : null;
+  const hoveredGaps =
+    validHovered && inspectSettings.showGap
+      ? calculateFlexGridGaps(validHovered)
+      : [];
 
   const showDistances =
     (isAltPressed || (active && validSelected !== null)) &&
@@ -73,6 +102,9 @@ export function InspectMeasureOverlay({
           <InspectDetailsCard
             element={validSelected}
             rect={sourceRect}
+            inspectSettings={inspectSettings}
+            onUpdateInspectSettings={onUpdateInspectSettings}
+            onSelectElement={selectElement}
             onNavigateDom={navigateDom}
             onClose={clearSelection}
           />
@@ -83,6 +115,8 @@ export function InspectMeasureOverlay({
         <HoveredElementBox
           element={validHovered}
           padding={hoveredPadding}
+          margin={hoveredMargin}
+          gaps={hoveredGaps}
           isSameAsSelected={validHovered === validSelected}
         />
       )}

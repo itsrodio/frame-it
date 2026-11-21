@@ -51,7 +51,26 @@
       "navParent": "親要素 (↑)",
       "navChild": "最初の子要素 (↓)",
       "navPrev": "前の兄弟要素 (←)",
-      "navNext": "次の兄弟要素 (→)"
+      "navNext": "次の兄弟要素 (→)",
+      "copyFigma": "Figma用にコピー (SVG)",
+      "copySvg": "SVGをコピー",
+      "pinCard": "カードを画面端に固定",
+      "floatCard": "要素の近くに配置",
+      "resetTweaks": "変更をリセット"
+    },
+    "settings": {
+      "title": "インスペクターとエクスポート",
+      "description": "コード出力形式、カラー表記、単位、カードの配置、ボックスモデル表示を設定します。",
+      "codeFormat": "コード形式",
+      "colorFormat": "カラー形式",
+      "unitFormat": "単位",
+      "cardPlacement": "カード位置",
+      "placementFloating": "要素の近く",
+      "placementPinned": "画面端に固定",
+      "boxOverlays": "ボックスモデル表示",
+      "showPadding": "Padding",
+      "showMargin": "Margin",
+      "showGap": "Flex / Grid Gap"
     }
   },
   "guides": {

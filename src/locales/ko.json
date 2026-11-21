@@ -51,7 +51,26 @@
       "navParent": "상위 요소 (↑)",
       "navChild": "첫 번째 하위 요소 (↓)",
       "navPrev": "이전 형제 요소 (←)",
-      "navNext": "다음 형제 요소 (→)"
+      "navNext": "다음 형제 요소 (→)",
+      "copyFigma": "Figma로 복사 (SVG)",
+      "copySvg": "SVG 복사",
+      "pinCard": "카드를 모서리에 고정",
+      "floatCard": "요소 근처에 표시",
+      "resetTweaks": "실시간 수정 초기화"
+    },
+    "settings": {
+      "title": "인스펙터 및 내보내기",
+      "description": "코드 내보내기 형식, 색상 표기법, 단위, 카드 위치 및 박스 모델 오버레이를 설정합니다.",
+      "codeFormat": "코드 형식",
+      "colorFormat": "색상 형식",
+      "unitFormat": "단위",
+      "cardPlacement": "카드 위치",
+      "placementFloating": "요소 근처",
+      "placementPinned": "모서리에 고정",
+      "boxOverlays": "박스 모델 오버레이",
+      "showPadding": "Padding",
+      "showMargin": "Margin",
+      "showGap": "Flex / Grid Gap"
     }
   },
   "guides": {

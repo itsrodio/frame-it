@@ -9,6 +9,7 @@ export interface FormattedColor {
   rgba: RgbaColor;
   hex: string;
   rgb: string;
+  oklch: string;
   gradient?: string;
 }
 
@@ -264,6 +265,41 @@ export function rgbaToRgbString(color: RgbaColor): string {
   return `rgb(${r}, ${g}, ${b})`;
 }
 
+export function rgbaToOklchString(color: RgbaColor): string {
+  const srgbToLin = (v: number) => {
+    const c = clampByte(v) / 255;
+    return c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
+  };
+
+  const r = srgbToLin(color.r);
+  const g = srgbToLin(color.g);
+  const b = srgbToLin(color.b);
+
+  const l = Math.cbrt(0.4122214708 * r + 0.5363325363 * g + 0.0514459929 * b);
+  const m = Math.cbrt(0.2119034982 * r + 0.6806995451 * g + 0.1073969566 * b);
+  const s = Math.cbrt(0.0883024619 * r + 0.2817188376 * g + 0.6299787005 * b);
+
+  const L = 0.2104542553 * l + 0.793617785 * m - 0.0040720468 * s;
+  const a = 1.9779984951 * l - 2.428592205 * m + 0.4505937099 * s;
+  const bOk = 0.0259040371 * l + 0.7827717662 * m - 0.808675766 * s;
+
+  const C = Math.hypot(a, bOk);
+  let H = (Math.atan2(bOk, a) * 180) / Math.PI;
+  if (H < 0) H += 360;
+
+  const round2 = (n: number) => Math.round(n * 100) / 100;
+  const round1 = (n: number) => Math.round(n * 10) / 10;
+
+  const lVal = round2(Math.max(0, Math.min(1, L)));
+  const cVal = C < 0.001 ? 0 : round2(C);
+  const hVal = cVal === 0 ? 0 : round1(H);
+
+  if (color.a < 1) {
+    return `oklch(${lVal} ${cVal} ${hVal} / ${round2(color.a)})`;
+  }
+  return `oklch(${lVal} ${cVal} ${hVal})`;
+}
+
 export function formatColor(
   rgba: RgbaColor,
   gradient?: string,
@@ -272,6 +308,7 @@ export function formatColor(
     rgba,
     hex: rgbaToHex(rgba),
     rgb: rgbaToRgbString(rgba),
+    oklch: rgbaToOklchString(rgba),
     ...(gradient ? { gradient } : {}),
   };
 }

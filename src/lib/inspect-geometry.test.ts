@@ -1,7 +1,9 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import {
   calculateDistances,
+  calculateFlexGridGaps,
   calculateInspectCardPosition,
+  parseMargin,
   parsePadding,
 } from '@/lib/inspect-geometry';
 
@@ -129,5 +131,60 @@ describe('inspect-geometry', () => {
     expect(
       calculateInspectCardPosition(rect(0, 0, 1000, 800), viewport, cardSize),
     ).toEqual({ left: 716, top: 52 });
+
+    // 6. Pinned mode always anchors to top-right corner
+    expect(
+      calculateInspectCardPosition(
+        rect(100, 100, 200, 100),
+        viewport,
+        cardSize,
+        'pinned',
+      ),
+    ).toEqual({ left: 716, top: 52 });
+  });
+
+  it('parses element margin and calculates Flex/Grid gap overlay boxes between children', () => {
+    const flexRow = document.createElement('div');
+    flexRow.style.display = 'flex';
+    flexRow.style.marginTop = '16px';
+    flexRow.style.marginLeft = '8px';
+
+    const c1 = document.createElement('div');
+    const c2 = document.createElement('div');
+    const c3 = document.createElement('div');
+    flexRow.append(c1, c2, c3);
+    document.body.appendChild(flexRow);
+
+    expect(parseMargin(flexRow)).toEqual({
+      top: 16,
+      right: 0,
+      bottom: 0,
+      left: 8,
+    });
+
+    vi.spyOn(c1, 'getBoundingClientRect').mockReturnValue(
+      rect(10, 10, 100, 40),
+    );
+    vi.spyOn(c2, 'getBoundingClientRect').mockReturnValue(
+      rect(126, 10, 100, 40),
+    );
+    vi.spyOn(c3, 'getBoundingClientRect').mockReturnValue(
+      rect(126, 62, 100, 40),
+    );
+
+    const gaps = calculateFlexGridGaps(flexRow);
+    expect(gaps).toHaveLength(2);
+    expect(gaps[0]).toMatchObject({
+      axis: 'x',
+      value: 16,
+      left: 110,
+      width: 16,
+    });
+    expect(gaps[1]).toMatchObject({
+      axis: 'y',
+      value: 12,
+      top: 50,
+      height: 12,
+    });
   });
 });

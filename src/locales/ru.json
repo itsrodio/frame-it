@@ -51,7 +51,26 @@
       "navParent": "Родительский элемент (↑)",
       "navChild": "Первый дочерний (↓)",
       "navPrev": "Предыдущий сосед (←)",
-      "navNext": "Следующий сосед (→)"
+      "navNext": "Следующий сосед (→)",
+      "copyFigma": "Копировать в Figma (SVG)",
+      "copySvg": "Копировать SVG",
+      "pinCard": "Закрепить карточку в углу",
+      "floatCard": "Карточка рядом с элементом",
+      "resetTweaks": "Сбросить изменения стилей"
+    },
+    "settings": {
+      "title": "Инспектор и экспорт",
+      "description": "Формат копирования кода, представление цветов, единицы измерения, позиция карточки и подсветка отступов.",
+      "codeFormat": "Формат кода",
+      "colorFormat": "Формат цвета",
+      "unitFormat": "Единицы",
+      "cardPlacement": "Позиция карточки",
+      "placementFloating": "Рядом с элементом",
+      "placementPinned": "В углу экрана",
+      "boxOverlays": "Подсветка отступов",
+      "showPadding": "Padding",
+      "showMargin": "Margin",
+      "showGap": "Flex / Grid Gap"
     }
   },
   "guides": {

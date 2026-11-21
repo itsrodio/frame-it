@@ -51,7 +51,26 @@
       "navParent": "Élément parent (↑)",
       "navChild": "Premier enfant (↓)",
       "navPrev": "Frère précédent (←)",
-      "navNext": "Frère suivant (→)"
+      "navNext": "Frère suivant (→)",
+      "copyFigma": "Copier vers Figma (SVG)",
+      "copySvg": "Copier le SVG",
+      "pinCard": "Épingler la carte au coin",
+      "floatCard": "Carte près de l'élément",
+      "resetTweaks": "Réinitialiser les modifications"
+    },
+    "settings": {
+      "title": "Inspecteur et exportation",
+      "description": "Configurez le format d'exportation, la notation des couleurs, les unités, la position de la carte et les calques de boîte.",
+      "codeFormat": "Format de code",
+      "colorFormat": "Format de couleur",
+      "unitFormat": "Unités",
+      "cardPlacement": "Position de la carte",
+      "placementFloating": "Près de l'élément",
+      "placementPinned": "Épinglée au coin",
+      "boxOverlays": "Calques du modèle de boîte",
+      "showPadding": "Padding",
+      "showMargin": "Margin",
+      "showGap": "Flex / Grid Gap"
     }
   },
   "guides": {

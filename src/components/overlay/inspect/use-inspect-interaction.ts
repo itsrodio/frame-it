@@ -269,11 +269,17 @@ export function useInspectInteraction({
     setSelectedEl(null);
   }, []);
 
+  const selectElement = useCallback((el: HTMLElement | null) => {
+    selectedElRef.current = el;
+    setSelectedEl(el);
+  }, []);
+
   return {
     selectedEl,
     hoveredEl,
     isAltPressed,
     navigateDom,
     clearSelection,
+    selectElement,
   };
 }

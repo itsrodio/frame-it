@@ -1,14 +1,11 @@
 import { cn } from 'cn';
-import {
-  ArrowDown,
-  ArrowLeft,
-  ArrowRight,
-  ArrowUp,
-  Check,
-  Copy,
-  X,
-} from 'lucide-react';
+import { Check, Copy, Layers, Pin, X } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import {
+  ColorInspectField,
+  CopyableFieldBox,
+  DomBreadcrumbsTitle,
+} from '@/components/overlay/inspect/inspect-card-fields';
 import type { DomNavDirection } from '@/components/overlay/inspect/use-inspect-interaction';
 import { Button } from '@/components/ui/button';
 import { Field, FieldGroup, FieldLabel } from '@/components/ui/field';
@@ -17,144 +14,33 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
-import { getElementLabel } from '@/lib/dom-utils';
-import { calculateInspectCardPosition } from '@/lib/inspect-geometry';
 import {
-  buildInspectedCssSnippet,
-  extractInspectedStyles,
-  type FormattedColor,
-} from '@/lib/inspect-styles';
+  buildCodeSnippet,
+  buildFigmaSvg,
+  formatDimensionWithUnit,
+} from '@/lib/inspect-exporters';
+import { preloadImagesForFigma } from '@/lib/inspect-figma-svg';
+import { calculateInspectCardPosition } from '@/lib/inspect-geometry';
+import { extractInspectedStyles } from '@/lib/inspect-styles';
+import { DEFAULT_EXTENSION_SETTINGS } from '@/lib/settings-storage';
+import type { ExtensionInspectSettings } from '@/types/settings';
 
 export interface InspectDetailsCardProps {
   element: HTMLElement;
   rect: DOMRect;
+  inspectSettings?: ExtensionInspectSettings;
+  onUpdateInspectSettings?: (patch: Partial<ExtensionInspectSettings>) => void;
+  onSelectElement?: (el: HTMLElement) => void;
   onNavigateDom?: (direction: DomNavDirection) => void;
   onClose?: () => void;
-}
-
-function CopyableFieldBox({
-  id,
-  value,
-  copyValue,
-  tooltip,
-  copiedId,
-  onCopy,
-  className,
-}: {
-  id: string;
-  value: string;
-  copyValue?: string;
-  tooltip?: string;
-  copiedId: string | null;
-  onCopy: (id: string, text: string) => void;
-  className?: string;
-}) {
-  const isCopied = copiedId === id;
-  return (
-    <button
-      type="button"
-      data-testid={`inspect-copy-${id}`}
-      onClick={() => onCopy(id, copyValue ?? value)}
-      title={
-        tooltip ??
-        `${i18n.t('inspect.card.clickToCopy')}: ${copyValue ?? value}`
-      }
-      className={cn(
-        'flex h-7 w-3/5 items-center justify-between overflow-hidden rounded-md border border-input bg-transparent px-2 font-mono text-xs transition-colors hover:bg-muted/50 cursor-pointer',
-        isCopied &&
-          'border-emerald-500/40 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-medium',
-        className,
-      )}
-    >
-      {isCopied ? (
-        <span className="flex items-center gap-1 truncate">
-          <Check className="size-3 shrink-0" />
-          <span>{i18n.t('inspect.card.copied')}</span>
-        </span>
-      ) : (
-        <span className="truncate">{value}</span>
-      )}
-    </button>
-  );
-}
-
-function ColorInspectField({
-  idPrefix,
-  label,
-  color,
-  copiedId,
-  onCopy,
-}: {
-  idPrefix: string;
-  label: string;
-  color: FormattedColor;
-  copiedId: string | null;
-  onCopy: (id: string, text: string) => void;
-}) {
-  const hexId = `${idPrefix}-hex`;
-  const rgbId = `${idPrefix}-rgb`;
-  const isHexCopied = copiedId === hexId;
-  const isRgbCopied = copiedId === rgbId;
-
-  return (
-    <Field orientation="horizontal">
-      <FieldLabel className="w-2/5 text-xs text-muted-foreground">
-        {label}
-      </FieldLabel>
-
-      {/* Составной контрол в стиле ColorOpacityField: [Swatch | HEX | RGB] */}
-      <div className="flex h-7 w-3/5 items-center overflow-hidden rounded-md border border-input bg-transparent">
-        <span
-          className="ml-1.5 size-4 shrink-0 rounded-[3px] border border-border/60"
-          style={{
-            background: color.gradient ?? color.rgb,
-          }}
-        />
-
-        <button
-          type="button"
-          data-testid={`inspect-copy-${hexId}`}
-          onClick={() => onCopy(hexId, color.hex)}
-          title={`${i18n.t('inspect.card.clickToCopy')}: ${color.hex}`}
-          className={cn(
-            'flex h-full min-w-0 flex-1 items-center px-1.5 font-mono text-xs transition-colors hover:bg-muted/50 cursor-pointer',
-            isHexCopied &&
-              'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-medium',
-          )}
-        >
-          {isHexCopied ? (
-            <span className="flex items-center gap-1 truncate">
-              <Check className="size-3 shrink-0" />
-              <span className="truncate">{i18n.t('inspect.card.copied')}</span>
-            </span>
-          ) : (
-            <span className="truncate">{color.hex}</span>
-          )}
-        </button>
-
-        <button
-          type="button"
-          data-testid={`inspect-copy-${rgbId}`}
-          onClick={() => onCopy(rgbId, color.rgb)}
-          title={`${i18n.t('inspect.card.clickToCopy')}: ${color.rgb}`}
-          className={cn(
-            'flex h-full shrink-0 items-center border-l border-input px-1.5 font-mono text-[10px] text-muted-foreground transition-colors hover:bg-muted/50 hover:text-foreground cursor-pointer',
-            isRgbCopied &&
-              'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-medium',
-          )}
-        >
-          {isRgbCopied ? <Check className="size-3" /> : <span>RGB</span>}
-          <span className="sr-only">{color.rgb}</span>
-        </button>
-      </div>
-    </Field>
-  );
 }
 
 export function InspectDetailsCard({
   element,
   rect,
-  onNavigateDom,
+  inspectSettings = DEFAULT_EXTENSION_SETTINGS.inspect,
+  onUpdateInspectSettings,
+  onSelectElement,
   onClose,
 }: InspectDetailsCardProps) {
   const [copiedId, setCopiedId] = useState<string | null>(null);
@@ -185,16 +71,41 @@ export function InspectDetailsCard({
   }, []);
 
   const styles = extractInspectedStyles(element, rect);
-  const cssSnippet = buildInspectedCssSnippet(styles);
+  const isDirectSvg = element.tagName.toLowerCase() === 'svg';
+  const figmaSvgPayload = buildFigmaSvg(element, styles, rect);
+  const copyPayload = isDirectSvg
+    ? figmaSvgPayload
+    : buildCodeSnippet(element, styles, inspectSettings.codeFormat, rect);
+
+  const handleCopyFigma = useCallback(
+    async (copySlotId: 'figma-svg' | 'all-css' = 'figma-svg') => {
+      const hasImgs =
+        element instanceof HTMLImageElement ||
+        element.querySelector('img') !== null;
+      if (!hasImgs) {
+        handleCopy(copySlotId, figmaSvgPayload);
+        return;
+      }
+      const preloaded = await preloadImagesForFigma(element);
+      const svgWithImages = buildFigmaSvg(element, styles, rect, preloaded);
+      handleCopy(copySlotId, svgWithImages);
+    },
+    [element, figmaSvgPayload, handleCopy, rect, styles],
+  );
 
   const viewport = {
     width: document.documentElement.clientWidth || window.innerWidth || 1280,
     height: window.innerHeight || 800,
   };
-  const position = calculateInspectCardPosition(rect, viewport, {
-    width: 272,
-    height: 330,
-  });
+  const position = calculateInspectCardPosition(
+    rect,
+    viewport,
+    {
+      width: 272,
+      height: 320,
+    },
+    inspectSettings.cardPlacement,
+  );
 
   const contrastLevel = styles.colors.contrast.level;
   const contrastBadgeClass =
@@ -202,9 +113,20 @@ export function InspectDetailsCard({
       ? 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400'
       : 'bg-destructive/15 text-destructive';
 
-  const isCssCopied = copiedId === 'all-css';
+  const isCodeCopied = copiedId === 'all-css';
+  const isFigmaCopied = copiedId === 'figma-svg';
   const isSizeCopied = copiedId === 'font-size';
   const isWeightCopied = copiedId === 'font-weight';
+  const isPinned = inspectSettings.cardPlacement === 'pinned';
+
+  const fmtUnit = (val: string) =>
+    formatDimensionWithUnit(val, inspectSettings.unitFormat);
+
+  const copyTooltipText = isCodeCopied
+    ? i18n.t('inspect.card.copied')
+    : isDirectSvg
+      ? i18n.t('inspect.card.copySvg')
+      : `${i18n.t('inspect.card.copyCss')} (${inspectSettings.codeFormat.toUpperCase()})`;
 
   return (
     <div
@@ -215,14 +137,12 @@ export function InspectDetailsCard({
         left: position.left,
       }}
     >
-      {/* Шапка в едином стиле с GuidePopoverHeader */}
+      {/* Лаконичная шапка: слева путь элемента (родитель › элемент), справа действия (Figma SVG, Copy Code, Pin, Close) */}
       <div className="flex items-center justify-between border-b px-3 py-2.5">
-        <div className="flex min-w-0 items-center gap-1.5 pr-1">
-          <span className="size-1.5 shrink-0 rounded-full bg-primary" />
-          <span className="truncate font-mono text-xs font-medium text-foreground">
-            {getElementLabel(element)}
-          </span>
-        </div>
+        <DomBreadcrumbsTitle
+          element={element}
+          onSelectElement={onSelectElement}
+        />
 
         <div className="flex shrink-0 items-center gap-0.5">
           <Tooltip>
@@ -231,77 +151,28 @@ export function InspectDetailsCard({
                 <Button
                   variant="ghost"
                   size="icon"
-                  data-testid="inspect-nav-parent"
-                  className="size-6 text-muted-foreground hover:text-foreground"
-                  onClick={() => onNavigateDom?.('parent')}
-                  aria-label={i18n.t('inspect.card.navParent')}
+                  data-testid="inspect-copy-figma"
+                  className={cn(
+                    'size-6',
+                    isFigmaCopied
+                      ? 'text-emerald-600 dark:text-emerald-400'
+                      : 'text-muted-foreground hover:text-foreground',
+                  )}
+                  onClick={() => void handleCopyFigma()}
+                  aria-label={i18n.t('inspect.card.copyFigma')}
                 >
-                  <ArrowUp className="size-3.5" />
+                  {isFigmaCopied ? (
+                    <Check className="size-3.5" />
+                  ) : (
+                    <Layers className="size-3.5" />
+                  )}
                 </Button>
               }
             />
             <TooltipContent className="w-fit whitespace-nowrap">
-              {i18n.t('inspect.card.navParent')}
-            </TooltipContent>
-          </Tooltip>
-
-          <Tooltip>
-            <TooltipTrigger
-              render={
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  data-testid="inspect-nav-child"
-                  className="size-6 text-muted-foreground hover:text-foreground"
-                  onClick={() => onNavigateDom?.('child')}
-                  aria-label={i18n.t('inspect.card.navChild')}
-                >
-                  <ArrowDown className="size-3.5" />
-                </Button>
-              }
-            />
-            <TooltipContent className="w-fit whitespace-nowrap">
-              {i18n.t('inspect.card.navChild')}
-            </TooltipContent>
-          </Tooltip>
-
-          <Tooltip>
-            <TooltipTrigger
-              render={
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  data-testid="inspect-nav-prev"
-                  className="size-6 text-muted-foreground hover:text-foreground"
-                  onClick={() => onNavigateDom?.('prev')}
-                  aria-label={i18n.t('inspect.card.navPrev')}
-                >
-                  <ArrowLeft className="size-3.5" />
-                </Button>
-              }
-            />
-            <TooltipContent className="w-fit whitespace-nowrap">
-              {i18n.t('inspect.card.navPrev')}
-            </TooltipContent>
-          </Tooltip>
-
-          <Tooltip>
-            <TooltipTrigger
-              render={
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  data-testid="inspect-nav-next"
-                  className="size-6 text-muted-foreground hover:text-foreground"
-                  onClick={() => onNavigateDom?.('next')}
-                  aria-label={i18n.t('inspect.card.navNext')}
-                >
-                  <ArrowRight className="size-3.5" />
-                </Button>
-              }
-            />
-            <TooltipContent className="w-fit whitespace-nowrap">
-              {i18n.t('inspect.card.navNext')}
+              {isFigmaCopied
+                ? i18n.t('inspect.card.copied')
+                : i18n.t('inspect.card.copyFigma')}
             </TooltipContent>
           </Tooltip>
 
@@ -314,30 +185,63 @@ export function InspectDetailsCard({
                   data-testid="inspect-copy-css"
                   className={cn(
                     'size-6',
-                    isCssCopied
+                    isCodeCopied
                       ? 'text-emerald-600 dark:text-emerald-400'
                       : 'text-muted-foreground hover:text-foreground',
                   )}
-                  onClick={() => handleCopy('all-css', cssSnippet)}
+                  onClick={() => {
+                    if (!isDirectSvg && inspectSettings.codeFormat === 'svg') {
+                      void handleCopyFigma('all-css');
+                    } else {
+                      handleCopy('all-css', copyPayload);
+                    }
+                  }}
                   aria-label={i18n.t('inspect.card.copyCss')}
                 >
-                  {isCssCopied ? (
+                  {isCodeCopied ? (
                     <Check className="size-3.5" />
                   ) : (
                     <Copy className="size-3.5" />
                   )}
-                  <span className="sr-only">
-                    {isCssCopied
-                      ? i18n.t('inspect.card.copied')
-                      : i18n.t('inspect.card.copyCss')}
-                  </span>
+                  <span className="sr-only">{copyTooltipText}</span>
                 </Button>
               }
             />
             <TooltipContent className="w-fit whitespace-nowrap">
-              {isCssCopied
-                ? i18n.t('inspect.card.copied')
-                : i18n.t('inspect.card.copyCss')}
+              {copyTooltipText}
+            </TooltipContent>
+          </Tooltip>
+
+          <Tooltip>
+            <TooltipTrigger
+              render={
+                <Button
+                  variant={isPinned ? 'default' : 'ghost'}
+                  size="icon"
+                  data-testid="inspect-toggle-pin"
+                  className={cn(
+                    'size-6',
+                    !isPinned && 'text-muted-foreground hover:text-foreground',
+                  )}
+                  onClick={() =>
+                    onUpdateInspectSettings?.({
+                      cardPlacement: isPinned ? 'floating' : 'pinned',
+                    })
+                  }
+                  aria-label={
+                    isPinned
+                      ? i18n.t('inspect.card.floatCard')
+                      : i18n.t('inspect.card.pinCard')
+                  }
+                >
+                  <Pin className="size-3.5" />
+                </Button>
+              }
+            />
+            <TooltipContent className="w-fit whitespace-nowrap">
+              {isPinned
+                ? i18n.t('inspect.card.floatCard')
+                : i18n.t('inspect.card.pinCard')}
             </TooltipContent>
           </Tooltip>
 
@@ -413,7 +317,8 @@ export function InspectDetailsCard({
                 </span>
               ) : (
                 <span className="truncate">
-                  {styles.typography.fontSize} / {styles.typography.lineHeight}
+                  {fmtUnit(styles.typography.fontSize)} /{' '}
+                  {fmtUnit(styles.typography.lineHeight)}
                 </span>
               )}
             </button>
@@ -444,6 +349,7 @@ export function InspectDetailsCard({
           idPrefix="text"
           label={i18n.t('inspect.card.color')}
           color={styles.colors.text}
+          colorFormat={inspectSettings.colorFormat}
           copiedId={copiedId}
           onCopy={handleCopy}
         />
@@ -452,6 +358,7 @@ export function InspectDetailsCard({
           idPrefix="bg"
           label={i18n.t('inspect.card.background')}
           color={styles.colors.background}
+          colorFormat={inspectSettings.colorFormat}
           copiedId={copiedId}
           onCopy={handleCopy}
         />
@@ -495,7 +402,8 @@ export function InspectDetailsCard({
             </FieldLabel>
             <CopyableFieldBox
               id="gap"
-              value={styles.layout.gap}
+              value={fmtUnit(styles.layout.gap)}
+              copyValue={styles.layout.gap}
               copiedId={copiedId}
               onCopy={handleCopy}
             />
@@ -508,35 +416,42 @@ export function InspectDetailsCard({
           </FieldLabel>
           <CopyableFieldBox
             id="padding"
-            value={styles.layout.padding}
+            value={fmtUnit(styles.layout.padding)}
+            copyValue={styles.layout.padding}
             copiedId={copiedId}
             onCopy={handleCopy}
           />
         </Field>
 
-        <Field orientation="horizontal">
-          <FieldLabel className="w-2/5 text-xs text-muted-foreground">
-            {i18n.t('inspect.card.margin')}
-          </FieldLabel>
-          <CopyableFieldBox
-            id="margin"
-            value={styles.layout.margin}
-            copiedId={copiedId}
-            onCopy={handleCopy}
-          />
-        </Field>
+        {styles.layout.margin !== '0px' && (
+          <Field orientation="horizontal">
+            <FieldLabel className="w-2/5 text-xs text-muted-foreground">
+              {i18n.t('inspect.card.margin')}
+            </FieldLabel>
+            <CopyableFieldBox
+              id="margin"
+              value={fmtUnit(styles.layout.margin)}
+              copyValue={styles.layout.margin}
+              copiedId={copiedId}
+              onCopy={handleCopy}
+            />
+          </Field>
+        )}
 
-        <Field orientation="horizontal">
-          <FieldLabel className="w-2/5 text-xs text-muted-foreground">
-            {i18n.t('inspect.card.radius')}
-          </FieldLabel>
-          <CopyableFieldBox
-            id="radius"
-            value={styles.layout.borderRadius}
-            copiedId={copiedId}
-            onCopy={handleCopy}
-          />
-        </Field>
+        {styles.layout.borderRadius !== '0px' && (
+          <Field orientation="horizontal">
+            <FieldLabel className="w-2/5 text-xs text-muted-foreground">
+              {i18n.t('inspect.card.radius')}
+            </FieldLabel>
+            <CopyableFieldBox
+              id="radius"
+              value={fmtUnit(styles.layout.borderRadius)}
+              copyValue={styles.layout.borderRadius}
+              copiedId={copiedId}
+              onCopy={handleCopy}
+            />
+          </Field>
+        )}
       </FieldGroup>
     </div>
   );

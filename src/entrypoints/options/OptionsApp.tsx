@@ -4,6 +4,7 @@ import { BehaviorSettingsSection } from '@/components/options/behavior-settings-
 import { DefaultGuidesSection } from '@/components/options/default-guides-section';
 import { GeneralSettingsSection } from '@/components/options/general-settings-section';
 import { HotkeysSettingsSection } from '@/components/options/hotkeys-settings-section';
+import { InspectSettingsSection } from '@/components/options/inspect-settings-section';
 import { OptionsHeader } from '@/components/options/options-header';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { useExtensionSettings } from '@/hooks/use-extension-settings';
@@ -52,6 +53,16 @@ export function OptionsApp() {
                       persistSettings((prev) => ({
                         ...prev,
                         behavior: { ...prev.behavior, ...patch },
+                      }))
+                    }
+                  />
+
+                  <InspectSettingsSection
+                    inspect={settings.inspect}
+                    onChange={(patch) =>
+                      persistSettings((prev) => ({
+                        ...prev,
+                        inspect: { ...prev.inspect, ...patch },
                       }))
                     }
                   />

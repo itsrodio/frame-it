@@ -51,7 +51,26 @@
       "navParent": "Elemento pai (↑)",
       "navChild": "Primeiro filho (↓)",
       "navPrev": "Irmão anterior (←)",
-      "navNext": "Próximo irmão (→)"
+      "navNext": "Próximo irmão (→)",
+      "copyFigma": "Copiar para o Figma (SVG)",
+      "copySvg": "Copiar SVG",
+      "pinCard": "Fixar cartão no canto",
+      "floatCard": "Cartão próximo ao elemento",
+      "resetTweaks": "Redefinir ajustes ao vivo"
+    },
+    "settings": {
+      "title": "Inspetor e exportação",
+      "description": "Configure o formato de exportação, notação de cor, unidades, posição do cartão e camadas do modelo de caixa.",
+      "codeFormat": "Formato de código",
+      "colorFormat": "Formato de cor",
+      "unitFormat": "Unidades",
+      "cardPlacement": "Posição do cartão",
+      "placementFloating": "Próximo ao elemento",
+      "placementPinned": "Fixado no canto",
+      "boxOverlays": "Camadas do modelo de caixa",
+      "showPadding": "Padding",
+      "showMargin": "Margin",
+      "showGap": "Flex / Grid Gap"
     }
   },
   "guides": {

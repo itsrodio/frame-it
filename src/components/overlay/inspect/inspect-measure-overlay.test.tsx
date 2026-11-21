@@ -264,40 +264,6 @@ describe('InspectMeasureOverlay', () => {
     });
     expect(card.textContent).toContain('div#child-1');
 
-    // Test card header DOM navigation buttons (next, prev, parent, child)
-    const navNextBtn = card.querySelector(
-      '[data-testid="inspect-nav-next"]',
-    ) as HTMLButtonElement;
-    const navPrevBtn = card.querySelector(
-      '[data-testid="inspect-nav-prev"]',
-    ) as HTMLButtonElement;
-    const navParentBtn = card.querySelector(
-      '[data-testid="inspect-nav-parent"]',
-    ) as HTMLButtonElement;
-    const navChildBtn = card.querySelector(
-      '[data-testid="inspect-nav-child"]',
-    ) as HTMLButtonElement;
-
-    act(() => {
-      navNextBtn.click();
-    });
-    expect(card.textContent).toContain('div#child-2');
-
-    act(() => {
-      navPrevBtn.click();
-    });
-    expect(card.textContent).toContain('div#child-1');
-
-    act(() => {
-      navParentBtn.click();
-    });
-    expect(card.textContent).toContain('section#parent-sec');
-
-    act(() => {
-      navChildBtn.click();
-    });
-    expect(card.textContent).toContain('div#child-1');
-
     // Test clicking size, font-size, font-weight, and RGB copy buttons
     for (const testId of [
       'inspect-copy-size',
@@ -313,6 +279,23 @@ describe('InspectMeasureOverlay', () => {
       });
     }
     expect(writeText).toHaveBeenCalledWith('rgb(17, 24, 39)');
+
+    // Toggle card pin placement
+    const pinBtn = card.querySelector(
+      '[data-testid="inspect-toggle-pin"]',
+    ) as HTMLButtonElement;
+    act(() => {
+      pinBtn.click();
+    });
+
+    // Click breadcrumb ancestor (parent-sec) in header to jump directly to parent
+    const parentBreadcrumb = card.querySelector(
+      '[data-testid="inspect-breadcrumb-0"]',
+    ) as HTMLButtonElement;
+    act(() => {
+      parentBreadcrumb.click();
+    });
+    expect(card.textContent).toContain('section#parent-sec');
 
     // Unpin element via close button in card header
     const unpinBtn = card.querySelector(

@@ -53,6 +53,21 @@ export interface ExtensionBehaviorSettings {
   holdToClose: boolean;
 }
 
+export type InspectCodeFormat = 'css' | 'tailwind' | 'jsx' | 'svg';
+export type InspectColorFormat = 'hex' | 'rgb' | 'oklch';
+export type InspectUnitFormat = 'px' | 'rem' | 'both';
+export type InspectCardPlacement = 'floating' | 'pinned';
+
+export interface ExtensionInspectSettings {
+  codeFormat: InspectCodeFormat;
+  colorFormat: InspectColorFormat;
+  unitFormat: InspectUnitFormat;
+  cardPlacement: InspectCardPlacement;
+  showPadding: boolean;
+  showMargin: boolean;
+  showGap: boolean;
+}
+
 export interface ExtensionDefaultGuides {
   columns: LinearGuideSettings;
   rows: LinearGuideSettings;
@@ -63,6 +78,7 @@ export interface ExtensionSettings {
   language: ExtensionLanguage;
   theme: Theme;
   behavior: ExtensionBehaviorSettings;
+  inspect: ExtensionInspectSettings;
   hotkeys: ExtensionHotkeys;
   defaultGuides: ExtensionDefaultGuides;
 }
