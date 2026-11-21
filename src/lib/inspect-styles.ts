@@ -9,6 +9,7 @@ export interface FormattedColor {
   rgba: RgbaColor;
   hex: string;
   rgb: string;
+  gradient?: string;
 }
 
 export type WcagContrastLevel = 'AAA' | 'AA' | 'Fail';
@@ -263,11 +264,88 @@ export function rgbaToRgbString(color: RgbaColor): string {
   return `rgb(${r}, ${g}, ${b})`;
 }
 
-export function formatColor(rgba: RgbaColor): FormattedColor {
+export function formatColor(
+  rgba: RgbaColor,
+  gradient?: string,
+): FormattedColor {
   return {
     rgba,
     hex: rgbaToHex(rgba),
     rgb: rgbaToRgbString(rgba),
+    ...(gradient ? { gradient } : {}),
+  };
+}
+
+const GRADIENT_COLOR_TOKEN_REGEX =
+  /(?:rgba?|hsla?|oklch|oklab|color)\([^)]+\)|#[0-9a-fA-F]{3,8}\b|\btransparent\b/gi;
+
+function isTextBackgroundClip(style: CSSStyleDeclaration): boolean {
+  const clip =
+    style.backgroundClip ||
+    style.webkitBackgroundClip ||
+    style.getPropertyValue('-webkit-background-clip') ||
+    style.getPropertyValue('background-clip');
+  return clip?.trim().toLowerCase() === 'text';
+}
+
+/**
+ * Извлекает цветовые точки из CSS-градиента (`linear-gradient`, `radial-gradient`, `conic-gradient`)
+ * и вычисляет результирующий цвет с использованием premultiplied-alpha интерполяции.
+ */
+export function parseGradientColor(
+  bgImage: string | null | undefined,
+  positionRatio = 0.5,
+): RgbaColor | null {
+  if (!bgImage || bgImage === 'none' || !bgImage.includes('gradient(')) {
+    return null;
+  }
+
+  const matches = bgImage.match(GRADIENT_COLOR_TOKEN_REGEX);
+  if (!matches || matches.length === 0) return null;
+
+  const stops: RgbaColor[] = [];
+  for (const token of matches) {
+    if (token.toLowerCase() === 'transparent') {
+      stops.push({ r: 0, g: 0, b: 0, a: 0 });
+    } else {
+      const parsed = parseCssColor(token);
+      if (parsed) {
+        stops.push(parsed);
+      } else if (/^rgba?\(|^oklch\(|^oklab\(|^#/.test(token.toLowerCase())) {
+        // Явный прозрачный цвет вида rgba(0, 0, 0, 0) внутри градиента
+        stops.push({ r: 0, g: 0, b: 0, a: 0 });
+      }
+    }
+  }
+
+  const hasVisibleStop = stops.some((s) => s.a > 0);
+  if (!hasVisibleStop) return null;
+
+  if (stops.length === 1) {
+    return stops[0] ?? null;
+  }
+
+  const t = Math.max(0, Math.min(1, positionRatio));
+  const scaled = t * (stops.length - 1);
+  const idx = Math.min(stops.length - 2, Math.floor(scaled));
+  const localT = scaled - idx;
+
+  const s1 = stops[idx] ?? stops[0] ?? DEFAULT_WHITE;
+  const s2 = stops[idx + 1] ?? s1;
+
+  // Premultiplied alpha interpolation (как в браузерном рендере CSS-градиентов)
+  const outA = (1 - localT) * s1.a + localT * s2.a;
+  if (outA <= 0) return null;
+
+  const r = ((1 - localT) * s1.r * s1.a + localT * s2.r * s2.a) / outA;
+  const g = ((1 - localT) * s1.g * s1.a + localT * s2.g * s2.a) / outA;
+  const b = ((1 - localT) * s1.b * s1.a + localT * s2.b * s2.a) / outA;
+
+  return {
+    r: clampByte(r),
+    g: clampByte(g),
+    b: clampByte(b),
+    a: clampAlpha(outA),
   };
 }
 
@@ -290,24 +368,53 @@ export function blendColors(fg: RgbaColor, bg: RgbaColor): RgbaColor {
 /**
  * Определяет эффективный цвет фона элемента, поднимаясь вверх по DOM-дереву,
  * если у самого элемента фон `transparent` или полупрозрачный.
+ * Учитывает как `background-color`, так и фоновые CSS-градиенты (`background-image`),
+ * игнорируя градиенты с `background-clip: text` (которые красят сам текст, а не блок).
  */
-export function resolveEffectiveBackgroundColor(el: HTMLElement): {
+export function resolveEffectiveBackgroundColor(
+  el: HTMLElement,
+  targetRect?: DOMRect,
+): {
   color: FormattedColor;
   isInherited: boolean;
 } {
   const layers: RgbaColor[] = [];
   let current: HTMLElement | null = el;
   let ownHasBg = false;
+  let matchedGradient: string | undefined;
 
   while (current) {
     const style = window.getComputedStyle(current);
-    const parsed = parseCssColor(style.backgroundColor);
-    if (parsed) {
+    const clipIsText = isTextBackgroundClip(style);
+
+    // Если на элементе есть фоновый градиент (не обрезанный по тексту)
+    if (!clipIsText && style.backgroundImage?.includes('gradient(')) {
+      let ratio = 0.5;
+      if (targetRect && current !== el) {
+        const containerRect = current.getBoundingClientRect();
+        if (containerRect.height > 0) {
+          const targetCenterY = targetRect.top + targetRect.height / 2;
+          ratio = (targetCenterY - containerRect.top) / containerRect.height;
+        }
+      }
+      const gradColor = parseGradientColor(style.backgroundImage, ratio);
+      if (gradColor) {
+        if (current === el) ownHasBg = true;
+        if (!matchedGradient) matchedGradient = style.backgroundImage;
+        layers.push(gradColor);
+        if (gradColor.a >= 1) {
+          break;
+        }
+      }
+    }
+
+    const parsedBg = parseCssColor(style.backgroundColor);
+    if (parsedBg) {
       if (current === el) {
         ownHasBg = true;
       }
-      layers.push(parsed);
-      if (parsed.a >= 1) {
+      layers.push(parsedBg);
+      if (parsedBg.a >= 1) {
         break;
       }
     }
@@ -323,7 +430,7 @@ export function resolveEffectiveBackgroundColor(el: HTMLElement): {
   }
 
   return {
-    color: formatColor(composite),
+    color: formatColor(composite, matchedGradient),
     isInherited: !ownHasBg,
   };
 }
@@ -456,6 +563,61 @@ function extractGap(style: CSSStyleDeclaration): string | null {
   return `${Math.round(rowGap)}px ${Math.round(colGap)}px`;
 }
 
+/**
+ * Определяет эффективный цвет текста элемента.
+ * Поддерживает градиентный текст (`background-clip: text` + `color: transparent` / `-webkit-text-fill-color: transparent`),
+ * в том числе унаследованный от родителя.
+ */
+function resolveEffectiveTextColor(
+  el: HTMLElement,
+  style: CSSStyleDeclaration,
+  effectiveBg: RgbaColor,
+): {
+  formatted: FormattedColor;
+  blendedForContrast: RgbaColor;
+} {
+  const webkitFill =
+    style.webkitTextFillColor ||
+    style.getPropertyValue('-webkit-text-fill-color');
+  const fillColor =
+    webkitFill && webkitFill.trim() !== ''
+      ? parseCssColor(webkitFill)
+      : parseCssColor(style.color);
+
+  // Проверяем, применён ли к самому элементу или его родителю градиентный текст (bg-clip: text)
+  let gradHost: HTMLElement | null = el;
+  while (gradHost) {
+    const hostStyle =
+      gradHost === el ? style : window.getComputedStyle(gradHost);
+    const hasGradient = hostStyle.backgroundImage?.includes('gradient(');
+    if (
+      hasGradient &&
+      (isTextBackgroundClip(hostStyle) || (gradHost === el && !fillColor))
+    ) {
+      const gradRgba = parseGradientColor(hostStyle.backgroundImage, 0.5);
+      if (gradRgba) {
+        const blended =
+          gradRgba.a < 1 ? blendColors(gradRgba, effectiveBg) : gradRgba;
+        return {
+          formatted: formatColor(blended, hostStyle.backgroundImage),
+          blendedForContrast: blended,
+        };
+      }
+    }
+    if (fillColor) break;
+    gradHost = gradHost.parentElement;
+  }
+
+  const rawTextRgba = fillColor ?? parseCssColor(style.color) ?? DEFAULT_BLACK;
+  const blendedTextRgba =
+    rawTextRgba.a < 1 ? blendColors(rawTextRgba, effectiveBg) : rawTextRgba;
+
+  return {
+    formatted: formatColor(rawTextRgba),
+    blendedForContrast: blendedTextRgba,
+  };
+}
+
 export function extractInspectedStyles(
   el: HTMLElement,
   precomputedRect?: DOMRect,
@@ -463,14 +625,12 @@ export function extractInspectedStyles(
   const rect = precomputedRect ?? el.getBoundingClientRect();
   const style = window.getComputedStyle(el);
 
-  const bgInfo = resolveEffectiveBackgroundColor(el);
-  const rawTextRgba = parseCssColor(style.color) ?? DEFAULT_BLACK;
-  const blendedTextRgba =
-    rawTextRgba.a < 1
-      ? blendColors(rawTextRgba, bgInfo.color.rgba)
-      : rawTextRgba;
-  const textColor = formatColor(rawTextRgba);
-  const contrast = evaluateWcagContrast(blendedTextRgba, bgInfo.color.rgba);
+  const bgInfo = resolveEffectiveBackgroundColor(el, rect);
+  const textInfo = resolveEffectiveTextColor(el, style, bgInfo.color.rgba);
+  const contrast = evaluateWcagContrast(
+    textInfo.blendedForContrast,
+    bgInfo.color.rgba,
+  );
 
   const fontSizeNum = Number.parseFloat(style.fontSize);
   const fontSize = Number.isFinite(fontSizeNum)
@@ -497,7 +657,7 @@ export function extractInspectedStyles(
       fontWeight: style.fontWeight || '400',
     },
     colors: {
-      text: textColor,
+      text: textInfo.formatted,
       background: bgInfo.color,
       isInheritedBackground: bgInfo.isInherited,
       contrast,

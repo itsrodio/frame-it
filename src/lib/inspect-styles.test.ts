@@ -165,4 +165,42 @@ describe('inspect-styles & WCAG 2.1 contrast', () => {
       'ui-sans-serif',
     );
   });
+
+  it('resolves gradient text (background-clip: text + color: transparent) and gradient container backgrounds', () => {
+    const heroSection = document.createElement('section');
+    heroSection.style.backgroundColor = 'rgb(10, 10, 10)';
+    heroSection.style.backgroundImage =
+      'linear-gradient(180deg, rgba(120, 20, 20, 0.5), transparent)';
+
+    const heading = document.createElement('h1');
+    heading.style.color = 'transparent';
+    heading.style.backgroundImage =
+      'linear-gradient(90deg, rgb(255, 255, 255), rgba(255, 255, 255, 0.5))';
+    heading.style.backgroundClip = 'text';
+
+    heroSection.appendChild(heading);
+    document.body.appendChild(heroSection);
+
+    const styles = extractInspectedStyles(heading, {
+      x: 0,
+      y: 0,
+      left: 0,
+      top: 0,
+      width: 312,
+      height: 96,
+      right: 312,
+      bottom: 96,
+      toJSON: () => ({}),
+    });
+
+    // Background should blend the section's semi-transparent red gradient over #0A0A0A (not #000000)
+    expect(styles.colors.background.hex).toBe('#260D0D');
+    expect(styles.colors.background.gradient).toContain('linear-gradient');
+
+    // Gradient text should resolve to the blended white/silver gradient color (not #000000!)
+    expect(styles.colors.text.hex).toBe('#C9C3C3');
+    expect(styles.colors.text.gradient).toContain('linear-gradient');
+    expect(styles.colors.contrast.level).toBe('AAA');
+    expect(styles.colors.contrast.ratio).toBeGreaterThan(7);
+  });
 });

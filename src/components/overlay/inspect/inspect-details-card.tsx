@@ -106,7 +106,9 @@ function ColorInspectField({
       <div className="flex h-7 w-3/5 items-center overflow-hidden rounded-md border border-input bg-transparent">
         <span
           className="ml-1.5 size-4 shrink-0 rounded-[3px] border border-border/60"
-          style={{ backgroundColor: color.rgb }}
+          style={{
+            background: color.gradient ?? color.rgb,
+          }}
         />
 
         <button
