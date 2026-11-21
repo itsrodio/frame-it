@@ -142,7 +142,7 @@ export function useInspectInteraction({
         return;
       }
 
-      // Не перехватываем стрелки и Enter, когда фокус находится внутри UI самого оверлея (Dock, Popover, карточка)
+      // Do not intercept arrow keys or Enter when focus is inside the overlay UI (Dock, Popover, card).
       if (
         (e.target instanceof Element && isOverlayElement(e.target)) ||
         (originTarget instanceof Element && isOverlayElement(originTarget))
@@ -150,10 +150,10 @@ export function useInspectInteraction({
         return;
       }
 
-      // Навигация по DOM-дереву с клавиатуры при зафиксированном элементе:
-      // ↑ или Shift+Enter -> родитель
-      // ↓ или Enter -> первый видимый ребёнок
-      // ← / → -> соседний элемент
+      // Keyboard DOM tree navigation while an element is locked:
+      // Up or Shift+Enter -> parent
+      // Down or Enter -> first visible child
+      // Left / Right -> previous / next sibling
       if (
         selectedElRef.current &&
         document.body.contains(selectedElRef.current)

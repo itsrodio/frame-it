@@ -94,7 +94,7 @@ export function CloseTool({ onClose, holdToClose = true }: CloseToolProps) {
             onBlur={cancelHold}
             className="group relative overflow-hidden transition-transform duration-150 ease-out hover:text-destructive active:scale-[0.92] data-[holding=true]:scale-[0.92] data-[holding=true]:text-destructive"
           >
-            {/* Радиальная заливка из центра */}
+            {/* Radial fill from center */}
             <span
               aria-hidden="true"
               className="pointer-events-none absolute inset-0 rounded-full bg-destructive/20 transition-transform"
@@ -109,13 +109,13 @@ export function CloseTool({ onClose, holdToClose = true }: CloseToolProps) {
               }}
             />
 
-            {/* Тонкая рамка, проявляющаяся при удержании */}
+            {/* Subtle border revealed while holding */}
             <span
               aria-hidden="true"
               className="pointer-events-none absolute inset-0 rounded-[inherit] border border-destructive/40 opacity-0 transition-opacity duration-150 group-data-[holding=true]:opacity-100"
             />
 
-            {/* Иконка с лёгким поворотом при удержании */}
+            {/* Icon with slight rotation while holding */}
             <X className="relative z-10 transition-transform duration-300 ease-out group-data-[holding=true]:rotate-90 group-data-[holding=true]:scale-110" />
           </Button>
         }

@@ -1,4 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
+import { Badge } from '@/components/ui/badge';
+import { Kbd } from '@/components/ui/kbd';
 import { extractContainerInfo } from '@/lib/container-detector';
 import { isOverlayElement } from '@/lib/dom-utils';
 import type { DetectedContainerInfo } from '@/types/layout-guides';
@@ -60,7 +62,7 @@ export function ContainerPickerOverlay({
       }
       lastTargetRef.current = target;
 
-      // Если навели на мелкий текстовый/инлайн элемент, поднимаемся до ближайшего блочного контейнера
+      // When hovering a small inline/text node, walk up to the nearest block-level container.
       let candidate: HTMLElement = target;
       while (
         candidate.parentElement &&
@@ -142,13 +144,10 @@ export function ContainerPickerOverlay({
 
   return (
     <div className="fixed inset-0 pointer-events-none z-40">
-      {/* Подсказка сверху экрана */}
       <div className="fixed top-4 left-1/2 -translate-x-1/2 rounded-full bg-popover/95 px-3.5 py-1.5 text-xs font-medium text-popover-foreground shadow-lg ring-1 ring-border backdrop-blur-xs">
         {hintText ?? i18n.t('picker.snapHint')} •{' '}
         {i18n.t('picker.cancelBeforeKey')}{' '}
-        <kbd className="rounded bg-muted px-1 py-0.5 font-mono text-[10px]">
-          Esc
-        </kbd>{' '}
+        <Kbd className="h-auto px-1 py-0.5 font-mono text-[10px]">Esc</Kbd>{' '}
         {i18n.t('picker.cancelAfterKey')}
       </div>
 
@@ -162,7 +161,7 @@ export function ContainerPickerOverlay({
             height: hoveredInfo.rect.height,
           }}
         >
-          {/* Визуализация внутреннего padding-inline контейнера */}
+          {/* Container inline padding visualization */}
           {hoveredInfo.paddingInline > 0 && (
             <>
               <div
@@ -176,7 +175,7 @@ export function ContainerPickerOverlay({
             </>
           )}
 
-          {/* Бейдж с размерами и параметрами элемента */}
+          {/* Element dimensions and detected grid badge */}
           <div className="absolute -top-7 left-0 flex items-center gap-1.5 rounded bg-primary px-2 py-0.5 text-[11px] font-medium whitespace-nowrap text-primary-foreground shadow-sm">
             <span className="font-mono">{hoveredInfo.label}</span>
             <span className="opacity-75">•</span>
@@ -187,9 +186,12 @@ export function ContainerPickerOverlay({
               </span>
             )}
             {hoveredInfo.columnCount && (
-              <span className="rounded bg-background/20 px-1 text-[10px]">
+              <Badge
+                variant="secondary"
+                className="h-4 rounded bg-background/20 px-1 py-0 text-[10px] text-primary-foreground"
+              >
                 {i18n.t('picker.badgeCols', [hoveredInfo.columnCount])}
-              </span>
+              </Badge>
             )}
           </div>
         </div>

@@ -9,8 +9,7 @@ export interface UseTrackedElementOptions {
 }
 
 /**
- * Синхронизирует параметры сетки с выбранным DOM-контейнером
- * при ресайзе окна или самого элемента через ResizeObserver.
+ * Synchronizes guide settings with a tracked DOM container on window or element resize via ResizeObserver.
  */
 export function useTrackedElement({
   trackedElement,

@@ -22,8 +22,8 @@ export function formatColorByPreference(
 }
 
 /**
- * Форматирует строку с пиксельными значениями (например, `16px` или `12px 24px`)
- * в соответствии с выбранными единицами измерения (`px`, `rem`, `both`).
+ * Formats a pixel dimension string (e.g. `16px` or `12px 24px`)
+ * according to the selected unit format (`px`, `rem`, or `both`).
  */
 export function formatDimensionWithUnit(
   pxText: string,
@@ -132,7 +132,7 @@ const TW_WEIGHT_MAP: Record<string, string> = {
 };
 
 /**
- * Генерирует строку классов Tailwind CSS из вычисленных стилей элемента.
+ * Generates Tailwind CSS utility classes from computed element styles.
  */
 export function buildTailwindClasses(styles: InspectedElementStyles): string {
   const classes: string[] = [];
@@ -195,7 +195,7 @@ export function buildTailwindClasses(styles: InspectedElementStyles): string {
 }
 
 /**
- * Генерирует готовый React JSX-сниппет с Tailwind-классами для выбранного элемента.
+ * Generates a React JSX snippet with Tailwind classes for the inspected element.
  */
 export function buildJsxSnippet(
   el: HTMLElement,

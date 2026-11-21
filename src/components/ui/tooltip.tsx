@@ -41,6 +41,7 @@ function TooltipContent({
   const defaultContainer = usePortalContainer();
 
   return (
+    // Portal into the Shadow DOM container; pointer-events-auto re-enables interaction over the pointer-events-none host.
     <TooltipPrimitive.Portal container={container ?? defaultContainer}>
       <TooltipPrimitive.Positioner
         align={align}

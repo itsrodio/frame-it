@@ -1,5 +1,6 @@
 import { SquareMousePointer } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { OptionsSectionCard } from '@/components/options/options-section-card';
+import { SegmentedControl } from '@/components/overlay/shared/segmented-control';
 import { Toggle } from '@/components/ui/toggle';
 import type {
   ExtensionInspectSettings,
@@ -48,23 +49,12 @@ export function InspectSettingsSection({
   ];
 
   return (
-    <section className="rounded-xl border bg-card p-6 shadow-xs">
-      <div className="mb-5 flex items-start gap-3">
-        <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-muted text-muted-foreground">
-          <SquareMousePointer className="size-4" />
-        </div>
-        <div>
-          <h2 className="text-sm font-semibold">
-            {i18n.t('inspect.settings.title')}
-          </h2>
-          <p className="text-xs text-muted-foreground">
-            {i18n.t('inspect.settings.description')}
-          </p>
-        </div>
-      </div>
-
+    <OptionsSectionCard
+      icon={SquareMousePointer}
+      title={i18n.t('inspect.settings.title')}
+      description={i18n.t('inspect.settings.description')}
+    >
       <div className="divide-y">
-        {/* Code Format */}
         <div className="flex flex-col gap-3 py-3.5 first:pt-0 sm:flex-row sm:items-center sm:justify-between">
           <div className="space-y-0.5">
             <div className="text-xs font-medium">
@@ -74,26 +64,16 @@ export function InspectSettingsSection({
               {i18n.t('inspect.settings.codeFormatDescription')}
             </div>
           </div>
-          <div className="flex items-center gap-1 rounded-lg border bg-muted/40 p-1 w-fit shrink-0">
-            {CODE_FORMATS.map((item) => (
-              <Button
-                key={item.value}
-                variant={
-                  inspect.codeFormat === item.value ? 'default' : 'ghost'
-                }
-                size="xs"
-                aria-pressed={inspect.codeFormat === item.value}
-                data-testid={`inspect-code-format-${item.value}`}
-                onClick={() => onChange({ codeFormat: item.value })}
-                className="h-7 px-2.5 text-xs"
-              >
-                {item.label}
-              </Button>
-            ))}
-          </div>
+          <SegmentedControl
+            items={CODE_FORMATS}
+            value={inspect.codeFormat}
+            testIdPrefix="inspect-code-format"
+            onValueChange={(codeFormat) => onChange({ codeFormat })}
+            className="h-8 w-fit shrink-0 rounded-lg bg-muted/40 p-1"
+            itemClassName="h-full rounded-md px-2.5 text-xs"
+          />
         </div>
 
-        {/* Color Format */}
         <div className="flex flex-col gap-3 py-3.5 sm:flex-row sm:items-center sm:justify-between">
           <div className="space-y-0.5">
             <div className="text-xs font-medium">
@@ -103,26 +83,16 @@ export function InspectSettingsSection({
               {i18n.t('inspect.settings.colorFormatDescription')}
             </div>
           </div>
-          <div className="flex items-center gap-1 rounded-lg border bg-muted/40 p-1 w-fit shrink-0">
-            {COLOR_FORMATS.map((item) => (
-              <Button
-                key={item.value}
-                variant={
-                  inspect.colorFormat === item.value ? 'default' : 'ghost'
-                }
-                size="xs"
-                aria-pressed={inspect.colorFormat === item.value}
-                data-testid={`inspect-color-format-${item.value}`}
-                onClick={() => onChange({ colorFormat: item.value })}
-                className="h-7 px-2.5 text-xs"
-              >
-                {item.label}
-              </Button>
-            ))}
-          </div>
+          <SegmentedControl
+            items={COLOR_FORMATS}
+            value={inspect.colorFormat}
+            testIdPrefix="inspect-color-format"
+            onValueChange={(colorFormat) => onChange({ colorFormat })}
+            className="h-8 w-fit shrink-0 rounded-lg bg-muted/40 p-1"
+            itemClassName="h-full rounded-md px-2.5 text-xs"
+          />
         </div>
 
-        {/* Units */}
         <div className="flex flex-col gap-3 py-3.5 sm:flex-row sm:items-center sm:justify-between">
           <div className="space-y-0.5">
             <div className="text-xs font-medium">
@@ -132,26 +102,17 @@ export function InspectSettingsSection({
               {i18n.t('inspect.settings.unitFormatDescription')}
             </div>
           </div>
-          <div className="flex items-center gap-1 rounded-lg border bg-muted/40 p-1 w-fit shrink-0">
-            {UNIT_FORMATS.map((item) => (
-              <Button
-                key={item.value}
-                variant={
-                  inspect.unitFormat === item.value ? 'default' : 'ghost'
-                }
-                size="xs"
-                aria-pressed={inspect.unitFormat === item.value}
-                data-testid={`inspect-unit-format-${item.value}`}
-                onClick={() => onChange({ unitFormat: item.value })}
-                className="h-7 px-2.5 font-mono text-xs"
-              >
-                {item.label}
-              </Button>
-            ))}
-          </div>
+          <SegmentedControl
+            items={UNIT_FORMATS}
+            value={inspect.unitFormat}
+            testIdPrefix="inspect-unit-format"
+            mono
+            onValueChange={(unitFormat) => onChange({ unitFormat })}
+            className="h-8 w-fit shrink-0 rounded-lg bg-muted/40 p-1"
+            itemClassName="h-full rounded-md px-2.5 text-xs"
+          />
         </div>
 
-        {/* Card Placement */}
         <div className="flex flex-col gap-3 py-3.5 sm:flex-row sm:items-center sm:justify-between">
           <div className="space-y-0.5">
             <div className="text-xs font-medium">
@@ -161,26 +122,16 @@ export function InspectSettingsSection({
               {i18n.t('inspect.settings.cardPlacementDescription')}
             </div>
           </div>
-          <div className="flex items-center gap-1 rounded-lg border bg-muted/40 p-1 w-fit shrink-0">
-            {placements.map((item) => (
-              <Button
-                key={item.value}
-                variant={
-                  inspect.cardPlacement === item.value ? 'default' : 'ghost'
-                }
-                size="xs"
-                aria-pressed={inspect.cardPlacement === item.value}
-                data-testid={`inspect-placement-${item.value}`}
-                onClick={() => onChange({ cardPlacement: item.value })}
-                className="h-7 px-2.5 text-xs"
-              >
-                {item.label}
-              </Button>
-            ))}
-          </div>
+          <SegmentedControl
+            items={placements}
+            value={inspect.cardPlacement}
+            testIdPrefix="inspect-placement"
+            onValueChange={(cardPlacement) => onChange({ cardPlacement })}
+            className="h-8 w-fit shrink-0 rounded-lg bg-muted/40 p-1"
+            itemClassName="h-full rounded-md px-2.5 text-xs"
+          />
         </div>
 
-        {/* Box Model Overlays */}
         <div className="flex flex-col gap-3 py-3.5 last:pb-0 sm:flex-row sm:items-center sm:justify-between">
           <div className="space-y-0.5">
             <div className="text-xs font-medium">
@@ -224,6 +175,6 @@ export function InspectSettingsSection({
           </div>
         </div>
       </div>
-    </section>
+    </OptionsSectionCard>
   );
 }

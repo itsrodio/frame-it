@@ -1,5 +1,5 @@
 import { CSPProvider } from '@base-ui/react/csp-provider';
-import { useEffect } from 'react';
+import { useEffect, useLayoutEffect } from 'react';
 import { BehaviorSettingsSection } from '@/components/options/behavior-settings-section';
 import { DefaultGuidesSection } from '@/components/options/default-guides-section';
 import { GeneralSettingsSection } from '@/components/options/general-settings-section';
@@ -16,7 +16,10 @@ export function OptionsApp() {
   const { settings, persistSettings, resetAllSettings } =
     useExtensionSettings();
 
-  setLanguageOverride(settings.language);
+  useLayoutEffect(() => {
+    setLanguageOverride(settings.language);
+  }, [settings.language]);
+
   const pageTitle = i18n.t('options.title');
 
   useEffect(() => {

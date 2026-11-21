@@ -1,5 +1,6 @@
 import { Globe, Monitor, Moon, Sun } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { OptionsSectionCard } from '@/components/options/options-section-card';
+import { SegmentedControl } from '@/components/overlay/shared/segmented-control';
 import {
   Select,
   SelectContent,
@@ -33,44 +34,49 @@ export function GeneralSettingsSection({
         : `${opt.nativeLabel} (${opt.value})`,
   }));
 
-  const themeOptions: Array<{
+  const themeItems: Array<{
     value: Theme;
-    label: string;
-    icon: typeof Monitor;
+    label: React.ReactNode;
+    testId: string;
   }> = [
     {
       value: 'system',
-      label: i18n.t('options.general.themeSystem'),
-      icon: Monitor,
+      testId: 'theme-system',
+      label: (
+        <>
+          <Monitor className="size-3.5" />
+          <span>{i18n.t('options.general.themeSystem')}</span>
+        </>
+      ),
     },
     {
       value: 'light',
-      label: i18n.t('options.general.themeLight'),
-      icon: Sun,
+      testId: 'theme-light',
+      label: (
+        <>
+          <Sun className="size-3.5" />
+          <span>{i18n.t('options.general.themeLight')}</span>
+        </>
+      ),
     },
     {
       value: 'dark',
-      label: i18n.t('options.general.themeDark'),
-      icon: Moon,
+      testId: 'theme-dark',
+      label: (
+        <>
+          <Moon className="size-3.5" />
+          <span>{i18n.t('options.general.themeDark')}</span>
+        </>
+      ),
     },
   ];
 
   return (
-    <section className="rounded-xl border bg-card p-6 shadow-xs">
-      <div className="mb-5 flex items-start gap-3">
-        <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-muted text-muted-foreground">
-          <Globe className="size-4" />
-        </div>
-        <div>
-          <h2 className="text-sm font-semibold">
-            {i18n.t('options.general.title')}
-          </h2>
-          <p className="text-xs text-muted-foreground">
-            {i18n.t('options.general.description')}
-          </p>
-        </div>
-      </div>
-
+    <OptionsSectionCard
+      icon={Globe}
+      title={i18n.t('options.general.title')}
+      description={i18n.t('options.general.description')}
+    >
       <div className="divide-y">
         <div className="flex flex-col gap-3 py-4 first:pt-0 sm:flex-row sm:items-center sm:justify-between">
           <div className="space-y-0.5">
@@ -117,28 +123,15 @@ export function GeneralSettingsSection({
               {i18n.t('options.general.themeDescription')}
             </div>
           </div>
-          <div className="flex items-center gap-1 rounded-lg border bg-muted/40 p-1">
-            {themeOptions.map((item) => {
-              const Icon = item.icon;
-              const isSelected = theme === item.value;
-              return (
-                <Button
-                  key={item.value}
-                  variant={isSelected ? 'default' : 'ghost'}
-                  size="xs"
-                  aria-pressed={isSelected}
-                  data-testid={`theme-${item.value}`}
-                  onClick={() => onThemeChange(item.value)}
-                  className="h-7 px-2.5 text-xs"
-                >
-                  <Icon className="size-3.5" />
-                  {item.label}
-                </Button>
-              );
-            })}
-          </div>
+          <SegmentedControl
+            items={themeItems}
+            value={theme}
+            onValueChange={onThemeChange}
+            className="h-8 rounded-lg bg-muted/40 p-1"
+            itemClassName="h-full gap-1.5 rounded-md px-2.5 text-xs"
+          />
         </div>
       </div>
-    </section>
+    </OptionsSectionCard>
   );
 }

@@ -1,4 +1,5 @@
 import { SlidersHorizontal } from 'lucide-react';
+import { OptionsSectionCard } from '@/components/options/options-section-card';
 import { getGuideTypes } from '@/components/overlay/layout-guides/constants';
 import {
   Select,
@@ -8,13 +9,44 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Toggle } from '@/components/ui/toggle';
+import { Switch } from '@/components/ui/switch';
 import type { GuideType } from '@/types/layout-guides';
 import type { ExtensionBehaviorSettings } from '@/types/settings';
 
 export interface BehaviorSettingsSectionProps {
   behavior: ExtensionBehaviorSettings;
   onChange: (patch: Partial<ExtensionBehaviorSettings>) => void;
+}
+
+interface BehaviorSwitchRowProps {
+  title: string;
+  description: string;
+  checked: boolean;
+  testId: string;
+  onCheckedChange: (checked: boolean) => void;
+}
+
+function BehaviorSwitchRow({
+  title,
+  description,
+  checked,
+  testId,
+  onCheckedChange,
+}: BehaviorSwitchRowProps) {
+  return (
+    <div className="flex items-center justify-between gap-4 py-3.5 first:pt-0 last:pb-0">
+      <div className="space-y-0.5">
+        <div className="text-xs font-medium">{title}</div>
+        <div className="text-xs text-muted-foreground">{description}</div>
+      </div>
+      <Switch
+        aria-label={title}
+        data-testid={testId}
+        checked={checked}
+        onCheckedChange={onCheckedChange}
+      />
+    </div>
+  );
 }
 
 export function BehaviorSettingsSection({
@@ -24,71 +56,33 @@ export function BehaviorSettingsSection({
   const guideTypeItems = getGuideTypes();
 
   return (
-    <section className="rounded-xl border bg-card p-6 shadow-xs">
-      <div className="mb-5 flex items-start gap-3">
-        <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-muted text-muted-foreground">
-          <SlidersHorizontal className="size-4" />
-        </div>
-        <div>
-          <h2 className="text-sm font-semibold">
-            {i18n.t('options.behavior.title')}
-          </h2>
-          <p className="text-xs text-muted-foreground">
-            {i18n.t('options.behavior.description')}
-          </p>
-        </div>
-      </div>
-
+    <OptionsSectionCard
+      icon={SlidersHorizontal}
+      title={i18n.t('options.behavior.title')}
+      description={i18n.t('options.behavior.description')}
+    >
       <div className="divide-y">
-        <div className="flex items-center justify-between gap-4 py-3.5 first:pt-0">
-          <div className="space-y-0.5">
-            <div className="text-xs font-medium">
-              {i18n.t('options.behavior.autoDetectOnLaunch')}
-            </div>
-            <div className="text-xs text-muted-foreground">
-              {i18n.t('options.behavior.autoDetectOnLaunchDescription')}
-            </div>
-          </div>
-          <Toggle
-            size="sm"
-            variant="outline"
-            data-testid="toggle-auto-detect-on-launch"
-            pressed={behavior.autoDetectOnLaunch}
-            onPressedChange={(autoDetectOnLaunch) =>
-              onChange({ autoDetectOnLaunch })
-            }
-            className="h-7 min-w-22 text-xs"
-          >
-            {behavior.autoDetectOnLaunch
-              ? i18n.t('options.behavior.enabled')
-              : i18n.t('options.behavior.disabled')}
-          </Toggle>
-        </div>
+        <BehaviorSwitchRow
+          title={i18n.t('options.behavior.autoDetectOnLaunch')}
+          description={i18n.t('options.behavior.autoDetectOnLaunchDescription')}
+          checked={behavior.autoDetectOnLaunch}
+          testId="toggle-auto-detect-on-launch"
+          onCheckedChange={(autoDetectOnLaunch) =>
+            onChange({ autoDetectOnLaunch })
+          }
+        />
 
-        <div className="flex items-center justify-between gap-4 py-3.5">
-          <div className="space-y-0.5">
-            <div className="text-xs font-medium">
-              {i18n.t('options.behavior.guidesEnabledByDefault')}
-            </div>
-            <div className="text-xs text-muted-foreground">
-              {i18n.t('options.behavior.guidesEnabledByDefaultDescription')}
-            </div>
-          </div>
-          <Toggle
-            size="sm"
-            variant="outline"
-            data-testid="toggle-guides-enabled-by-default"
-            pressed={behavior.guidesEnabledByDefault}
-            onPressedChange={(guidesEnabledByDefault) =>
-              onChange({ guidesEnabledByDefault })
-            }
-            className="h-7 min-w-22 text-xs"
-          >
-            {behavior.guidesEnabledByDefault
-              ? i18n.t('options.behavior.enabled')
-              : i18n.t('options.behavior.disabled')}
-          </Toggle>
-        </div>
+        <BehaviorSwitchRow
+          title={i18n.t('options.behavior.guidesEnabledByDefault')}
+          description={i18n.t(
+            'options.behavior.guidesEnabledByDefaultDescription',
+          )}
+          checked={behavior.guidesEnabledByDefault}
+          testId="toggle-guides-enabled-by-default"
+          onCheckedChange={(guidesEnabledByDefault) =>
+            onChange({ guidesEnabledByDefault })
+          }
+        />
 
         <div className="flex flex-col gap-3 py-3.5 sm:flex-row sm:items-center sm:justify-between">
           <div className="space-y-0.5">
@@ -128,81 +122,38 @@ export function BehaviorSettingsSection({
           </div>
         </div>
 
-        <div className="flex items-center justify-between gap-4 py-3.5">
-          <div className="space-y-0.5">
-            <div className="text-xs font-medium">
-              {i18n.t('options.behavior.rememberSiteSettings')}
-            </div>
-            <div className="text-xs text-muted-foreground">
-              {i18n.t('options.behavior.rememberSiteSettingsDescription')}
-            </div>
-          </div>
-          <Toggle
-            size="sm"
-            variant="outline"
-            data-testid="toggle-remember-site-settings"
-            pressed={behavior.rememberSiteSettings}
-            onPressedChange={(rememberSiteSettings) =>
-              onChange({ rememberSiteSettings })
-            }
-            className="h-7 min-w-22 text-xs"
-          >
-            {behavior.rememberSiteSettings
-              ? i18n.t('options.behavior.enabled')
-              : i18n.t('options.behavior.disabled')}
-          </Toggle>
-        </div>
+        <BehaviorSwitchRow
+          title={i18n.t('options.behavior.rememberSiteSettings')}
+          description={i18n.t(
+            'options.behavior.rememberSiteSettingsDescription',
+          )}
+          checked={behavior.rememberSiteSettings}
+          testId="toggle-remember-site-settings"
+          onCheckedChange={(rememberSiteSettings) =>
+            onChange({ rememberSiteSettings })
+          }
+        />
 
-        <div className="flex items-center justify-between gap-4 py-3.5">
-          <div className="space-y-0.5">
-            <div className="text-xs font-medium">
-              {i18n.t('options.behavior.holdToClose')}
-            </div>
-            <div className="text-xs text-muted-foreground">
-              {i18n.t('options.behavior.holdToCloseDescription')}
-            </div>
-          </div>
-          <Toggle
-            size="sm"
-            variant="outline"
-            data-testid="toggle-hold-to-close"
-            pressed={behavior.holdToClose}
-            onPressedChange={(holdToClose) => onChange({ holdToClose })}
-            className="h-7 min-w-22 text-xs"
-          >
-            {behavior.holdToClose
-              ? i18n.t('options.behavior.enabled')
-              : i18n.t('options.behavior.disabled')}
-          </Toggle>
-        </div>
+        <BehaviorSwitchRow
+          title={i18n.t('options.behavior.holdToClose')}
+          description={i18n.t('options.behavior.holdToCloseDescription')}
+          checked={behavior.holdToClose}
+          testId="toggle-hold-to-close"
+          onCheckedChange={(holdToClose) => onChange({ holdToClose })}
+        />
 
-        <div className="flex items-center justify-between gap-4 py-3.5 last:pb-0">
-          <div className="space-y-0.5">
-            <div className="text-xs font-medium">
-              {i18n.t('options.behavior.designOverlayLockedByDefault')}
-            </div>
-            <div className="text-xs text-muted-foreground">
-              {i18n.t(
-                'options.behavior.designOverlayLockedByDefaultDescription',
-              )}
-            </div>
-          </div>
-          <Toggle
-            size="sm"
-            variant="outline"
-            data-testid="toggle-design-overlay-locked"
-            pressed={behavior.designOverlayLockedByDefault}
-            onPressedChange={(designOverlayLockedByDefault) =>
-              onChange({ designOverlayLockedByDefault })
-            }
-            className="h-7 min-w-22 text-xs"
-          >
-            {behavior.designOverlayLockedByDefault
-              ? i18n.t('options.behavior.enabled')
-              : i18n.t('options.behavior.disabled')}
-          </Toggle>
-        </div>
+        <BehaviorSwitchRow
+          title={i18n.t('options.behavior.designOverlayLockedByDefault')}
+          description={i18n.t(
+            'options.behavior.designOverlayLockedByDefaultDescription',
+          )}
+          checked={behavior.designOverlayLockedByDefault}
+          testId="toggle-design-overlay-locked"
+          onCheckedChange={(designOverlayLockedByDefault) =>
+            onChange({ designOverlayLockedByDefault })
+          }
+        />
       </div>
-    </section>
+    </OptionsSectionCard>
   );
 }

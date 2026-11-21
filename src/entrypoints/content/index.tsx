@@ -44,7 +44,7 @@ export default defineContentScript({
         container.append(wrapper);
 
         const root = ReactDOM.createRoot(wrapper);
-        // pass the wrapper to App so that Portals (Tooltip/Dropdown) are rendered inside the Shadow DOM.
+        // Pass the wrapper to App so Portals (Tooltip/Popover/Select/DropdownMenu) render inside the Shadow DOM.
         root.render(<App portalContainer={wrapper} onClose={closeOverlay} />);
         return root;
       },

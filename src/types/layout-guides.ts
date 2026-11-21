@@ -11,12 +11,12 @@ export interface BaseGuideSettings {
 export interface LinearGuideSettings extends BaseGuideSettings {
   count: number;
   alignment: GuideAlignment;
-  itemSize: number | null; // Width для columns, Height для rows (null = Auto при stretch)
-  maxSize: number | null; // Max Width для контейнера columns, Max Height для rows (null = 100% / Auto)
-  margin: number; // Внутренний padding контейнера сетки (работает во всех режимах, включая center)
+  itemSize: number | null; // Width for columns, height for rows (null = Auto when stretched)
+  maxSize: number | null; // Max width for columns container, max height for rows (null = 100% / Auto)
+  margin: number; // Inner padding of the guide container (applies to all alignment modes)
   gutter: number;
-  offset: number; // Смещение сетки по X (для columns) или Y (для rows), может быть отрицательным
-  followScroll: boolean; // Следовать за скроллом страницы (особенно полезно для rows)
+  offset: number; // Grid offset along X (columns) or Y (rows); may be negative
+  followScroll: boolean; // Scroll with the page instead of staying fixed to the viewport
 }
 
 export interface GridGuideSettings extends BaseGuideSettings {

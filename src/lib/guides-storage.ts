@@ -55,10 +55,9 @@ export function runAutoDetectOrDefaults(
 }
 
 /**
- * При открытии на сайте:
- * 1. Если включено сохранение настроек для сайта и пользователь уже менял настройки на этом сайте,
- *    восстанавливаем его кастомные настройки и НЕ перезатираем их автодетектом.
- * 2. Иначе запускаем автодетект контейнера (если включён) или берём дефолтные настройки расширения.
+ * Resolves initial guide settings on page open:
+ * 1. If per-site persistence is enabled and custom settings exist, restore them without overwriting via auto-detect.
+ * 2. Otherwise run container auto-detection (if enabled) or fall back to extension defaults.
  */
 export function getInitialGuidesSetup(
   settings: ExtensionSettings = getCachedSettings(),

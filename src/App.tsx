@@ -6,6 +6,7 @@ import { InspectMeasureOverlay } from '@/components/overlay/inspect/inspect-meas
 import { ContainerPickerOverlay } from '@/components/overlay/layout-guides/container-picker-overlay';
 import { LayoutGuidesOverlay } from '@/components/overlay/layout-guides/layout-guides-overlay';
 import { TooltipProvider } from '@/components/ui/tooltip';
+import { useDesignOverlay } from '@/hooks/use-design-overlay';
 import { useDesignOverlayInteraction } from '@/hooks/use-design-overlay-interaction';
 import { useExtensionSettings } from '@/hooks/use-extension-settings';
 import { useGlobalHotkeys } from '@/hooks/use-global-hotkeys';
@@ -17,19 +18,6 @@ import {
   extractContainerInfo,
 } from '@/lib/container-detector';
 import {
-  calculateCenteredX,
-  calculateFitWidthScale,
-  computeSmartDesignPlacement,
-  computeSnapToElementPlacement,
-  readDesignImageFile,
-} from '@/lib/design-overlay-image';
-import {
-  buildDefaultDesignOverlayState,
-  clearSiteDesignOverlay,
-  loadSiteDesignOverlay,
-  saveSiteDesignOverlay,
-} from '@/lib/design-overlay-storage';
-import {
   clearSiteCustomState,
   getInitialGuidesSetup,
   runAutoDetectOrDefaults,
@@ -38,7 +26,6 @@ import {
 import { PortalContext } from '@/lib/portal-context';
 import { getCachedSettings } from '@/lib/settings-storage';
 import { ThemeProvider } from '@/lib/theme-provider';
-import type { DesignOverlayState } from '@/types/design-overlay';
 import type {
   DetectedContainerInfo,
   GridGuideSettings,
@@ -69,8 +56,10 @@ export function App({ portalContainer, onClose }: AppProps) {
   const [hasCustomSiteSettings, setHasCustomSiteSettings] = useState<boolean>(
     initialSetup.hasCustomSiteSettings,
   );
+  // Keep ref in sync so the external settings subscription avoids stale closures.
   const hasCustomSiteSettingsRef = useRef(hasCustomSiteSettings);
   hasCustomSiteSettingsRef.current = hasCustomSiteSettings;
+
   const [activeTool, setActiveTool] = useState<ActiveOverlayTool>('none');
   const [inspectSettings, setInspectSettings] = useState(
     () => getCachedSettings().inspect,
@@ -81,16 +70,6 @@ export function App({ portalContainer, onClose }: AppProps) {
   const [trackedElementLabel, setTrackedElementLabel] = useState<string | null>(
     initialSetup.trackedElementLabel,
   );
-  const [designOverlayState, setDesignOverlayState] =
-    useState<DesignOverlayState>(() =>
-      buildDefaultDesignOverlayState(
-        getCachedSettings().behavior.designOverlayLockedByDefault,
-      ),
-    );
-  const [designOverlayLoaded, setDesignOverlayLoaded] = useState(false);
-  const [designOverlayQuotaExceeded, setDesignOverlayQuotaExceeded] =
-    useState(false);
-  const designOverlayTouchedRef = useRef(false);
 
   const handleExternalSettingsChange = useCallback(
     (nextSettings: ExtensionSettings) => {
@@ -114,28 +93,14 @@ export function App({ portalContainer, onClose }: AppProps) {
     onExternalChange: handleExternalSettingsChange,
   });
 
-  useEffect(() => {
-    let cancelled = false;
-    loadSiteDesignOverlay(
-      getCachedSettings().behavior.designOverlayLockedByDefault,
-    ).then((loaded) => {
-      if (cancelled) return;
-      if (!designOverlayTouchedRef.current) {
-        setDesignOverlayState(loaded);
-      }
-      setDesignOverlayLoaded(true);
-    });
-    return () => {
-      cancelled = true;
-    };
+  const resetActiveTool = useCallback(() => {
+    setActiveTool('none');
   }, []);
 
-  useEffect(() => {
-    if (!designOverlayLoaded) return;
-    void saveSiteDesignOverlay(designOverlayState).then((res) => {
-      setDesignOverlayQuotaExceeded(res.quotaExceeded);
-    });
-  }, [designOverlayLoaded, designOverlayState]);
+  const designOverlay = useDesignOverlay({
+    lockedByDefault: settings.behavior.designOverlayLockedByDefault,
+    onUnlock: resetActiveTool,
+  });
 
   useEffect(() => {
     if (!hasCustomSiteSettings || !settings.behavior.rememberSiteSettings) {
@@ -151,9 +116,9 @@ export function App({ portalContainer, onClose }: AppProps) {
   const needsGuidesScroll =
     guidesState.enabled && guidesState[guidesState.type].followScroll;
   const needsDesignOverlayScroll =
-    designOverlayState.enabled &&
-    Boolean(designOverlayState.imageUrl) &&
-    designOverlayState.followScroll;
+    designOverlay.state.enabled &&
+    Boolean(designOverlay.state.imageUrl) &&
+    designOverlay.state.followScroll;
   const scroll = useWindowScroll(needsGuidesScroll || needsDesignOverlayScroll);
 
   const handleClearTrackedElement = useCallback(() => {
@@ -226,184 +191,17 @@ export function App({ portalContainer, onClose }: AppProps) {
     setActiveTool((prev) => (prev === tool ? 'none' : tool));
   }, []);
 
-  const handleLoadDesignImage = useCallback(
-    async (file: File | Blob, fileName?: string) => {
-      const loaded = await readDesignImageFile(file, fileName);
-      designOverlayTouchedRef.current = true;
-      const defaultLocked = settings.behavior.designOverlayLockedByDefault;
-      if (!defaultLocked) {
-        setActiveTool('none');
-      }
-      const detectedContainer = autoDetectPageContainer();
-      setDesignOverlayState((prev) => {
-        const hadImage = Boolean(prev.imageUrl);
-        const smart = computeSmartDesignPlacement({
-          naturalWidth: loaded.naturalWidth,
-          naturalHeight: loaded.naturalHeight,
-          viewportWidth: window.innerWidth,
-          viewportHeight: window.innerHeight,
-          scrollX: window.scrollX,
-          scrollY: window.scrollY,
-          followScroll: prev.followScroll,
-          containerRect: detectedContainer?.rect ?? null,
-        });
-        return {
-          ...prev,
-          enabled: true,
-          imageUrl: loaded.imageUrl,
-          fileName: loaded.fileName,
-          naturalWidth: loaded.naturalWidth,
-          naturalHeight: loaded.naturalHeight,
-          x: hadImage ? prev.x : smart.x,
-          y: hadImage ? prev.y : smart.y,
-          scale: hadImage ? prev.scale : smart.scale,
-          locked: hadImage ? prev.locked : defaultLocked,
-        };
-      });
-    },
-    [settings.behavior.designOverlayLockedByDefault],
-  );
-
-  const handlePatchDesignOverlay = useCallback(
-    (patch: Partial<DesignOverlayState>) => {
-      designOverlayTouchedRef.current = true;
-      if (patch.locked === false) {
-        setActiveTool('none');
-      }
-      setDesignOverlayState((prev) => ({ ...prev, ...patch }));
-    },
-    [],
-  );
-
-  const handleToggleDesignOverlay = useCallback((enabled: boolean) => {
-    designOverlayTouchedRef.current = true;
-    setDesignOverlayState((prev) => ({ ...prev, enabled }));
-  }, []);
-
-  const handleToggleDesignOverlayShortcut = useCallback(() => {
-    designOverlayTouchedRef.current = true;
-    setDesignOverlayState((prev) =>
-      prev.imageUrl ? { ...prev, enabled: !prev.enabled } : prev,
-    );
-  }, []);
-
-  const handleToggleDesignOverlayLock = useCallback(() => {
-    designOverlayTouchedRef.current = true;
-    setDesignOverlayState((prev) => {
-      if (!prev.imageUrl) return prev;
-      const nextLocked = !prev.locked;
-      if (!nextLocked) {
-        setActiveTool('none');
-      }
-      return { ...prev, locked: nextLocked };
-    });
-  }, []);
-
-  const handleMoveDesignOverlay = useCallback((x: number, y: number) => {
-    designOverlayTouchedRef.current = true;
-    setDesignOverlayState((prev) => ({ ...prev, x, y }));
-  }, []);
-
-  const handleNudgeDesignOverlay = useCallback((dx: number, dy: number) => {
-    designOverlayTouchedRef.current = true;
-    setDesignOverlayState((prev) => ({
-      ...prev,
-      x: prev.x + dx,
-      y: prev.y + dy,
-    }));
-  }, []);
-
-  const handleCenterDesignOverlay = useCallback(() => {
-    designOverlayTouchedRef.current = true;
-    setDesignOverlayState((prev) => ({
-      ...prev,
-      x: calculateCenteredX(prev.naturalWidth, prev.scale, window.innerWidth),
-    }));
-  }, []);
-
-  const handleFitDesignOverlayWidth = useCallback(() => {
-    designOverlayTouchedRef.current = true;
-    setDesignOverlayState((prev) => ({
-      ...prev,
-      scale: calculateFitWidthScale(prev.naturalWidth, window.innerWidth),
-      x: 0,
-    }));
-  }, []);
-
-  const handleAutoFitDesignOverlay = useCallback(() => {
-    designOverlayTouchedRef.current = true;
-    const detectedContainer = autoDetectPageContainer();
-    setDesignOverlayState((prev) => {
-      if (!prev.imageUrl) return prev;
-      const smart = computeSmartDesignPlacement({
-        naturalWidth: prev.naturalWidth,
-        naturalHeight: prev.naturalHeight,
-        viewportWidth: window.innerWidth,
-        viewportHeight: window.innerHeight,
-        scrollX: window.scrollX,
-        scrollY: window.scrollY,
-        followScroll: prev.followScroll,
-        containerRect: detectedContainer?.rect ?? null,
-      });
-      return {
-        ...prev,
-        x: smart.x,
-        y: smart.y,
-        scale: smart.scale,
-      };
-    });
-  }, []);
-
-  const handleSnapDesignOverlayToElement = useCallback(
-    (info: DetectedContainerInfo) => {
-      designOverlayTouchedRef.current = true;
-      setDesignOverlayState((prev) => {
-        const snapped = computeSnapToElementPlacement({
-          naturalWidth: prev.naturalWidth,
-          rect: info.rect,
-          scrollX: window.scrollX,
-          scrollY: window.scrollY,
-          followScroll: prev.followScroll,
-        });
-        return {
-          ...prev,
-          enabled: true,
-          x: snapped.x,
-          y: snapped.y,
-          scale: snapped.scale,
-        };
-      });
-    },
-    [],
-  );
-
-  const handleResetDesignOverlayPosition = useCallback(() => {
-    designOverlayTouchedRef.current = true;
-    setDesignOverlayState((prev) => ({ ...prev, x: 0, y: 0 }));
-  }, []);
-
-  const handleClearDesignOverlay = useCallback(() => {
-    designOverlayTouchedRef.current = true;
-    setDesignOverlayQuotaExceeded(false);
-    setDesignOverlayState(
-      buildDefaultDesignOverlayState(
-        settings.behavior.designOverlayLockedByDefault,
-      ),
-    );
-    void clearSiteDesignOverlay();
-  }, [settings.behavior.designOverlayLockedByDefault]);
-
   useDesignOverlayInteraction({
     portalContainer,
     canNudge:
-      designOverlayState.enabled &&
-      Boolean(designOverlayState.imageUrl) &&
-      !designOverlayState.locked &&
+      designOverlay.state.enabled &&
+      Boolean(designOverlay.state.imageUrl) &&
+      !designOverlay.state.locked &&
       activeTool === 'none',
     onPasteImage: (file, fileName) => {
-      void handleLoadDesignImage(file, fileName).catch(() => {});
+      void designOverlay.loadImage(file, fileName).catch(() => {});
     },
-    onNudge: handleNudgeDesignOverlay,
+    onNudge: designOverlay.nudge,
   });
 
   useGlobalHotkeys({
@@ -415,8 +213,8 @@ export function App({ portalContainer, onClose }: AppProps) {
     onAutoDetect: handleAutoDetect,
     onTogglePickContainer: () => toggleTool('pick-container'),
     onSwitchGuideType: handleTypeChange,
-    onToggleDesignOverlay: handleToggleDesignOverlayShortcut,
-    onToggleDesignOverlayLock: handleToggleDesignOverlayLock,
+    onToggleDesignOverlay: designOverlay.toggleShortcut,
+    onToggleDesignOverlayLock: designOverlay.toggleLock,
   });
 
   const handleColumnsChange = useCallback(
@@ -492,10 +290,10 @@ export function App({ portalContainer, onClose }: AppProps) {
           <TooltipProvider>
             <div className="fixed inset-0 pointer-events-none select-none text-foreground">
               <DesignOverlayLayer
-                state={designOverlayState}
+                state={designOverlay.state}
                 scroll={scroll}
                 isInteractiveAllowed={activeTool === 'none'}
-                onMove={handleMoveDesignOverlay}
+                onMove={designOverlay.move}
               />
 
               <LayoutGuidesOverlay state={guidesState} scroll={scroll} />
@@ -508,7 +306,7 @@ export function App({ portalContainer, onClose }: AppProps) {
                   onSnapToElement={(el) =>
                     applyDetectedContainer(extractContainerInfo(el), true)
                   }
-                  onCancel={() => setActiveTool('none')}
+                  onCancel={resetActiveTool}
                 />
               )}
 
@@ -523,12 +321,12 @@ export function App({ portalContainer, onClose }: AppProps) {
                 onSelect={(info) => {
                   setActiveTool('none');
                   if (isPickingDesignTarget) {
-                    handleSnapDesignOverlayToElement(info);
+                    designOverlay.snapToElement(info);
                   } else {
                     applyDetectedContainer(info, true);
                   }
                 }}
-                onCancel={() => setActiveTool('none')}
+                onCancel={resetActiveTool}
               />
 
               <Dock
@@ -541,18 +339,18 @@ export function App({ portalContainer, onClose }: AppProps) {
                 hasCustomSiteSettings={hasCustomSiteSettings}
                 holdToClose={settings.behavior.holdToClose}
                 designOverlay={{
-                  state: designOverlayState,
-                  quotaExceeded: designOverlayQuotaExceeded,
+                  state: designOverlay.state,
+                  quotaExceeded: designOverlay.quotaExceeded,
                   isPickingTarget: isPickingDesignTarget,
-                  onToggle: handleToggleDesignOverlay,
-                  onPatch: handlePatchDesignOverlay,
-                  onLoadFile: handleLoadDesignImage,
-                  onAutoFit: handleAutoFitDesignOverlay,
+                  onToggle: designOverlay.toggleEnabled,
+                  onPatch: designOverlay.patch,
+                  onLoadFile: designOverlay.loadImage,
+                  onAutoFit: designOverlay.autoFit,
                   onTogglePickTarget: () => toggleTool('pick-design-target'),
-                  onCenterHorizontal: handleCenterDesignOverlay,
-                  onFitToViewportWidth: handleFitDesignOverlayWidth,
-                  onResetPosition: handleResetDesignOverlayPosition,
-                  onClear: handleClearDesignOverlay,
+                  onCenterHorizontal: designOverlay.centerHorizontal,
+                  onFitToViewportWidth: designOverlay.fitToViewportWidth,
+                  onResetPosition: designOverlay.resetPosition,
+                  onClear: designOverlay.clear,
                 }}
                 onToggle={handleToggle}
                 onToggleInspect={(active) =>

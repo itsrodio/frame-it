@@ -28,6 +28,7 @@ function PopoverContent({
   const defaultContainer = usePortalContainer();
 
   return (
+    // Portal into the Shadow DOM container; pointer-events-auto re-enables interaction over the pointer-events-none host.
     <PopoverPrimitive.Portal container={container ?? defaultContainer}>
       <PopoverPrimitive.Positioner
         align={align}

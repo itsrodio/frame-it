@@ -168,8 +168,8 @@ function parseRgbChannel(raw: string): number {
 }
 
 /**
- * Парсит CSS-строку цвета (`rgb(...)`, `rgba(...)`, `hsl(...)`, `hsla(...)`, `oklch(...)`, `oklab(...)`, `color(srgb ...)`, `#rgb`, `#rrggbb`, `#rrggbbaa`).
- * Возвращает `null` для `transparent` или полностью прозрачного цвета (`a === 0`).
+ * Parses a CSS color string (`rgb()`, `rgba()`, `hsl()`, `hsla()`, `oklch()`, `oklab()`, `color(srgb ...)`, `#rgb`, `#rrggbb`, `#rrggbbaa`).
+ * Returns `null` for `transparent` or fully transparent colors (`a === 0`).
  */
 export function parseCssColor(
   raw: string | null | undefined,
@@ -206,7 +206,7 @@ export function parseCssColor(
     return null;
   }
 
-  // Поддержка современных цветов Tailwind v4: oklch(L C H [/ A]) и oklab(L a b [/ A])
+  // Tailwind v4 modern color spaces: oklch(L C H [/ A]) and oklab(L a b [/ A])
   const okMatch = trimmed.match(/^(oklch|oklab)\((.+)\)$/);
   if (okMatch?.[1] && okMatch[2]) {
     const mode = okMatch[1];
@@ -246,7 +246,6 @@ export function parseCssColor(
     return oklabToRgba(L, aVal, bVal, alpha);
   }
 
-  // Поддержка hsl(...) / hsla(...)
   const hslMatch = trimmed.match(/^hsla?\((.+)\)$/);
   if (hslMatch?.[1]) {
     const parts = hslMatch[1]
@@ -264,7 +263,6 @@ export function parseCssColor(
     return hslToRgba(h, s, l, a);
   }
 
-  // Поддержка color(srgb r g b [/ a])
   const srgbFuncMatch = trimmed.match(/^color\(srgb\s+(.+)\)$/);
   if (srgbFuncMatch?.[1]) {
     const parts = srgbFuncMatch[1]
@@ -396,7 +394,7 @@ export function isTextBackgroundClip(style: CSSStyleDeclaration): boolean {
 }
 
 /**
- * Извлекает список RGBA-стопов из CSS-градиента (`linear-gradient`, `radial-gradient`, `conic-gradient`).
+ * Extracts RGBA color stops from a CSS gradient (`linear-gradient`, `radial-gradient`, `conic-gradient`).
  */
 export function extractGradientStops(
   bgImage: string | null | undefined,
@@ -419,7 +417,7 @@ export function extractGradientStops(
       } else if (
         /^(?:rgba?|hsla?|oklch|oklab|color)\(|^#/.test(token.toLowerCase())
       ) {
-        // Явный прозрачный цвет вида rgba(0, 0, 0, 0) внутри градиента
+        // Explicit transparent stop such as rgba(0, 0, 0, 0) inside a gradient
         stops.push({ r: 0, g: 0, b: 0, a: 0 });
       }
     }
@@ -429,8 +427,8 @@ export function extractGradientStops(
 }
 
 /**
- * Извлекает цветовые точки из CSS-градиента (`linear-gradient`, `radial-gradient`, `conic-gradient`)
- * и вычисляет результирующий цвет с использованием premultiplied-alpha интерполяции.
+ * Extracts color stops from a CSS gradient and interpolates the color at `positionRatio`
+ * using premultiplied-alpha interpolation.
  */
 export function parseGradientColor(
   bgImage: string | null | undefined,
@@ -451,7 +449,7 @@ export function parseGradientColor(
   const s1 = stops[idx] ?? stops[0] ?? DEFAULT_WHITE;
   const s2 = stops[idx + 1] ?? s1;
 
-  // Premultiplied alpha interpolation (как в браузерном рендере CSS-градиентов)
+  // Premultiplied alpha interpolation (matches browser CSS gradient rendering).
   const outA = (1 - localT) * s1.a + localT * s2.a;
   if (outA <= 0) return null;
 
@@ -468,7 +466,7 @@ export function parseGradientColor(
 }
 
 /**
- * Наложение полупрозрачного цвета `fg` поверх `bg` (alpha compositing).
+ * Composites a semi-transparent foreground color over a background color.
  */
 export function blendColors(fg: RgbaColor, bg: RgbaColor): RgbaColor {
   if (fg.a >= 1) return { ...fg, a: 1 };
@@ -484,10 +482,10 @@ export function blendColors(fg: RgbaColor, bg: RgbaColor): RgbaColor {
 }
 
 /**
- * Определяет эффективный цвет фона элемента, поднимаясь вверх по DOM-дереву,
- * если у самого элемента фон `transparent` или полупрозрачный.
- * Учитывает как `background-color`, так и фоновые CSS-градиенты (`background-image`),
- * игнорируя градиенты с `background-clip: text` (которые красят сам текст, а не блок).
+ * Resolves an element's effective background color by walking up the DOM tree
+ * when its own background is transparent or semi-transparent.
+ * Accounts for both `background-color` and CSS gradients (`background-image`),
+ * ignoring `background-clip: text` gradients that paint text rather than the box.
  */
 export function resolveEffectiveBackgroundColor(
   el: HTMLElement,
@@ -505,7 +503,7 @@ export function resolveEffectiveBackgroundColor(
     const style = window.getComputedStyle(current);
     const clipIsText = isTextBackgroundClip(style);
 
-    // Если на элементе есть фоновый градиент (не обрезанный по тексту)
+    // Account for box background gradients (excluding background-clip: text)
     if (!clipIsText && style.backgroundImage?.includes('gradient(')) {
       let ratio = 0.5;
       if (targetRect && current !== el) {
@@ -568,7 +566,7 @@ export function getRelativeLuminance(color: RgbaColor): number {
 }
 
 /**
- * Вычисляет коэффициент контрастности по формуле WCAG 2.1 (от 1 до 21).
+ * Computes the WCAG 2.1 contrast ratio (from 1 to 21).
  */
 export function calculateContrastRatio(fg: RgbaColor, bg: RgbaColor): number {
   const effectiveBg = bg.a < 1 ? blendColors(bg, DEFAULT_WHITE) : bg;
@@ -623,10 +621,8 @@ const GENERIC_OR_EMOJI_FONTS = new Set([
 ]);
 
 /**
- * Извлекает отображаемое имя шрифта из CSS `font-family`.
- * Если в начале стека стоят системные фолбэки (`ui-sans-serif`, `system-ui`),
- * но в стеке есть кастомный шрифт (например, после системных), возвращает кастомный шрифт,
- * иначе возвращает первый шрифт из стека.
+ * Extracts the primary display font name from a CSS `font-family` stack,
+ * skipping leading generic/system fallback fonts when a named font is present.
  */
 export function cleanFontFamily(rawFontFamily: string): string {
   if (!rawFontFamily) return 'sans-serif';
@@ -684,9 +680,9 @@ function extractGap(style: CSSStyleDeclaration): string | null {
 }
 
 /**
- * Определяет эффективный цвет текста элемента.
- * Поддерживает градиентный текст (`background-clip: text` + `color: transparent` / `-webkit-text-fill-color: transparent`),
- * в том числе унаследованный от родителя.
+ * Resolves an element's effective text color, including gradient text
+ * (`background-clip: text` + `color: transparent` / `-webkit-text-fill-color`),
+ * even when inherited from an ancestor element.
  */
 function resolveEffectiveTextColor(
   el: HTMLElement,
@@ -704,7 +700,7 @@ function resolveEffectiveTextColor(
       ? parseCssColor(webkitFill)
       : parseCssColor(style.color);
 
-  // Проверяем, применён ли к самому элементу или его родителю градиентный текст (bg-clip: text)
+  // Check whether gradient text (background-clip: text) is applied to the element or an ancestor.
   let gradHost: HTMLElement | null = el;
   while (gradHost) {
     const hostStyle =
