@@ -21,8 +21,5 @@
     "**/coverage": true,
     "**/playwright-report": true,
     "**/test-results": true
-  },
-  "[github-actions-workflow]": {
-    "editor.defaultFormatter": "redhat.vscode-yaml"
   }
 }
