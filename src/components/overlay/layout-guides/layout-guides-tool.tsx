@@ -23,9 +23,9 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 import {
+  buildColorOpacityProps,
   isGridModified,
   isLinearModified,
-  normalizeHexColor,
 } from '@/lib/guide-utils';
 import type {
   BaseGuideSettings,
@@ -69,18 +69,10 @@ export function LayoutGuidesTool({
     else onGridChange(patch);
   };
 
-  const { cleanHex, validCssHex } = normalizeHexColor(activeSettings.color);
-
-  const handleHexChange = (raw: string) => {
-    const sanitized = raw.replace(/[^0-9a-fA-F]/g, '').slice(0, 6);
-    updateActiveBase({ color: `#${sanitized}` });
-  };
-
-  const handleOpacityChange = (raw: string) => {
-    const num = Number(raw);
-    if (Number.isNaN(num)) return;
-    updateActiveBase({ opacity: Math.max(0, Math.min(100, num)) });
-  };
+  const colorOpacityProps = buildColorOpacityProps(
+    activeSettings,
+    updateActiveBase,
+  );
 
   return (
     <div className="flex items-center">
@@ -129,11 +121,7 @@ export function LayoutGuidesTool({
               <GridGuideFields
                 settings={state.grid}
                 onChange={onGridChange}
-                cleanHex={cleanHex}
-                validCssHex={validCssHex}
-                opacity={state.grid.opacity}
-                onHexChange={handleHexChange}
-                onOpacityChange={handleOpacityChange}
+                {...colorOpacityProps}
               />
             ) : (
               <LinearGuideFields
@@ -148,11 +136,7 @@ export function LayoutGuidesTool({
                 onChange={
                   state.type === 'columns' ? onColumnsChange : onRowsChange
                 }
-                cleanHex={cleanHex}
-                validCssHex={validCssHex}
-                opacity={activeSettings.opacity}
-                onHexChange={handleHexChange}
-                onOpacityChange={handleOpacityChange}
+                {...colorOpacityProps}
               />
             )}
           </FieldGroup>

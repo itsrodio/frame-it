@@ -2,7 +2,7 @@ import { act } from 'react';
 import ReactDOM from 'react-dom/client';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { DEFAULT_LAYOUT_GUIDES_STATE } from '@/components/overlay/layout-guides/constants';
-import { LayoutGuidesOverlay } from '@/components/overlay/layout-guides-overlay';
+import { LayoutGuidesOverlay } from '@/components/overlay/layout-guides/layout-guides-overlay';
 import type { LayoutGuidesState } from '@/types/layout-guides';
 
 describe('LayoutGuidesOverlay', () => {

@@ -1,7 +1,7 @@
 import { act } from 'react';
 import ReactDOM from 'react-dom/client';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { CloseTool } from '@/components/overlay/close-tool';
+import { CloseTool } from '@/components/overlay/dock/close-tool';
 import { TooltipProvider } from '@/components/ui/tooltip';
 
 describe('CloseTool', () => {
