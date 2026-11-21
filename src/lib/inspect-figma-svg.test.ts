@@ -1,5 +1,10 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { buildFigmaSvg, preloadImagesForFigma } from '@/lib/inspect-figma-svg';
+import {
+  buildFigmaSvg,
+  buildPageExportFilename,
+  buildPageFigmaSvg,
+  preloadImagesForFigma,
+} from '@/lib/inspect-figma-svg';
 import { extractInspectedStyles } from '@/lib/inspect-styles';
 
 function mockRect(
@@ -325,5 +330,89 @@ describe('inspect-figma-svg', () => {
     expect(preloaded.get(fetchedImg)).toBe('data:image/png;base64,CONVERTED');
     expect(preloaded.get(badFetchImg)).toBeUndefined();
     vi.unstubAllGlobals();
+  });
+
+  it('exports full page SVG excluding FrameIt overlay, supporting deep DOM trees and scroll offsets', async () => {
+    document.title = 'Landing Page';
+    document.documentElement.style.backgroundColor = 'rgb(248, 250, 252)';
+
+    // Build a 30-level deep tree (> 24 element limit)
+    let cursor: HTMLElement = document.body;
+    for (let i = 0; i < 30; i += 1) {
+      const wrapper = document.createElement('div');
+      vi.spyOn(wrapper, 'getBoundingClientRect').mockReturnValue(
+        mockRect(0, 0, 1440, 2600),
+      );
+      cursor.appendChild(wrapper);
+      cursor = wrapper;
+    }
+    const deepHeading = document.createElement('h1');
+    deepHeading.textContent = 'Deep Hero Title';
+    cursor.appendChild(deepHeading);
+
+    // Add FrameIt overlay host that must be excluded
+    const overlayHost = document.createElement('frameit-overlay');
+    const overlayChild = document.createElement('div');
+    overlayChild.id = 'frameit-root';
+    overlayChild.textContent = 'FrameItDockHiddenText';
+    overlayHost.appendChild(overlayChild);
+    document.body.appendChild(overlayHost);
+
+    Object.defineProperty(window, 'scrollX', { value: 20, configurable: true });
+    Object.defineProperty(window, 'scrollY', {
+      value: 300,
+      configurable: true,
+    });
+    Object.defineProperty(document.documentElement, 'scrollWidth', {
+      value: 1440,
+      configurable: true,
+    });
+    Object.defineProperty(document.documentElement, 'scrollHeight', {
+      value: 2600,
+      configurable: true,
+    });
+
+    vi.spyOn(deepHeading, 'getBoundingClientRect').mockReturnValue(
+      mockRect(100, -100, 320, 40),
+    );
+    vi.spyOn(overlayHost, 'getBoundingClientRect').mockReturnValue(
+      mockRect(0, 0, 400, 60),
+    );
+    vi.spyOn(overlayChild, 'getBoundingClientRect').mockReturnValue(
+      mockRect(0, 0, 400, 60),
+    );
+
+    const svg = await buildPageFigmaSvg(document);
+
+    expect(svg).toContain('width="1440" height="2600"');
+    expect(svg).toContain('<g id="Landing Page">');
+    expect(svg).toContain('fill="#F8FAFC"');
+    expect(svg).toContain('Deep Hero Title');
+    // x = 100 - (-20) = 120, y baseline from -100 - (-300) = 200+
+    expect(svg).toContain('x="120"');
+    expect(svg).not.toContain('FrameItDockHiddenText');
+  });
+
+  it('builds sanitized .svg filenames for page export', () => {
+    expect(
+      buildPageExportFilename(
+        { title: 'Ignored Title' } as Document,
+        { hostname: 'example.com', pathname: '/pricing/pro/' } as Location,
+      ),
+    ).toBe('example.com-pricing-pro.svg');
+
+    expect(
+      buildPageExportFilename(
+        { title: 'My Local App' } as Document,
+        { hostname: '', pathname: '/' } as Location,
+      ),
+    ).toBe('my-local-app.svg');
+
+    expect(
+      buildPageExportFilename(
+        { title: '' } as Document,
+        { hostname: '', pathname: '' } as Location,
+      ),
+    ).toBe('page.svg');
   });
 });

@@ -1,6 +1,8 @@
+import { isOverlayElement } from '@/lib/dom-utils';
 import {
   cleanFontFamily,
   extractGradientStops,
+  extractInspectedStyles,
   type InspectedElementStyles,
   isTextBackgroundClip,
   parseCssColor,
@@ -499,7 +501,9 @@ export async function preloadImagesForFigma(
   const imgs: HTMLImageElement[] =
     rootEl instanceof HTMLImageElement
       ? [rootEl]
-      : Array.from(rootEl.querySelectorAll('img'));
+      : Array.from(rootEl.querySelectorAll('img')).filter(
+          (img) => !isOverlayElement(img),
+        );
 
   await Promise.all(
     imgs.map(async (img) => {
@@ -599,12 +603,19 @@ interface SvgLayerItem {
   spans?: SvgTextSpan[];
 }
 
+export interface BuildFigmaSvgOptions {
+  maxDepth?: number;
+  frameLabel?: string;
+}
+
 export function buildFigmaSvg(
   el: HTMLElement,
   styles: InspectedElementStyles,
   rect: DOMRect,
   preloadedImages?: Map<HTMLImageElement, string>,
+  options?: BuildFigmaSvgOptions,
 ): string {
+  const maxDepth = options?.maxDepth ?? 24;
   const tag = el.tagName.toLowerCase();
   const rootTextHex = styles.colors.text.hex.slice(0, 7);
 
@@ -721,7 +732,7 @@ export function buildFigmaSvg(
   };
 
   const walkElement = (node: Element, depth: number) => {
-    if (depth > 24) return;
+    if (depth > maxDepth) return;
     const nodeTag = node.tagName.toLowerCase();
     if (
       nodeTag === 'script' ||
@@ -733,6 +744,9 @@ export function buildFigmaSvg(
     }
 
     const isRoot = node === el;
+    if (!isRoot && isOverlayElement(node)) {
+      return;
+    }
     const nRect = isRoot ? rect : node.getBoundingClientRect();
     const nStyle = window.getComputedStyle(node);
 
@@ -759,111 +773,119 @@ export function buildFigmaSvg(
 
     if (!(node instanceof HTMLElement)) return;
 
+    const isDisplayContents = nStyle.display === 'contents';
     const nw = isRoot ? w : round1(nRect.width);
     const nh = isRoot ? h : round1(nRect.height);
-    if (!isRoot && (nw <= 0 || nh <= 0)) return;
+    if (!isRoot && !isDisplayContents && (nw <= 0 || nh <= 0)) return;
 
     const nx = isRoot ? 0 : round1(nRect.left - rect.left);
     const ny = isRoot ? 0 : round1(nRect.top - rect.top);
 
-    const rawRadius = Number.parseFloat(nStyle.borderRadius) || 0;
-    const rx = Math.max(
-      0,
-      Math.min(round1(nw / 2), round1(nh / 2), round1(rawRadius)),
-    );
-
-    const bgColor = parseCssColor(nStyle.backgroundColor);
-    const clipIsText = isTextBackgroundClip(nStyle);
-    const gradStops = !clipIsText
-      ? extractGradientStops(nStyle.backgroundImage)
-      : [];
-
-    const bt = round1(Number.parseFloat(nStyle.borderTopWidth) || 0);
-    const br = round1(
-      Number.parseFloat(nStyle.borderRightWidth || nStyle.borderTopWidth) || 0,
-    );
-    const bb = round1(
-      Number.parseFloat(nStyle.borderBottomWidth || nStyle.borderTopWidth) || 0,
-    );
-    const bl = round1(
-      Number.parseFloat(nStyle.borderLeftWidth || nStyle.borderTopWidth) || 0,
-    );
-    const hasUniformBorder = bt > 0 && bt === br && bt === bb && bt === bl;
-    const topBorderColor = bt > 0 ? parseCssColor(nStyle.borderTopColor) : null;
-    const bottomBorderColor =
-      bb > 0
-        ? parseCssColor(nStyle.borderBottomColor || nStyle.borderTopColor)
-        : null;
-
-    // Always preserve the resolved page/section background on container roots so copied blocks
-    // do not appear on Figma's transparent dark canvas.
-    const isContainerRoot = isRoot && el.children.length > 0;
-    const hasBoxFill =
-      bgColor !== null ||
-      gradStops.length > 0 ||
-      (isRoot && (!styles.colors.isInheritedBackground || isContainerRoot));
-
-    if (hasBoxFill || (hasUniformBorder && topBorderColor)) {
-      let fillAttr = 'fill="none"';
-      if (gradStops.length > 0) {
-        const isHorizontal =
-          nw > nh * 2 ||
-          nStyle.backgroundImage.includes('90deg') ||
-          nStyle.backgroundImage.includes('to right');
-        const gradUrl = registerGradient(gradStops, isHorizontal);
-        fillAttr = `fill="${gradUrl}"`;
-      } else if (bgColor) {
-        const hex6 = rgbaToHex({ ...bgColor, a: 1 });
-        const opacityAttr =
-          bgColor.a < 1 ? ` fill-opacity="${round2(bgColor.a)}"` : '';
-        fillAttr = `fill="${hex6}"${opacityAttr}`;
-      } else if (
-        isRoot &&
-        (!styles.colors.isInheritedBackground || isContainerRoot)
-      ) {
-        fillAttr = `fill="${styles.colors.background.hex.slice(0, 7)}"`;
-      }
-
-      let strokeAttr = '';
-      if (hasUniformBorder && topBorderColor) {
-        const bHex6 = rgbaToHex({ ...topBorderColor, a: 1 });
-        const bOpacity =
-          topBorderColor.a < 1
-            ? ` stroke-opacity="${round2(topBorderColor.a)}"`
-            : '';
-        strokeAttr = ` stroke="${bHex6}"${bOpacity} stroke-width="${bt}"`;
-      }
-
-      const posAttrs = nx !== 0 || ny !== 0 ? `x="${nx}" y="${ny}" ` : '';
-      const rxAttr = rx > 0 ? ` rx="${rx}"` : '';
-      pushRaw(
-        `    <rect ${posAttrs}width="${nw}" height="${nh}"${rxAttr} ${fillAttr}${strokeAttr} />`,
+    if (!isDisplayContents) {
+      const rawRadius = Number.parseFloat(nStyle.borderRadius) || 0;
+      const rx = Math.max(
+        0,
+        Math.min(round1(nw / 2), round1(nh / 2), round1(rawRadius)),
       );
+
+      const bgColor = parseCssColor(nStyle.backgroundColor);
+      const clipIsText = isTextBackgroundClip(nStyle);
+      const gradStops = !clipIsText
+        ? extractGradientStops(nStyle.backgroundImage)
+        : [];
+
+      const bt = round1(Number.parseFloat(nStyle.borderTopWidth) || 0);
+      const br = round1(
+        Number.parseFloat(nStyle.borderRightWidth || nStyle.borderTopWidth) ||
+          0,
+      );
+      const bb = round1(
+        Number.parseFloat(nStyle.borderBottomWidth || nStyle.borderTopWidth) ||
+          0,
+      );
+      const bl = round1(
+        Number.parseFloat(nStyle.borderLeftWidth || nStyle.borderTopWidth) || 0,
+      );
+      const hasUniformBorder = bt > 0 && bt === br && bt === bb && bt === bl;
+      const topBorderColor =
+        bt > 0 ? parseCssColor(nStyle.borderTopColor) : null;
+      const bottomBorderColor =
+        bb > 0
+          ? parseCssColor(nStyle.borderBottomColor || nStyle.borderTopColor)
+          : null;
+
+      // Always preserve the resolved page/section background on container roots so copied blocks
+      // do not appear on Figma's transparent dark canvas.
+      const isContainerRoot = isRoot && el.children.length > 0;
+      const hasBoxFill =
+        bgColor !== null ||
+        gradStops.length > 0 ||
+        (isRoot && (!styles.colors.isInheritedBackground || isContainerRoot));
+
+      if (hasBoxFill || (hasUniformBorder && topBorderColor)) {
+        let fillAttr = 'fill="none"';
+        if (gradStops.length > 0) {
+          const isHorizontal =
+            nw > nh * 2 ||
+            nStyle.backgroundImage.includes('90deg') ||
+            nStyle.backgroundImage.includes('to right');
+          const gradUrl = registerGradient(gradStops, isHorizontal);
+          fillAttr = `fill="${gradUrl}"`;
+        } else if (bgColor) {
+          const hex6 = rgbaToHex({ ...bgColor, a: 1 });
+          const opacityAttr =
+            bgColor.a < 1 ? ` fill-opacity="${round2(bgColor.a)}"` : '';
+          fillAttr = `fill="${hex6}"${opacityAttr}`;
+        } else if (
+          isRoot &&
+          (!styles.colors.isInheritedBackground || isContainerRoot)
+        ) {
+          fillAttr = `fill="${styles.colors.background.hex.slice(0, 7)}"`;
+        }
+
+        let strokeAttr = '';
+        if (hasUniformBorder && topBorderColor) {
+          const bHex6 = rgbaToHex({ ...topBorderColor, a: 1 });
+          const bOpacity =
+            topBorderColor.a < 1
+              ? ` stroke-opacity="${round2(topBorderColor.a)}"`
+              : '';
+          strokeAttr = ` stroke="${bHex6}"${bOpacity} stroke-width="${bt}"`;
+        }
+
+        const posAttrs = nx !== 0 || ny !== 0 ? `x="${nx}" y="${ny}" ` : '';
+        const rxAttr = rx > 0 ? ` rx="${rx}"` : '';
+        pushRaw(
+          `    <rect ${posAttrs}width="${nw}" height="${nh}"${rxAttr} ${fillAttr}${strokeAttr} />`,
+        );
+      }
+
+      if (!hasUniformBorder) {
+        if (bt > 0 && topBorderColor) {
+          const hex6 = rgbaToHex({ ...topBorderColor, a: 1 });
+          const op =
+            topBorderColor.a < 1
+              ? ` stroke-opacity="${round2(topBorderColor.a)}"`
+              : '';
+          pushRaw(
+            `    <line x1="${nx}" y1="${ny}" x2="${round1(nx + nw)}" y2="${ny}" stroke="${hex6}"${op} stroke-width="${bt}" />`,
+          );
+        }
+        if (bb > 0 && bottomBorderColor) {
+          const hex6 = rgbaToHex({ ...bottomBorderColor, a: 1 });
+          const op =
+            bottomBorderColor.a < 1
+              ? ` stroke-opacity="${round2(bottomBorderColor.a)}"`
+              : '';
+          const by = round1(ny + nh);
+          pushRaw(
+            `    <line x1="${nx}" y1="${by}" x2="${round1(nx + nw)}" y2="${by}" stroke="${hex6}"${op} stroke-width="${bb}" />`,
+          );
+        }
+      }
     }
 
-    if (!hasUniformBorder) {
-      if (bt > 0 && topBorderColor) {
-        const hex6 = rgbaToHex({ ...topBorderColor, a: 1 });
-        const op =
-          topBorderColor.a < 1
-            ? ` stroke-opacity="${round2(topBorderColor.a)}"`
-            : '';
-        pushRaw(
-          `    <line x1="${nx}" y1="${ny}" x2="${round1(nx + nw)}" y2="${ny}" stroke="${hex6}"${op} stroke-width="${bt}" />`,
-        );
-      }
-      if (bb > 0 && bottomBorderColor) {
-        const hex6 = rgbaToHex({ ...bottomBorderColor, a: 1 });
-        const op =
-          bottomBorderColor.a < 1
-            ? ` stroke-opacity="${round2(bottomBorderColor.a)}"`
-            : '';
-        const by = round1(ny + nh);
-        pushRaw(
-          `    <line x1="${nx}" y1="${by}" x2="${round1(nx + nw)}" y2="${by}" stroke="${hex6}"${op} stroke-width="${bb}" />`,
-        );
-      }
-    }
+    const clipIsText = isTextBackgroundClip(nStyle);
 
     const fontSize = Math.max(
       8,
@@ -952,7 +974,9 @@ export function buildFigmaSvg(
     return `    <text x="${item.x}" y="${item.y}" fill="${item.fill}"${item.opacityAttr} font-family="${item.fontFamily}" font-size="${item.fontSize}" font-weight="${item.fontWeight}"${item.fontStyleAttr}>${tspans}</text>`;
   });
 
-  const label = escapeXml(tag + (el.id ? `#${el.id}` : ''));
+  const label = escapeXml(
+    options?.frameLabel?.trim() || tag + (el.id ? `#${el.id}` : ''),
+  );
   const defsBlock = defs.length > 0 ? [`  <defs>`, ...defs, `  </defs>`] : [];
 
   return [
@@ -963,4 +987,93 @@ export function buildFigmaSvg(
     `  </g>`,
     `</svg>`,
   ].join('\n');
+}
+
+function createDocumentPageRect(doc: Document): DOMRect {
+  const docEl = doc.documentElement;
+  const bodyEl = doc.body;
+  const scrollX = window.scrollX || 0;
+  const scrollY = window.scrollY || 0;
+  const width = Math.max(
+    docEl?.scrollWidth ?? 0,
+    bodyEl?.scrollWidth ?? 0,
+    docEl?.clientWidth ?? 0,
+    window.innerWidth || 0,
+    1,
+  );
+  const height = Math.max(
+    docEl?.scrollHeight ?? 0,
+    bodyEl?.scrollHeight ?? 0,
+    docEl?.clientHeight ?? 0,
+    window.innerHeight || 0,
+    1,
+  );
+  const left = -scrollX;
+  const top = -scrollY;
+  return {
+    x: left,
+    y: top,
+    left,
+    top,
+    width,
+    height,
+    right: left + width,
+    bottom: top + height,
+    toJSON: () => ({ left, top, width, height }),
+  };
+}
+
+/**
+ * Generates a `.svg` or `.png` filename for the current page export.
+ */
+export function buildPageExportFilename(
+  doc: Document = document,
+  loc: Location = window.location,
+  extension: 'svg' | 'png' = 'svg',
+): string {
+  const host = (loc.hostname || '').trim();
+  const path = (loc.pathname || '')
+    .replace(/^\/+|\/+$/g, '')
+    .replace(/[^a-zA-Z0-9-_]+/g, '-')
+    .replace(/-+/g, '-')
+    .replace(/^-+|-+$/g, '');
+  const titleSlug = (doc.title || '')
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9-_]+/g, '-')
+    .replace(/-+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .slice(0, 40);
+  const base = [host, path].filter(Boolean).join('-') || titleSlug || 'page';
+  return `${base.slice(0, 64)}.${extension}`;
+}
+
+/**
+ * Exports the entire visible webpage DOM (excluding FrameIt's own overlay)
+ * as a Figma-compatible vector SVG string.
+ */
+export async function buildPageFigmaSvg(
+  doc: Document = document,
+): Promise<string> {
+  const rootEl = doc.body ?? doc.documentElement;
+  if (!(rootEl instanceof HTMLElement)) {
+    return '';
+  }
+
+  const pageRect = createDocumentPageRect(doc);
+  const styles = extractInspectedStyles(rootEl, pageRect);
+  const hasImages = Array.from(rootEl.querySelectorAll('img')).some(
+    (img) => !isOverlayElement(img),
+  );
+  const preloadedImages = hasImages
+    ? await preloadImagesForFigma(rootEl)
+    : undefined;
+
+  const frameLabel =
+    doc.title?.trim() || window.location.hostname?.trim() || 'page';
+
+  return buildFigmaSvg(rootEl, styles, pageRect, preloadedImages, {
+    maxDepth: 64,
+    frameLabel,
+  });
 }

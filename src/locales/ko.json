@@ -14,12 +14,30 @@
       "toggleAriaLabel": "디자인 오버레이 전환",
       "toggleTooltip": "디자인 오버레이 (Shift+O)"
     },
+    "pageExport": {
+      "ariaLabel": "전체 페이지를 클립보드에 복사",
+      "tooltipSvg": "전체 페이지를 Figma용으로 복사 (SVG)",
+      "tooltipPng": "전체 페이지 스크린샷 복사 (PNG)",
+      "copiedTooltip": "클립보드에 복사됨",
+      "savedTooltip": "파일 저장됨"
+    },
     "close": {
       "ariaLabel": "길게 눌러 FrameIt 닫기",
       "holdToClose": "길게 눌러 닫기",
       "keepHolding": "계속 누르고 계세요...",
       "clickToClose": "FrameIt 닫기"
     }
+  },
+  "pageExport": {
+    "title": "페이지 내보내기",
+    "format": "형식",
+    "svgHint": "Figma용 편집 가능한 벡터 레이어",
+    "pngHint": "전체 페이지 스크린샷",
+    "saveSvg": ".svg 저장",
+    "savePng": ".png 저장",
+    "copyClipboard": "클립보드에 복사",
+    "saved": "저장됨",
+    "error": "페이지를 내보내지 못했습니다"
   },
   "picker": {
     "snapHint": "페이지의 아무 컨테이너나 클릭하여 레이아웃 가이드를 스냅하세요",

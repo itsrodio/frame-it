@@ -14,12 +14,30 @@
       "toggleAriaLabel": "Afficher/masquer la maquette",
       "toggleTooltip": "Calque maquette (Shift+O)"
     },
+    "pageExport": {
+      "ariaLabel": "Copier toute la page dans le presse-papiers",
+      "tooltipSvg": "Copier toute la page vers Figma (SVG)",
+      "tooltipPng": "Copier la capture complète (PNG)",
+      "copiedTooltip": "Copié dans le presse-papiers",
+      "savedTooltip": "Fichier enregistré"
+    },
     "close": {
       "ariaLabel": "Maintenir pour fermer FrameIt",
       "holdToClose": "Maintenir pour fermer",
       "keepHolding": "Continuez de maintenir...",
       "clickToClose": "Fermer FrameIt"
     }
+  },
+  "pageExport": {
+    "title": "Exporter la page",
+    "format": "Format",
+    "svgHint": "Calques vectoriels éditables pour Figma",
+    "pngHint": "Capture d'écran pleine page",
+    "saveSvg": "Enregistrer .svg",
+    "savePng": "Enregistrer .png",
+    "copyClipboard": "Copier dans le presse-papiers",
+    "saved": "Enregistré",
+    "error": "Échec de l'exportation de la page"
   },
   "picker": {
     "snapHint": "Cliquez sur n'importe quel conteneur de la page pour aligner les guides",

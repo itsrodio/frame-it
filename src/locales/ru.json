@@ -14,12 +14,30 @@
       "toggleAriaLabel": "Переключить наложение макета",
       "toggleTooltip": "Наложение макета (Shift+O)"
     },
+    "pageExport": {
+      "ariaLabel": "Скопировать всю страницу в буфер",
+      "tooltipSvg": "Скопировать страницу для Figma (SVG)",
+      "tooltipPng": "Скопировать скриншот страницы (PNG)",
+      "copiedTooltip": "Скопировано в буфер",
+      "savedTooltip": "Файл сохранён"
+    },
     "close": {
       "ariaLabel": "Удерживайте, чтобы закрыть FrameIt",
       "holdToClose": "Удерживайте для закрытия",
       "keepHolding": "Продолжайте удерживать...",
       "clickToClose": "Закрыть FrameIt"
     }
+  },
+  "pageExport": {
+    "title": "Экспорт страницы",
+    "format": "Формат",
+    "svgHint": "Векторные слои для Figma",
+    "pngHint": "Полный скриншот всей страницы",
+    "saveSvg": "Сохранить .svg",
+    "savePng": "Сохранить .png",
+    "copyClipboard": "Копировать в буфер",
+    "saved": "Сохранено",
+    "error": "Не удалось экспортировать страницу"
   },
   "picker": {
     "snapHint": "Кликните по любому контейнеру на странице, чтобы привязать сетку",

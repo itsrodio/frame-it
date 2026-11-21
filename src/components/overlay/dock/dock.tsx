@@ -1,5 +1,6 @@
 import { DesignOverlayTool } from '@/components/overlay/design-overlay/design-overlay-tool';
 import { CloseTool } from '@/components/overlay/dock/close-tool';
+import { PageExportTool } from '@/components/overlay/dock/page-export-tool';
 import { InspectTool } from '@/components/overlay/inspect/inspect-tool';
 import { LayoutGuidesTool } from '@/components/overlay/layout-guides/layout-guides-tool';
 import { Separator } from '@/components/ui/separator';
@@ -39,6 +40,7 @@ export function Dock({
       />
       <LayoutGuidesTool {...props} />
       {designOverlay && <DesignOverlayTool {...designOverlay} />}
+      <PageExportTool />
       <Separator orientation="vertical" className="my-1.5" />
       <CloseTool onClose={onClose} holdToClose={holdToClose} />
     </nav>

@@ -14,12 +14,30 @@
       "toggleAriaLabel": "Toggle design overlay",
       "toggleTooltip": "Toggle design overlay (Shift+O)"
     },
+    "pageExport": {
+      "ariaLabel": "Copy full page to clipboard",
+      "tooltipSvg": "Copy full page to Figma (SVG)",
+      "tooltipPng": "Copy full page screenshot (PNG)",
+      "copiedTooltip": "Copied to clipboard",
+      "savedTooltip": "File saved"
+    },
     "close": {
       "ariaLabel": "Hold to close FrameIt",
       "holdToClose": "Hold to close",
       "keepHolding": "Keep holding...",
       "clickToClose": "Close FrameIt"
     }
+  },
+  "pageExport": {
+    "title": "Export Page",
+    "format": "Format",
+    "svgHint": "Editable vector layers for Figma",
+    "pngHint": "Full-page pixel screenshot",
+    "saveSvg": "Save .svg",
+    "savePng": "Save .png",
+    "copyClipboard": "Copy to clipboard",
+    "saved": "Saved",
+    "error": "Failed to export page"
   },
   "picker": {
     "snapHint": "Click any container on the page to snap layout guides",

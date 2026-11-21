@@ -73,4 +73,26 @@ describe('background entrypoint', () => {
 
     expect(sendMessageSpy).not.toHaveBeenCalled();
   });
+
+  it('captures visible tab PNG when CAPTURE_VISIBLE_TAB message is received', async () => {
+    const captureSpy = vi
+      .spyOn(browser.tabs, 'captureVisibleTab')
+      .mockResolvedValue('data:image/png;base64,SCREENSHOT' as never);
+
+    background.main();
+
+    const sendResponse = vi.fn();
+    await fakeBrowser.runtime.onMessage.trigger(
+      { type: 'CAPTURE_VISIBLE_TAB' },
+      { tab: createMockTab({ id: 7, windowId: 12 }) },
+      sendResponse,
+    );
+
+    expect(captureSpy).toHaveBeenCalledWith(12, { format: 'png' });
+    await vi.waitFor(() => {
+      expect(sendResponse).toHaveBeenCalledWith({
+        dataUrl: 'data:image/png;base64,SCREENSHOT',
+      });
+    });
+  });
 });

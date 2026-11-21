@@ -14,12 +14,30 @@
       "toggleAriaLabel": "Alternar sobreposição de design",
       "toggleTooltip": "Sobreposição de design (Shift+O)"
     },
+    "pageExport": {
+      "ariaLabel": "Copiar página inteira para a área de transferência",
+      "tooltipSvg": "Copiar página inteira para o Figma (SVG)",
+      "tooltipPng": "Copiar captura da página inteira (PNG)",
+      "copiedTooltip": "Copiado para a área de transferência",
+      "savedTooltip": "Arquivo salvo"
+    },
     "close": {
       "ariaLabel": "Segure para fechar o FrameIt",
       "holdToClose": "Segure para fechar",
       "keepHolding": "Continue segurando...",
       "clickToClose": "Fechar FrameIt"
     }
+  },
+  "pageExport": {
+    "title": "Exportar página",
+    "format": "Formato",
+    "svgHint": "Camadas vetoriais editáveis para o Figma",
+    "pngHint": "Captura de tela da página inteira",
+    "saveSvg": "Salvar .svg",
+    "savePng": "Salvar .png",
+    "copyClipboard": "Copiar para área de transferência",
+    "saved": "Salvo",
+    "error": "Falha ao exportar a página"
   },
   "picker": {
     "snapHint": "Clique em qualquer contêiner na página para ajustar as guias",
