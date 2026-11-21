@@ -14,12 +14,30 @@
       "toggleAriaLabel": "Design-Overlay umschalten",
       "toggleTooltip": "Design-Overlay umschalten (Shift+O)"
     },
+    "pageExport": {
+      "ariaLabel": "Gesamte Seite in die Zwischenablage kopieren",
+      "tooltipSvg": "Gesamte Seite für Figma kopieren (SVG)",
+      "tooltipPng": "Seiten-Screenshot kopieren (PNG)",
+      "copiedTooltip": "In die Zwischenablage kopiert",
+      "savedTooltip": "Datei gespeichert"
+    },
     "close": {
       "ariaLabel": "Gedrückt halten, um FrameIt zu schließen",
       "holdToClose": "Halten zum Schließen",
       "keepHolding": "Weiter gedrückt halten...",
       "clickToClose": "FrameIt schließen"
     }
+  },
+  "pageExport": {
+    "title": "Seite exportieren",
+    "format": "Format",
+    "svgHint": "Bearbeitbare Vektorebenen für Figma",
+    "pngHint": "Vollständiger Seiten-Screenshot",
+    "saveSvg": ".svg speichern",
+    "savePng": ".png speichern",
+    "copyClipboard": "In Zwischenablage kopieren",
+    "saved": "Gespeichert",
+    "error": "Seite konnte nicht exportiert werden"
   },
   "picker": {
     "snapHint": "Klicken Sie auf einen Container auf der Seite, um Hilfslinien auszurichten",

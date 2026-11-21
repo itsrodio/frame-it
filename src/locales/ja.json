@@ -14,12 +14,30 @@
       "toggleAriaLabel": "デザインオーバーレイの切り替え",
       "toggleTooltip": "デザインオーバーレイ (Shift+O)"
     },
+    "pageExport": {
+      "ariaLabel": "ページ全体をクリップボードにコピー",
+      "tooltipSvg": "ページ全体を Figma 用にコピー (SVG)",
+      "tooltipPng": "ページ全体のスクリーンショットをコピー (PNG)",
+      "copiedTooltip": "クリップボードにコピーしました",
+      "savedTooltip": "ファイルを保存しました"
+    },
     "close": {
       "ariaLabel": "長押しして FrameIt を閉じる",
       "holdToClose": "長押しで閉じる",
       "keepHolding": "そのまま長押し...",
       "clickToClose": "FrameIt を閉じる"
     }
+  },
+  "pageExport": {
+    "title": "ページのエクスポート",
+    "format": "形式",
+    "svgHint": "Figma 用の編集可能なベクターレイヤー",
+    "pngHint": "ページ全体のスクリーンショット画像",
+    "saveSvg": ".svg を保存",
+    "savePng": ".png を保存",
+    "copyClipboard": "クリップボードにコピー",
+    "saved": "保存しました",
+    "error": "ページのエクスポートに失敗しました"
   },
   "picker": {
     "snapHint": "ページ上の任意のコンテナをクリックしてレイアウトガイドをスナップ",

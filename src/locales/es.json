@@ -14,12 +14,30 @@
       "toggleAriaLabel": "Alternar superposición de diseño",
       "toggleTooltip": "Superposición de diseño (Shift+O)"
     },
+    "pageExport": {
+      "ariaLabel": "Copiar página completa al portapapeles",
+      "tooltipSvg": "Copiar página completa a Figma (SVG)",
+      "tooltipPng": "Copiar captura de página completa (PNG)",
+      "copiedTooltip": "Copiado al portapapeles",
+      "savedTooltip": "Archivo guardado"
+    },
     "close": {
       "ariaLabel": "Mantener para cerrar FrameIt",
       "holdToClose": "Mantener para cerrar",
       "keepHolding": "Sigue manteniendo...",
       "clickToClose": "Cerrar FrameIt"
     }
+  },
+  "pageExport": {
+    "title": "Exportar página",
+    "format": "Formato",
+    "svgHint": "Capas vectoriales editables para Figma",
+    "pngHint": "Captura de pantalla completa",
+    "saveSvg": "Guardar .svg",
+    "savePng": "Guardar .png",
+    "copyClipboard": "Copiar al portapapeles",
+    "saved": "Guardado",
+    "error": "Error al exportar la página"
   },
   "picker": {
     "snapHint": "Haz clic en cualquier contenedor de la página para ajustar las guías",

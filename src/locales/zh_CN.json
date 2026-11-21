@@ -14,12 +14,30 @@
       "toggleAriaLabel": "切换设计稿叠加",
       "toggleTooltip": "设计稿叠加 (Shift+O)"
     },
+    "pageExport": {
+      "ariaLabel": "将整个页面复制到剪贴板",
+      "tooltipSvg": "复制整个页面到 Figma (SVG)",
+      "tooltipPng": "复制整页截图 (PNG)",
+      "copiedTooltip": "已复制到剪贴板",
+      "savedTooltip": "文件已保存"
+    },
     "close": {
       "ariaLabel": "长按关闭 FrameIt",
       "holdToClose": "长按关闭",
       "keepHolding": "继续按住...",
       "clickToClose": "关闭 FrameIt"
     }
+  },
+  "pageExport": {
+    "title": "导出页面",
+    "format": "格式",
+    "svgHint": "适用于 Figma 的可编辑矢量图层",
+    "pngHint": "整页像素截图",
+    "saveSvg": "保存 .svg",
+    "savePng": "保存 .png",
+    "copyClipboard": "复制到剪贴板",
+    "saved": "已保存",
+    "error": "导出页面失败"
   },
   "picker": {
     "snapHint": "点击页面上的任意容器以吸附布局参考线",

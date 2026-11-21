@@ -90,3 +90,51 @@ export async function copyTextToClipboard(text: string): Promise<boolean> {
     return false;
   }
 }
+
+/**
+ * Copies a binary Blob (e.g. `image/png`) to the system clipboard.
+ */
+export async function copyBlobToClipboard(blob: Blob): Promise<boolean> {
+  if (
+    typeof navigator === 'undefined' ||
+    !navigator.clipboard?.write ||
+    typeof ClipboardItem === 'undefined'
+  ) {
+    return false;
+  }
+
+  try {
+    await navigator.clipboard.write([
+      new ClipboardItem({ [blob.type || 'image/png']: blob }),
+    ]);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Triggers a browser file download for a Blob payload.
+ */
+export function downloadBlobFile(blob: Blob, filename: string): void {
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = filename;
+  link.style.display = 'none';
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+/**
+ * Triggers a browser file download for a text/SVG payload.
+ */
+export function downloadTextFile(
+  content: string,
+  filename: string,
+  mimeType = 'image/svg+xml;charset=utf-8',
+): void {
+  downloadBlobFile(new Blob([content], { type: mimeType }), filename);
+}

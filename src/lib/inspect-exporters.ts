@@ -1,4 +1,8 @@
-import { buildFigmaSvg } from '@/lib/inspect-figma-svg';
+import {
+  buildFigmaSvg,
+  buildPageExportFilename,
+  buildPageFigmaSvg,
+} from '@/lib/inspect-figma-svg';
 import {
   buildInspectedCssSnippet,
   type FormattedColor,
@@ -10,7 +14,7 @@ import type {
   InspectUnitFormat,
 } from '@/types/settings';
 
-export { buildFigmaSvg };
+export { buildFigmaSvg, buildPageExportFilename, buildPageFigmaSvg };
 
 export function formatColorByPreference(
   color: FormattedColor,
