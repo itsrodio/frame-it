@@ -12,6 +12,8 @@ export interface UseGlobalHotkeysOptions {
   onAutoDetect: () => void;
   onTogglePickContainer: () => void;
   onSwitchGuideType: (type: GuideType) => void;
+  onToggleDesignOverlay?: () => void;
+  onToggleDesignOverlayLock?: () => void;
 }
 
 export function useGlobalHotkeys({
@@ -22,6 +24,8 @@ export function useGlobalHotkeys({
   onAutoDetect,
   onTogglePickContainer,
   onSwitchGuideType,
+  onToggleDesignOverlay,
+  onToggleDesignOverlayLock,
 }: UseGlobalHotkeysOptions) {
   useEffect(() => {
     if (!hotkeys.enabled) return;
@@ -66,6 +70,24 @@ export function useGlobalHotkeys({
         return;
       }
 
+      if (
+        onToggleDesignOverlay &&
+        matchesHotkey(e, hotkeys.toggleDesignOverlay)
+      ) {
+        e.preventDefault();
+        onToggleDesignOverlay();
+        return;
+      }
+
+      if (
+        onToggleDesignOverlayLock &&
+        matchesHotkey(e, hotkeys.toggleDesignOverlayLock)
+      ) {
+        e.preventDefault();
+        onToggleDesignOverlayLock();
+        return;
+      }
+
       if (matchesHotkey(e, hotkeys.switchColumns)) {
         e.preventDefault();
         onSwitchGuideType('columns');
@@ -84,6 +106,8 @@ export function useGlobalHotkeys({
     hotkeys,
     onAutoDetect,
     onSwitchGuideType,
+    onToggleDesignOverlay,
+    onToggleDesignOverlayLock,
     onToggleGuides,
     onToggleInspect,
     onTogglePickContainer,

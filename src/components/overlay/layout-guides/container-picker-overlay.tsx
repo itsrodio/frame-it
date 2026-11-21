@@ -5,12 +5,16 @@ import type { DetectedContainerInfo } from '@/types/layout-guides';
 
 export interface ContainerPickerOverlayProps {
   active: boolean;
+  hintText?: string;
+  minWidthThreshold?: number;
   onSelect: (info: DetectedContainerInfo) => void;
   onCancel: () => void;
 }
 
 export function ContainerPickerOverlay({
   active,
+  hintText,
+  minWidthThreshold = 200,
   onSelect,
   onCancel,
 }: ContainerPickerOverlayProps) {
@@ -61,7 +65,7 @@ export function ContainerPickerOverlay({
       while (
         candidate.parentElement &&
         candidate.parentElement !== document.body &&
-        candidate.getBoundingClientRect().width < 200
+        candidate.getBoundingClientRect().width < minWidthThreshold
       ) {
         candidate = candidate.parentElement;
       }
@@ -132,7 +136,7 @@ export function ContainerPickerOverlay({
       window.removeEventListener('scroll', handleScrollOrResize, true);
       window.removeEventListener('resize', handleScrollOrResize);
     };
-  }, [active, onSelect, onCancel]);
+  }, [active, minWidthThreshold, onSelect, onCancel]);
 
   if (!active) return null;
 
@@ -140,7 +144,8 @@ export function ContainerPickerOverlay({
     <div className="fixed inset-0 pointer-events-none z-40">
       {/* Подсказка сверху экрана */}
       <div className="fixed top-4 left-1/2 -translate-x-1/2 rounded-full bg-popover/95 px-3.5 py-1.5 text-xs font-medium text-popover-foreground shadow-lg ring-1 ring-border backdrop-blur-xs">
-        {i18n.t('picker.snapHint')} • {i18n.t('picker.cancelBeforeKey')}{' '}
+        {hintText ?? i18n.t('picker.snapHint')} •{' '}
+        {i18n.t('picker.cancelBeforeKey')}{' '}
         <kbd className="rounded bg-muted px-1 py-0.5 font-mono text-[10px]">
           Esc
         </kbd>{' '}

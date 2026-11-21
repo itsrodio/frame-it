@@ -10,6 +10,10 @@
       "toggleAriaLabel": "Layout-Hilfslinien umschalten",
       "toggleTooltip": "Layout-Hilfslinien umschalten (Shift+G)"
     },
+    "designOverlay": {
+      "toggleAriaLabel": "Design-Overlay umschalten",
+      "toggleTooltip": "Design-Overlay umschalten (Shift+O)"
+    },
     "close": {
       "ariaLabel": "Gedrückt halten, um FrameIt zu schließen",
       "holdToClose": "Halten zum Schließen",
@@ -137,6 +141,59 @@
       "fixedToViewport": "Am Viewport fixiert"
     }
   },
+  "designOverlay": {
+    "header": {
+      "title": "Design-Overlay",
+      "settingsAriaLabel": "Design-Overlay-Einstellungen",
+      "autoFitAriaLabel": "Mockup automatisch anpassen",
+      "autoFitTooltip": "Automatisch an Container & Retina anpassen",
+      "pickTargetAriaLabel": "Mockup an Element ausrichten",
+      "pickTargetTooltip": "Element auf der Seite zum Ausrichten anklicken",
+      "clearAriaLabel": "Design-Overlay entfernen",
+      "clearTooltip": "Mockup entfernen"
+    },
+    "picker": {
+      "snapHint": "Klicken Sie auf ein Element, um das Mockup daran auszurichten"
+    },
+    "upload": {
+      "dropTitle": "Mockup hierher ziehen oder klicken",
+      "dropSubtitle": "PNG, JPG, SVG, WebP",
+      "pasteHint": "Strg+V zum Einfügen",
+      "replaceAriaLabel": "Mockup-Bild ersetzen",
+      "replaceTooltip": "Bilddatei auswählen",
+      "unsupportedError": "Nicht unterstütztes Format. Nutzen Sie PNG, JPG, SVG oder WebP."
+    },
+    "fields": {
+      "position": "Position",
+      "centerX": "Zentrieren",
+      "centerXTooltip": "Horizontal im Viewport zentrieren",
+      "resetPositionAriaLabel": "Position auf 0, 0 zurücksetzen",
+      "resetPositionTooltip": "Position zurücksetzen (0, 0)",
+      "scale": "Skala",
+      "scalePercent": "Skala %",
+      "fitWidthAriaLabel": "An Viewport-Breite anpassen",
+      "fitWidthTooltip": "An Viewport-Breite anpassen",
+      "opacity": "Deckkraft",
+      "opacityAriaLabel": "Deckkraft des Design-Overlays",
+      "blendMode": "Mischen",
+      "interaction": "Modus"
+    },
+    "blend": {
+      "normal": "Normal",
+      "difference": "Differenz"
+    },
+    "lock": {
+      "lockedLabel": "Gesperrt",
+      "unlockedLabel": "Beweglich",
+      "lockAriaLabel": "Design-Overlay sperren",
+      "unlockAriaLabel": "Design-Overlay entsperren",
+      "lockTooltip": "Klicks durchlassen (Shift+L)",
+      "unlockTooltip": "Zum Verschieben entsperren (Shift+L)"
+    },
+    "storage": {
+      "quotaWarning": "Bild ist zu groß für den Browser-Speicher und bleibt nur in dieser Sitzung."
+    }
+  },
   "options": {
     "title": "FrameIt-Einstellungen",
     "subtitle": "Konfigurieren Sie Sprache, Erscheinungsbild, Startverhalten, Tastenkürzel und Standard-Layoutraster.",
@@ -167,6 +224,8 @@
       "rememberSiteSettingsDescription": "Speichert Ihre Rasteranpassungen automatisch für jede Website.",
       "holdToClose": "Gedrückt halten zum Schließen",
       "holdToCloseDescription": "Erfordert 450 ms Gedrückthalten der Schließen-Schaltfläche gegen versehentliches Schließen.",
+      "designOverlayLockedByDefault": "Design-Overlay standardmäßig sperren",
+      "designOverlayLockedByDefaultDescription": "Eingefügte oder hochgeladene Mockups bleiben klickdurchlässig, bis sie entsperrt werden.",
       "enabled": "Aktiviert",
       "disabled": "Deaktiviert"
     },
@@ -183,7 +242,9 @@
       "pickContainer": "Container auf der Seite auswählen",
       "switchColumns": "Zu Spalten wechseln",
       "switchRows": "Zu Zeilen wechseln",
-      "switchGrid": "Zu Raster wechseln"
+      "switchGrid": "Zu Raster wechseln",
+      "toggleDesignOverlay": "Design-Overlay umschalten",
+      "toggleDesignOverlayLock": "Design-Overlay sperren/entsperren"
     },
     "defaults": {
       "title": "Standard-Layoutraster",

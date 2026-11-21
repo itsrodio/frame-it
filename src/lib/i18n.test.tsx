@@ -101,11 +101,11 @@ describe('i18n locales & UI translations', () => {
     }
   });
 
-  it('renders localized dock, popover fields, inspect banner, and container picker in Russian (ru) and Japanese (ja)', () => {
+  it('renders localized dock, popover fields, inspect banner, and container picker in Russian (ru) and Japanese (ja)', async () => {
     setTestLocale('ru');
     expect(getTestLocale()).toBe('ru');
 
-    act(() => {
+    await act(async () => {
       root.render(<App portalContainer={portalContainer} onClose={vi.fn()} />);
     });
 
@@ -124,12 +124,9 @@ describe('i18n locales & UI translations', () => {
     expect(closeBtn).not.toBeNull();
 
     // Open LayoutGuidesTool popover and verify Russian labels
-    const popoverTriggers = portalContainer.querySelectorAll(
-      '[data-slot="popover-trigger"]',
-    );
-    const popoverTrigger = popoverTriggers[
-      popoverTriggers.length - 1
-    ] as HTMLButtonElement;
+    const popoverTrigger = portalContainer.querySelector(
+      '[data-testid="guides-popover-trigger"]',
+    ) as HTMLButtonElement;
     act(() => {
       popoverTrigger.click();
     });

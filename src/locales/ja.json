@@ -10,6 +10,10 @@
       "toggleAriaLabel": "レイアウトガイドの切り替え",
       "toggleTooltip": "レイアウトガイドの切り替え (Shift+G)"
     },
+    "designOverlay": {
+      "toggleAriaLabel": "デザインオーバーレイの切り替え",
+      "toggleTooltip": "デザインオーバーレイ (Shift+O)"
+    },
     "close": {
       "ariaLabel": "長押しして FrameIt を閉じる",
       "holdToClose": "長押しで閉じる",
@@ -137,6 +141,59 @@
       "fixedToViewport": "画面に固定"
     }
   },
+  "designOverlay": {
+    "header": {
+      "title": "デザインオーバーレイ",
+      "settingsAriaLabel": "デザインオーバーレイ設定",
+      "autoFitAriaLabel": "モックアップを自動調整",
+      "autoFitTooltip": "コンテナと Retina 倍率に合わせて自動調整",
+      "pickTargetAriaLabel": "要素にモックアップを合わせる",
+      "pickTargetTooltip": "ページ上の要素をクリックして位置と幅を合わせる",
+      "clearAriaLabel": "デザインオーバーレイを削除",
+      "clearTooltip": "モックアップを削除"
+    },
+    "picker": {
+      "snapHint": "ページ上の要素をクリックしてモックアップをスナップ"
+    },
+    "upload": {
+      "dropTitle": "画像をドロップまたはクリック",
+      "dropSubtitle": "PNG, JPG, SVG, WebP",
+      "pasteHint": "Ctrl+V で貼り付け",
+      "replaceAriaLabel": "モックアップ画像を差し替え",
+      "replaceTooltip": "画像ファイルを選択",
+      "unsupportedError": "未対応の形式です。PNG、JPG、SVG、WebP を使用してください。"
+    },
+    "fields": {
+      "position": "位置",
+      "centerX": "中央揃え",
+      "centerXTooltip": "ビューポートの水平中央に配置",
+      "resetPositionAriaLabel": "位置を 0, 0 にリセット",
+      "resetPositionTooltip": "位置をリセット (0, 0)",
+      "scale": "倍率",
+      "scalePercent": "倍率 %",
+      "fitWidthAriaLabel": "画面幅に合わせる",
+      "fitWidthTooltip": "画面幅に合わせる",
+      "opacity": "不透明度",
+      "opacityAriaLabel": "デザインオーバーレイの不透明度",
+      "blendMode": "描画",
+      "interaction": "操作"
+    },
+    "blend": {
+      "normal": "通常",
+      "difference": "差の絶対値"
+    },
+    "lock": {
+      "lockedLabel": "ロック中",
+      "unlockedLabel": "移動可能",
+      "lockAriaLabel": "デザインオーバーレイをロック",
+      "unlockAriaLabel": "デザインオーバーレイのロックを解除",
+      "lockTooltip": "クリック透過をロック (Shift+L)",
+      "unlockTooltip": "移動のためロック解除 (Shift+L)"
+    },
+    "storage": {
+      "quotaWarning": "画像サイズが大きすぎるため、このセッション中のみ保持されます。"
+    }
+  },
   "options": {
     "title": "FrameIt 設定",
     "subtitle": "表示言語、テーマ、起動時の動作、キーボードショートカット、デフォルトのレイアウトグリッドを設定します。",
@@ -167,6 +224,8 @@
       "rememberSiteSettingsDescription": "カスタマイズしたグリッド設定を各Webサイトごとに自動保存します。",
       "holdToClose": "長押しでドックを閉じる",
       "holdToCloseDescription": "誤操作を防ぐため、閉じるボタンの 450ミリ秒長押しを必須にします。",
+      "designOverlayLockedByDefault": "デザインオーバーレイを初期状態でロック",
+      "designOverlayLockedByDefaultDescription": "貼り付け・アップロードしたモックアップをロック解除するまでクリック透過にします。",
       "enabled": "有効",
       "disabled": "無効"
     },
@@ -183,7 +242,9 @@
       "pickContainer": "ページ上のコンテナを選択",
       "switchColumns": "カラムに切り替え",
       "switchRows": "行に切り替え",
-      "switchGrid": "グリッドに切り替え"
+      "switchGrid": "グリッドに切り替え",
+      "toggleDesignOverlay": "デザインオーバーレイの切り替え",
+      "toggleDesignOverlayLock": "デザインオーバーレイのロック切り替え"
     },
     "defaults": {
       "title": "デフォルトのレイアウトガイド",

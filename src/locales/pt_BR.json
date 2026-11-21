@@ -10,6 +10,10 @@
       "toggleAriaLabel": "Alternar guias de layout",
       "toggleTooltip": "Alternar guias de layout (Shift+G)"
     },
+    "designOverlay": {
+      "toggleAriaLabel": "Alternar sobreposição de design",
+      "toggleTooltip": "Sobreposição de design (Shift+O)"
+    },
     "close": {
       "ariaLabel": "Segure para fechar o FrameIt",
       "holdToClose": "Segure para fechar",
@@ -137,6 +141,59 @@
       "fixedToViewport": "Fixo na tela"
     }
   },
+  "designOverlay": {
+    "header": {
+      "title": "Sobreposição",
+      "settingsAriaLabel": "Configurações de sobreposição de design",
+      "autoFitAriaLabel": "Ajustar mockup automaticamente",
+      "autoFitTooltip": "Ajustar ao contêiner e escala Retina",
+      "pickTargetAriaLabel": "Alinhar mockup ao elemento",
+      "pickTargetTooltip": "Clique em um elemento na página para alinhar",
+      "clearAriaLabel": "Remover sobreposição",
+      "clearTooltip": "Remover mockup"
+    },
+    "picker": {
+      "snapHint": "Clique em qualquer elemento na página para alinhar e ajustar o mockup"
+    },
+    "upload": {
+      "dropTitle": "Solte a imagem ou clique",
+      "dropSubtitle": "PNG, JPG, SVG, WebP",
+      "pasteHint": "Ctrl+V na página para colar",
+      "replaceAriaLabel": "Substituir imagem do mockup",
+      "replaceTooltip": "Escolher arquivo de imagem",
+      "unsupportedError": "Formato não suportado. Use PNG, JPG, SVG ou WebP."
+    },
+    "fields": {
+      "position": "Posição",
+      "centerX": "Centralizar",
+      "centerXTooltip": "Centralizar horizontalmente na tela",
+      "resetPositionAriaLabel": "Redefinir posição para 0, 0",
+      "resetPositionTooltip": "Redefinir posição (0, 0)",
+      "scale": "Escala",
+      "scalePercent": "Escala %",
+      "fitWidthAriaLabel": "Ajustar à largura da tela",
+      "fitWidthTooltip": "Ajustar à largura da tela",
+      "opacity": "Opacidade",
+      "opacityAriaLabel": "Opacidade da sobreposição",
+      "blendMode": "Mesclagem",
+      "interaction": "Modo"
+    },
+    "blend": {
+      "normal": "Normal",
+      "difference": "Diferença"
+    },
+    "lock": {
+      "lockedLabel": "Bloqueado",
+      "unlockedLabel": "Movível",
+      "lockAriaLabel": "Bloquear sobreposição",
+      "unlockAriaLabel": "Desbloquear sobreposição",
+      "lockTooltip": "Bloquear cliques (Shift+L)",
+      "unlockTooltip": "Desbloquear para mover (Shift+L)"
+    },
+    "storage": {
+      "quotaWarning": "A imagem é muito grande para salvar e permanecerá apenas nesta sessão."
+    }
+  },
   "options": {
     "title": "Configurações do FrameIt",
     "subtitle": "Configure idioma, aparência, comportamento inicial, atalhos de teclado e grades de layout padrão.",
@@ -167,6 +224,8 @@
       "rememberSiteSettingsDescription": "Salva automaticamente suas personalizações de grade para cada site.",
       "holdToClose": "Segurar para fechar",
       "holdToCloseDescription": "Exige segurar o botão de fechar por 450 ms para evitar fechamento acidental.",
+      "designOverlayLockedByDefault": "Bloquear sobreposição por padrão",
+      "designOverlayLockedByDefaultDescription": "Mantém mockups colados ou enviados transparentes a cliques até serem desbloqueados.",
       "enabled": "Ativado",
       "disabled": "Desativado"
     },
@@ -183,7 +242,9 @@
       "pickContainer": "Selecionar contêiner na página",
       "switchColumns": "Mudar para Colunas",
       "switchRows": "Mudar para Linhas",
-      "switchGrid": "Mudar para Grade"
+      "switchGrid": "Mudar para Grade",
+      "toggleDesignOverlay": "Alternar sobreposição de design",
+      "toggleDesignOverlayLock": "Bloquear/desbloquear sobreposição"
     },
     "defaults": {
       "title": "Guias de Layout Padrão",

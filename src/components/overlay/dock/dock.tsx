@@ -1,7 +1,9 @@
+import { DesignOverlayTool } from '@/components/overlay/design-overlay/design-overlay-tool';
 import { CloseTool } from '@/components/overlay/dock/close-tool';
 import { InspectTool } from '@/components/overlay/inspect/inspect-tool';
 import { LayoutGuidesTool } from '@/components/overlay/layout-guides/layout-guides-tool';
 import { Separator } from '@/components/ui/separator';
+import type { DesignOverlayToolProps } from '@/types/design-overlay';
 import type { LayoutGuidesToolProps } from '@/types/layout-guides';
 import type { ExtensionInspectSettings } from '@/types/settings';
 
@@ -10,6 +12,7 @@ export interface DockProps extends LayoutGuidesToolProps {
   defaultInspectSettings?: ExtensionInspectSettings;
   onUpdateInspectSettings?: (patch: Partial<ExtensionInspectSettings>) => void;
   onResetInspectSettings?: () => void;
+  designOverlay?: DesignOverlayToolProps;
   onClose: () => void;
   holdToClose?: boolean;
 }
@@ -19,6 +22,7 @@ export function Dock({
   defaultInspectSettings,
   onUpdateInspectSettings,
   onResetInspectSettings,
+  designOverlay,
   onClose,
   holdToClose = true,
   ...props
@@ -34,6 +38,7 @@ export function Dock({
         onResetInspectSettings={onResetInspectSettings}
       />
       <LayoutGuidesTool {...props} />
+      {designOverlay && <DesignOverlayTool {...designOverlay} />}
       <Separator orientation="vertical" className="my-1.5" />
       <CloseTool onClose={onClose} holdToClose={holdToClose} />
     </nav>

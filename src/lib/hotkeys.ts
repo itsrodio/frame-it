@@ -12,6 +12,8 @@ export const HOTKEY_ACTIONS: HotkeyAction[] = [
   'switchColumns',
   'switchRows',
   'switchGrid',
+  'toggleDesignOverlay',
+  'toggleDesignOverlayLock',
 ];
 
 export const DEFAULT_HOTKEYS: ExtensionHotkeys = {
@@ -54,6 +56,18 @@ export const DEFAULT_HOTKEYS: ExtensionHotkeys = {
   },
   switchGrid: {
     code: 'Digit3',
+    shift: true,
+    ctrlOrMeta: false,
+    alt: false,
+  },
+  toggleDesignOverlay: {
+    code: 'KeyO',
+    shift: true,
+    ctrlOrMeta: false,
+    alt: false,
+  },
+  toggleDesignOverlayLock: {
+    code: 'KeyL',
     shift: true,
     ctrlOrMeta: false,
     alt: false,

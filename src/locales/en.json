@@ -10,6 +10,10 @@
       "toggleAriaLabel": "Toggle layout guides",
       "toggleTooltip": "Toggle layout guides (Shift+G)"
     },
+    "designOverlay": {
+      "toggleAriaLabel": "Toggle design overlay",
+      "toggleTooltip": "Toggle design overlay (Shift+O)"
+    },
     "close": {
       "ariaLabel": "Hold to close FrameIt",
       "holdToClose": "Hold to close",
@@ -137,6 +141,59 @@
       "fixedToViewport": "Fixed to viewport"
     }
   },
+  "designOverlay": {
+    "header": {
+      "title": "Design Overlay",
+      "settingsAriaLabel": "Design overlay settings",
+      "autoFitAriaLabel": "Auto-fit mockup to page",
+      "autoFitTooltip": "Auto-fit to container & Retina scale",
+      "pickTargetAriaLabel": "Snap mockup to element",
+      "pickTargetTooltip": "Click an element on page to align mockup",
+      "clearAriaLabel": "Remove design overlay",
+      "clearTooltip": "Remove mockup"
+    },
+    "picker": {
+      "snapHint": "Click any element on the page to align and fit the mockup"
+    },
+    "upload": {
+      "dropTitle": "Drop mockup image or click",
+      "dropSubtitle": "PNG, JPG, SVG, WebP",
+      "pasteHint": "Ctrl+V anywhere to paste",
+      "replaceAriaLabel": "Replace mockup image",
+      "replaceTooltip": "Choose image file",
+      "unsupportedError": "Unsupported format. Use PNG, JPG, SVG, or WebP."
+    },
+    "fields": {
+      "position": "Position",
+      "centerX": "Center",
+      "centerXTooltip": "Center horizontally in viewport",
+      "resetPositionAriaLabel": "Reset position to 0, 0",
+      "resetPositionTooltip": "Reset position (0, 0)",
+      "scale": "Scale",
+      "scalePercent": "Scale %",
+      "fitWidthAriaLabel": "Fit to viewport width",
+      "fitWidthTooltip": "Fit to viewport width",
+      "opacity": "Opacity",
+      "opacityAriaLabel": "Design overlay opacity",
+      "blendMode": "Blend",
+      "interaction": "Mode"
+    },
+    "blend": {
+      "normal": "Normal",
+      "difference": "Difference"
+    },
+    "lock": {
+      "lockedLabel": "Locked",
+      "unlockedLabel": "Movable",
+      "lockAriaLabel": "Lock design overlay",
+      "unlockAriaLabel": "Unlock design overlay",
+      "lockTooltip": "Lock click-through (Shift+L)",
+      "unlockTooltip": "Unlock to move (Shift+L)"
+    },
+    "storage": {
+      "quotaWarning": "Image is too large for browser storage and will only stay for this session."
+    }
+  },
   "options": {
     "title": "FrameIt Settings",
     "subtitle": "Configure language, appearance, launch behavior, keyboard shortcuts, and default layout grids.",
@@ -167,6 +224,8 @@
       "rememberSiteSettingsDescription": "Automatically save your grid customizations in localStorage for each website.",
       "holdToClose": "Hold to close dock",
       "holdToCloseDescription": "Require holding the close button for 450ms to prevent accidental closure.",
+      "designOverlayLockedByDefault": "Lock design overlay by default",
+      "designOverlayLockedByDefaultDescription": "Keep pasted or uploaded mockups click-through until unlocked in the popover or via Shift+L.",
       "enabled": "Enabled",
       "disabled": "Disabled"
     },
@@ -183,7 +242,9 @@
       "pickContainer": "Pick container on page",
       "switchColumns": "Switch to Columns",
       "switchRows": "Switch to Rows",
-      "switchGrid": "Switch to Grid"
+      "switchGrid": "Switch to Grid",
+      "toggleDesignOverlay": "Toggle Design Overlay",
+      "toggleDesignOverlayLock": "Lock/unlock Design Overlay"
     },
     "defaults": {
       "title": "Default Layout Guides",

@@ -10,6 +10,10 @@
       "toggleAriaLabel": "Переключить направляющие сетки",
       "toggleTooltip": "Переключить направляющие (Shift+G)"
     },
+    "designOverlay": {
+      "toggleAriaLabel": "Переключить наложение макета",
+      "toggleTooltip": "Наложение макета (Shift+O)"
+    },
     "close": {
       "ariaLabel": "Удерживайте, чтобы закрыть FrameIt",
       "holdToClose": "Удерживайте для закрытия",
@@ -137,6 +141,59 @@
       "fixedToViewport": "Фикс. на экране"
     }
   },
+  "designOverlay": {
+    "header": {
+      "title": "Наложение макета",
+      "settingsAriaLabel": "Настройки наложения макета",
+      "autoFitAriaLabel": "Автоподгонка макета под сайт",
+      "autoFitTooltip": "Автоподгонка под контейнер и Retina",
+      "pickTargetAriaLabel": "Привязать макет к элементу",
+      "pickTargetTooltip": "Кликните элемент на странице для привязки макета",
+      "clearAriaLabel": "Удалить макет",
+      "clearTooltip": "Удалить макет"
+    },
+    "picker": {
+      "snapHint": "Кликните по элементу на странице, чтобы подогнать макет"
+    },
+    "upload": {
+      "dropTitle": "Перетащите макет или выберите файл",
+      "dropSubtitle": "PNG, JPG, SVG, WebP",
+      "pasteHint": "Ctrl+V на странице для вставки",
+      "replaceAriaLabel": "Заменить изображение макета",
+      "replaceTooltip": "Выбрать файл макета",
+      "unsupportedError": "Неподдерживаемый формат. Используйте PNG, JPG, SVG или WebP."
+    },
+    "fields": {
+      "position": "Позиция",
+      "centerX": "Центр",
+      "centerXTooltip": "Отцентрировать по ширине экрана",
+      "resetPositionAriaLabel": "Сбросить позицию в 0, 0",
+      "resetPositionTooltip": "Сбросить позицию (0, 0)",
+      "scale": "Масштаб",
+      "scalePercent": "Масштаб %",
+      "fitWidthAriaLabel": "Подогнать под ширину окна",
+      "fitWidthTooltip": "Подогнать под ширину окна",
+      "opacity": "Прозрач.",
+      "opacityAriaLabel": "Непрозрачность макета",
+      "blendMode": "Налож.",
+      "interaction": "Режим"
+    },
+    "blend": {
+      "normal": "Normal",
+      "difference": "Difference"
+    },
+    "lock": {
+      "lockedLabel": "Заблокирован",
+      "unlockedLabel": "Свободный",
+      "lockAriaLabel": "Заблокировать макет",
+      "unlockAriaLabel": "Разблокировать макет",
+      "lockTooltip": "Заблокировать клики (Shift+L)",
+      "unlockTooltip": "Разблокировать перемещение (Shift+L)"
+    },
+    "storage": {
+      "quotaWarning": "Изображение слишком велико для сохранения и останется только в этой сессии."
+    }
+  },
   "options": {
     "title": "Настройки FrameIt",
     "subtitle": "Язык интерфейса, тема оформления, поведение при запуске, горячие клавиши и параметры сеток по умолчанию.",
@@ -167,6 +224,8 @@
       "rememberSiteSettingsDescription": "Автоматически сохранять изменения сетки в localStorage отдельно для каждого домена.",
       "holdToClose": "Удержание для закрытия панели",
       "holdToCloseDescription": "Требовать удержания кнопки закрытия (450 мс) для защиты от случайного клика.",
+      "designOverlayLockedByDefault": "Блокировать макет по умолчанию",
+      "designOverlayLockedByDefaultDescription": "Сразу пропускать клики сквозь вставленный макет, пока блокировка не снята вручную или через Shift+L.",
       "enabled": "Включено",
       "disabled": "Выключено"
     },
@@ -183,7 +242,9 @@
       "pickContainer": "Выбрать контейнер на странице",
       "switchColumns": "Переключить на Колонки",
       "switchRows": "Переключить на Строки",
-      "switchGrid": "Переключить на Сетку"
+      "switchGrid": "Переключить на Сетку",
+      "toggleDesignOverlay": "Вкл/выкл наложение макета",
+      "toggleDesignOverlayLock": "Заблокировать/разблокировать макет"
     },
     "defaults": {
       "title": "Настройки сеток по умолчанию",

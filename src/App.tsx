@@ -1,10 +1,12 @@
 import { CSPProvider } from '@base-ui/react/csp-provider';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { DesignOverlayLayer } from '@/components/overlay/design-overlay/design-overlay-layer';
 import { Dock } from '@/components/overlay/dock/dock';
 import { InspectMeasureOverlay } from '@/components/overlay/inspect/inspect-measure-overlay';
 import { ContainerPickerOverlay } from '@/components/overlay/layout-guides/container-picker-overlay';
 import { LayoutGuidesOverlay } from '@/components/overlay/layout-guides/layout-guides-overlay';
 import { TooltipProvider } from '@/components/ui/tooltip';
+import { useDesignOverlayInteraction } from '@/hooks/use-design-overlay-interaction';
 import { useExtensionSettings } from '@/hooks/use-extension-settings';
 import { useGlobalHotkeys } from '@/hooks/use-global-hotkeys';
 import { useTrackedElement } from '@/hooks/use-tracked-element';
@@ -15,6 +17,19 @@ import {
   extractContainerInfo,
 } from '@/lib/container-detector';
 import {
+  calculateCenteredX,
+  calculateFitWidthScale,
+  computeSmartDesignPlacement,
+  computeSnapToElementPlacement,
+  readDesignImageFile,
+} from '@/lib/design-overlay-image';
+import {
+  buildDefaultDesignOverlayState,
+  clearSiteDesignOverlay,
+  loadSiteDesignOverlay,
+  saveSiteDesignOverlay,
+} from '@/lib/design-overlay-storage';
+import {
   clearSiteCustomState,
   getInitialGuidesSetup,
   runAutoDetectOrDefaults,
@@ -23,6 +38,7 @@ import {
 import { PortalContext } from '@/lib/portal-context';
 import { getCachedSettings } from '@/lib/settings-storage';
 import { ThemeProvider } from '@/lib/theme-provider';
+import type { DesignOverlayState } from '@/types/design-overlay';
 import type {
   DetectedContainerInfo,
   GridGuideSettings,
@@ -32,7 +48,11 @@ import type {
 } from '@/types/layout-guides';
 import type { ExtensionSettings } from '@/types/settings';
 
-export type ActiveOverlayTool = 'none' | 'inspect' | 'pick-container';
+export type ActiveOverlayTool =
+  | 'none'
+  | 'inspect'
+  | 'pick-container'
+  | 'pick-design-target';
 
 interface AppProps {
   portalContainer: HTMLElement;
@@ -61,6 +81,16 @@ export function App({ portalContainer, onClose }: AppProps) {
   const [trackedElementLabel, setTrackedElementLabel] = useState<string | null>(
     initialSetup.trackedElementLabel,
   );
+  const [designOverlayState, setDesignOverlayState] =
+    useState<DesignOverlayState>(() =>
+      buildDefaultDesignOverlayState(
+        getCachedSettings().behavior.designOverlayLockedByDefault,
+      ),
+    );
+  const [designOverlayLoaded, setDesignOverlayLoaded] = useState(false);
+  const [designOverlayQuotaExceeded, setDesignOverlayQuotaExceeded] =
+    useState(false);
+  const designOverlayTouchedRef = useRef(false);
 
   const handleExternalSettingsChange = useCallback(
     (nextSettings: ExtensionSettings) => {
@@ -85,6 +115,29 @@ export function App({ portalContainer, onClose }: AppProps) {
   });
 
   useEffect(() => {
+    let cancelled = false;
+    loadSiteDesignOverlay(
+      getCachedSettings().behavior.designOverlayLockedByDefault,
+    ).then((loaded) => {
+      if (cancelled) return;
+      if (!designOverlayTouchedRef.current) {
+        setDesignOverlayState(loaded);
+      }
+      setDesignOverlayLoaded(true);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!designOverlayLoaded) return;
+    void saveSiteDesignOverlay(designOverlayState).then((res) => {
+      setDesignOverlayQuotaExceeded(res.quotaExceeded);
+    });
+  }, [designOverlayLoaded, designOverlayState]);
+
+  useEffect(() => {
     if (!hasCustomSiteSettings || !settings.behavior.rememberSiteSettings) {
       return;
     }
@@ -95,9 +148,13 @@ export function App({ portalContainer, onClose }: AppProps) {
     settings.behavior.rememberSiteSettings,
   ]);
 
-  const needsScroll =
+  const needsGuidesScroll =
     guidesState.enabled && guidesState[guidesState.type].followScroll;
-  const scroll = useWindowScroll(needsScroll);
+  const needsDesignOverlayScroll =
+    designOverlayState.enabled &&
+    Boolean(designOverlayState.imageUrl) &&
+    designOverlayState.followScroll;
+  const scroll = useWindowScroll(needsGuidesScroll || needsDesignOverlayScroll);
 
   const handleClearTrackedElement = useCallback(() => {
     setTrackedElement(null);
@@ -169,6 +226,186 @@ export function App({ portalContainer, onClose }: AppProps) {
     setActiveTool((prev) => (prev === tool ? 'none' : tool));
   }, []);
 
+  const handleLoadDesignImage = useCallback(
+    async (file: File | Blob, fileName?: string) => {
+      const loaded = await readDesignImageFile(file, fileName);
+      designOverlayTouchedRef.current = true;
+      const defaultLocked = settings.behavior.designOverlayLockedByDefault;
+      if (!defaultLocked) {
+        setActiveTool('none');
+      }
+      const detectedContainer = autoDetectPageContainer();
+      setDesignOverlayState((prev) => {
+        const hadImage = Boolean(prev.imageUrl);
+        const smart = computeSmartDesignPlacement({
+          naturalWidth: loaded.naturalWidth,
+          naturalHeight: loaded.naturalHeight,
+          viewportWidth: window.innerWidth,
+          viewportHeight: window.innerHeight,
+          scrollX: window.scrollX,
+          scrollY: window.scrollY,
+          followScroll: prev.followScroll,
+          containerRect: detectedContainer?.rect ?? null,
+        });
+        return {
+          ...prev,
+          enabled: true,
+          imageUrl: loaded.imageUrl,
+          fileName: loaded.fileName,
+          naturalWidth: loaded.naturalWidth,
+          naturalHeight: loaded.naturalHeight,
+          x: hadImage ? prev.x : smart.x,
+          y: hadImage ? prev.y : smart.y,
+          scale: hadImage ? prev.scale : smart.scale,
+          locked: hadImage ? prev.locked : defaultLocked,
+        };
+      });
+    },
+    [settings.behavior.designOverlayLockedByDefault],
+  );
+
+  const handlePatchDesignOverlay = useCallback(
+    (patch: Partial<DesignOverlayState>) => {
+      designOverlayTouchedRef.current = true;
+      if (patch.locked === false) {
+        setActiveTool('none');
+      }
+      setDesignOverlayState((prev) => ({ ...prev, ...patch }));
+    },
+    [],
+  );
+
+  const handleToggleDesignOverlay = useCallback((enabled: boolean) => {
+    designOverlayTouchedRef.current = true;
+    setDesignOverlayState((prev) => ({ ...prev, enabled }));
+  }, []);
+
+  const handleToggleDesignOverlayShortcut = useCallback(() => {
+    designOverlayTouchedRef.current = true;
+    setDesignOverlayState((prev) =>
+      prev.imageUrl ? { ...prev, enabled: !prev.enabled } : prev,
+    );
+  }, []);
+
+  const handleToggleDesignOverlayLock = useCallback(() => {
+    designOverlayTouchedRef.current = true;
+    setDesignOverlayState((prev) => {
+      if (!prev.imageUrl) return prev;
+      const nextLocked = !prev.locked;
+      if (!nextLocked) {
+        setActiveTool('none');
+      }
+      return { ...prev, locked: nextLocked };
+    });
+  }, []);
+
+  const handleMoveDesignOverlay = useCallback((x: number, y: number) => {
+    designOverlayTouchedRef.current = true;
+    setDesignOverlayState((prev) => ({ ...prev, x, y }));
+  }, []);
+
+  const handleNudgeDesignOverlay = useCallback((dx: number, dy: number) => {
+    designOverlayTouchedRef.current = true;
+    setDesignOverlayState((prev) => ({
+      ...prev,
+      x: prev.x + dx,
+      y: prev.y + dy,
+    }));
+  }, []);
+
+  const handleCenterDesignOverlay = useCallback(() => {
+    designOverlayTouchedRef.current = true;
+    setDesignOverlayState((prev) => ({
+      ...prev,
+      x: calculateCenteredX(prev.naturalWidth, prev.scale, window.innerWidth),
+    }));
+  }, []);
+
+  const handleFitDesignOverlayWidth = useCallback(() => {
+    designOverlayTouchedRef.current = true;
+    setDesignOverlayState((prev) => ({
+      ...prev,
+      scale: calculateFitWidthScale(prev.naturalWidth, window.innerWidth),
+      x: 0,
+    }));
+  }, []);
+
+  const handleAutoFitDesignOverlay = useCallback(() => {
+    designOverlayTouchedRef.current = true;
+    const detectedContainer = autoDetectPageContainer();
+    setDesignOverlayState((prev) => {
+      if (!prev.imageUrl) return prev;
+      const smart = computeSmartDesignPlacement({
+        naturalWidth: prev.naturalWidth,
+        naturalHeight: prev.naturalHeight,
+        viewportWidth: window.innerWidth,
+        viewportHeight: window.innerHeight,
+        scrollX: window.scrollX,
+        scrollY: window.scrollY,
+        followScroll: prev.followScroll,
+        containerRect: detectedContainer?.rect ?? null,
+      });
+      return {
+        ...prev,
+        x: smart.x,
+        y: smart.y,
+        scale: smart.scale,
+      };
+    });
+  }, []);
+
+  const handleSnapDesignOverlayToElement = useCallback(
+    (info: DetectedContainerInfo) => {
+      designOverlayTouchedRef.current = true;
+      setDesignOverlayState((prev) => {
+        const snapped = computeSnapToElementPlacement({
+          naturalWidth: prev.naturalWidth,
+          rect: info.rect,
+          scrollX: window.scrollX,
+          scrollY: window.scrollY,
+          followScroll: prev.followScroll,
+        });
+        return {
+          ...prev,
+          enabled: true,
+          x: snapped.x,
+          y: snapped.y,
+          scale: snapped.scale,
+        };
+      });
+    },
+    [],
+  );
+
+  const handleResetDesignOverlayPosition = useCallback(() => {
+    designOverlayTouchedRef.current = true;
+    setDesignOverlayState((prev) => ({ ...prev, x: 0, y: 0 }));
+  }, []);
+
+  const handleClearDesignOverlay = useCallback(() => {
+    designOverlayTouchedRef.current = true;
+    setDesignOverlayQuotaExceeded(false);
+    setDesignOverlayState(
+      buildDefaultDesignOverlayState(
+        settings.behavior.designOverlayLockedByDefault,
+      ),
+    );
+    void clearSiteDesignOverlay();
+  }, [settings.behavior.designOverlayLockedByDefault]);
+
+  useDesignOverlayInteraction({
+    portalContainer,
+    canNudge:
+      designOverlayState.enabled &&
+      Boolean(designOverlayState.imageUrl) &&
+      !designOverlayState.locked &&
+      activeTool === 'none',
+    onPasteImage: (file, fileName) => {
+      void handleLoadDesignImage(file, fileName).catch(() => {});
+    },
+    onNudge: handleNudgeDesignOverlay,
+  });
+
   useGlobalHotkeys({
     hotkeys: settings.hotkeys,
     portalContainer,
@@ -178,6 +415,8 @@ export function App({ portalContainer, onClose }: AppProps) {
     onAutoDetect: handleAutoDetect,
     onTogglePickContainer: () => toggleTool('pick-container'),
     onSwitchGuideType: handleTypeChange,
+    onToggleDesignOverlay: handleToggleDesignOverlayShortcut,
+    onToggleDesignOverlayLock: handleToggleDesignOverlayLock,
   });
 
   const handleColumnsChange = useCallback(
@@ -244,6 +483,7 @@ export function App({ portalContainer, onClose }: AppProps) {
 
   const isInspectActive = activeTool === 'inspect';
   const isPickingContainer = activeTool === 'pick-container';
+  const isPickingDesignTarget = activeTool === 'pick-design-target';
 
   return (
     <CSPProvider disableStyleElements>
@@ -251,9 +491,16 @@ export function App({ portalContainer, onClose }: AppProps) {
         <PortalContext.Provider value={portalContainer}>
           <TooltipProvider>
             <div className="fixed inset-0 pointer-events-none select-none text-foreground">
+              <DesignOverlayLayer
+                state={designOverlayState}
+                scroll={scroll}
+                isInteractiveAllowed={activeTool === 'none'}
+                onMove={handleMoveDesignOverlay}
+              />
+
               <LayoutGuidesOverlay state={guidesState} scroll={scroll} />
 
-              {!isPickingContainer && (
+              {!isPickingContainer && !isPickingDesignTarget && (
                 <InspectMeasureOverlay
                   active={isInspectActive}
                   inspectSettings={inspectSettings}
@@ -266,10 +513,20 @@ export function App({ portalContainer, onClose }: AppProps) {
               )}
 
               <ContainerPickerOverlay
-                active={isPickingContainer}
+                active={isPickingContainer || isPickingDesignTarget}
+                hintText={
+                  isPickingDesignTarget
+                    ? i18n.t('designOverlay.picker.snapHint')
+                    : undefined
+                }
+                minWidthThreshold={isPickingDesignTarget ? 24 : 200}
                 onSelect={(info) => {
                   setActiveTool('none');
-                  applyDetectedContainer(info, true);
+                  if (isPickingDesignTarget) {
+                    handleSnapDesignOverlayToElement(info);
+                  } else {
+                    applyDetectedContainer(info, true);
+                  }
                 }}
                 onCancel={() => setActiveTool('none')}
               />
@@ -283,6 +540,20 @@ export function App({ portalContainer, onClose }: AppProps) {
                 trackedElementLabel={trackedElementLabel}
                 hasCustomSiteSettings={hasCustomSiteSettings}
                 holdToClose={settings.behavior.holdToClose}
+                designOverlay={{
+                  state: designOverlayState,
+                  quotaExceeded: designOverlayQuotaExceeded,
+                  isPickingTarget: isPickingDesignTarget,
+                  onToggle: handleToggleDesignOverlay,
+                  onPatch: handlePatchDesignOverlay,
+                  onLoadFile: handleLoadDesignImage,
+                  onAutoFit: handleAutoFitDesignOverlay,
+                  onTogglePickTarget: () => toggleTool('pick-design-target'),
+                  onCenterHorizontal: handleCenterDesignOverlay,
+                  onFitToViewportWidth: handleFitDesignOverlayWidth,
+                  onResetPosition: handleResetDesignOverlayPosition,
+                  onClear: handleClearDesignOverlay,
+                }}
                 onToggle={handleToggle}
                 onToggleInspect={(active) =>
                   setActiveTool(active ? 'inspect' : 'none')

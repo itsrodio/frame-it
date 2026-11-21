@@ -150,6 +150,7 @@ describe('OptionsApp', () => {
       'toggle-guides-enabled-by-default',
       'toggle-remember-site-settings',
       'toggle-hold-to-close',
+      'toggle-design-overlay-locked',
     ]) {
       const btn = container.querySelector(
         `[data-testid="${testId}"]`,
@@ -162,6 +163,12 @@ describe('OptionsApp', () => {
     expect(getCachedSettings().behavior.guidesEnabledByDefault).toBe(false);
     expect(getCachedSettings().behavior.rememberSiteSettings).toBe(false);
     expect(getCachedSettings().behavior.holdToClose).toBe(false);
+    expect(getCachedSettings().behavior.designOverlayLockedByDefault).toBe(
+      false,
+    );
+    expect(getCachedSettings().behavior.designOverlayLockedByDefault).toBe(
+      false,
+    );
 
     // Record a new hotkey for toggleGuides (Shift+X), cancel another with Escape, and reset single + all hotkeys
     const recordToggleGuidesBtn = container.querySelector(

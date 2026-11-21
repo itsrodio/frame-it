@@ -7,12 +7,17 @@ const OVERLAY_ROOT_ID = 'frameit-root';
  */
 export function isOverlayElement(el: Element | null): boolean {
   if (!el) return true;
-  if (el.id === OVERLAY_ROOT_ID || el.tagName === OVERLAY_HOST_TAG) {
+  if (
+    el.id === OVERLAY_ROOT_ID ||
+    el.tagName === OVERLAY_HOST_TAG ||
+    el.hasAttribute('data-frameit-design-overlay')
+  ) {
     return true;
   }
   if (
     el.closest(OVERLAY_HOST_TAG.toLowerCase()) ||
-    el.closest(`#${OVERLAY_ROOT_ID}`)
+    el.closest(`#${OVERLAY_ROOT_ID}`) ||
+    el.closest('[data-frameit-design-overlay]')
   ) {
     return true;
   }
