@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import {
   blendColors,
   buildInspectedCssSnippet,
@@ -7,6 +7,7 @@ import {
   evaluateWcagContrast,
   extractInspectedStyles,
   formatBoxShorthand,
+  formatColor,
   parseCssColor,
   resolveEffectiveBackgroundColor,
   rgbaToHex,
@@ -252,5 +253,89 @@ describe('inspect-styles & WCAG 2.1 contrast', () => {
     expect(styles.colors.background.gradient).toBeUndefined();
     expect(styles.colors.background.hex).not.toBe('#000000');
     expect(styles.layout.borderRadius).toBe('9999px');
+  });
+
+  it('covers all HSL hue sectors, oklch formatting with alpha, rowGap/columnGap, and -webkit-text-fill-color', () => {
+    // HSL sectors: 30, 90, 150, 210, 270, 330
+    expect(parseCssColor('hsl(30 100% 50%)')).toEqual({
+      r: 255,
+      g: 128,
+      b: 0,
+      a: 1,
+    });
+    expect(parseCssColor('hsl(90 100% 50%)')).toEqual({
+      r: 128,
+      g: 255,
+      b: 0,
+      a: 1,
+    });
+    expect(parseCssColor('hsl(150 100% 50%)')).toEqual({
+      r: 0,
+      g: 255,
+      b: 128,
+      a: 1,
+    });
+    expect(parseCssColor('hsl(210 100% 50%)')).toEqual({
+      r: 0,
+      g: 128,
+      b: 255,
+      a: 1,
+    });
+    expect(parseCssColor('hsl(270 100% 50%)')).toEqual({
+      r: 128,
+      g: 0,
+      b: 255,
+      a: 1,
+    });
+    expect(parseCssColor('hsl(330 100% 50%)')).toEqual({
+      r: 255,
+      g: 0,
+      b: 128,
+      a: 1,
+    });
+
+    const semi = formatColor({ r: 255, g: 0, b: 0, a: 0.5 });
+    expect(semi.oklch).toContain('/ 0.5)');
+
+    expect(cleanFontFamily('')).toBe('sans-serif');
+    expect(cleanFontFamily(' , ')).toBe('sans-serif');
+
+    // Equal rowGap & columnGap + -webkit-text-fill-color
+    const box = document.createElement('div');
+    box.style.rowGap = '16px';
+    box.style.columnGap = '16px';
+    document.body.appendChild(box);
+
+    const realGetComputedStyle = window.getComputedStyle.bind(window);
+    const computedSpy = vi
+      .spyOn(window, 'getComputedStyle')
+      .mockImplementation((target, pseudo) => {
+        const st = realGetComputedStyle(target, pseudo);
+        if (target === box) {
+          return new Proxy(st, {
+            get(obj, prop) {
+              if (prop === 'webkitTextFillColor') return 'rgb(16, 185, 129)';
+              const val = Reflect.get(obj, prop);
+              return typeof val === 'function' ? val.bind(obj) : val;
+            },
+          });
+        }
+        return st;
+      });
+
+    const styles = extractInspectedStyles(box, {
+      x: 0,
+      y: 0,
+      left: 0,
+      top: 0,
+      width: 100,
+      height: 50,
+      right: 100,
+      bottom: 50,
+      toJSON: () => ({}),
+    });
+    expect(styles.layout.gap).toBe('16px');
+    expect(styles.colors.text.hex).toBe('#10B981');
+    computedSpy.mockRestore();
   });
 });

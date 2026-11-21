@@ -1,5 +1,6 @@
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import {
+  copyTextToClipboard,
   getElementLabel,
   isEditableTarget,
   isOverlayElement,
@@ -104,5 +105,53 @@ describe('getElementLabel', () => {
     const el = document.createElement('article');
     el.className = 'md:flex lg:grid';
     expect(getElementLabel(el)).toBe('article');
+  });
+});
+
+describe('copyTextToClipboard', () => {
+  afterEach(() => {
+    document.body.innerHTML = '';
+  });
+
+  it('uses navigator.clipboard.writeText when available and succeeds', async () => {
+    const writeText = vi.fn().mockResolvedValue(undefined);
+    Object.defineProperty(navigator, 'clipboard', {
+      value: { writeText },
+      configurable: true,
+    });
+
+    await expect(copyTextToClipboard('hello')).resolves.toBe(true);
+    expect(writeText).toHaveBeenCalledWith('hello');
+  });
+
+  it('falls back to textarea + execCommand when navigator.clipboard rejects or is unavailable', async () => {
+    const writeText = vi.fn().mockRejectedValue(new Error('denied'));
+    Object.defineProperty(navigator, 'clipboard', {
+      value: { writeText },
+      configurable: true,
+    });
+    const execMock = vi.fn().mockReturnValue(true);
+    Object.defineProperty(document, 'execCommand', {
+      value: execMock,
+      configurable: true,
+    });
+
+    await expect(copyTextToClipboard('fallback text')).resolves.toBe(true);
+    expect(execMock).toHaveBeenCalledWith('copy');
+    expect(document.body.querySelector('textarea')).toBeNull();
+
+    // When execCommand returns false
+    Object.defineProperty(navigator, 'clipboard', {
+      value: undefined,
+      configurable: true,
+    });
+    execMock.mockReturnValue(false);
+    await expect(copyTextToClipboard('fail text')).resolves.toBe(false);
+
+    // When execCommand throws
+    execMock.mockImplementation(() => {
+      throw new Error('execCommand unsupported');
+    });
+    await expect(copyTextToClipboard('error text')).resolves.toBe(false);
   });
 });

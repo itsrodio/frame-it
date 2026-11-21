@@ -187,4 +187,52 @@ describe('inspect-geometry', () => {
       height: 12,
     });
   });
+
+  it('covers non-flex/grid gap shortcut and vertical guideLine projections when midX is outside target', () => {
+    const block = document.createElement('div');
+    block.style.display = 'block';
+    document.body.appendChild(block);
+    expect(calculateFlexGridGaps(block)).toEqual([]);
+
+    const source = rect(200, 200, 100, 100); // midX = 250
+    // Target to the left and above with target.right < midX (guideX = target.right)
+    const topLeft = rect(50, 50, 100, 50); // right = 150, bottom = 100
+    const tlLines = calculateDistances(source, topLeft);
+    expect(tlLines.find((l) => l.direction === 'top')?.guideLine).toEqual({
+      x1: 150,
+      y1: 100,
+      x2: 250,
+      y2: 100,
+    });
+
+    // Target to the right and below with target.left > midX (guideX = target.left)
+    const bottomRight = rect(350, 400, 100, 50); // left = 350, top = 400
+    const brLines = calculateDistances(source, bottomRight);
+    expect(brLines.find((l) => l.direction === 'bottom')?.guideLine).toEqual({
+      x1: 350,
+      y1: 400,
+      x2: 250,
+      y2: 400,
+    });
+
+    // Target below and to the left with midY > target.bottom
+    const leftAbove = rect(20, 400, 80, 60); // right = 100, top = 400
+    const laLines = calculateDistances(source, leftAbove);
+    expect(laLines.find((l) => l.direction === 'left')?.guideLine).toEqual({
+      x1: 100,
+      y1: 400,
+      x2: 100,
+      y2: 250,
+    });
+
+    // Target above with midX < target.left
+    const topRight = rect(350, 20, 80, 60);
+    const trLines = calculateDistances(source, topRight);
+    expect(trLines.find((l) => l.direction === 'top')?.guideLine).toEqual({
+      x1: 350,
+      y1: 80,
+      x2: 250,
+      y2: 80,
+    });
+  });
 });

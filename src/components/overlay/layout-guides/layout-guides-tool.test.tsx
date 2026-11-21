@@ -169,10 +169,26 @@ describe('LayoutGuidesTool & Fields', () => {
     });
     expect(onTogglePickContainer).toHaveBeenCalledTimes(1);
 
-    // Re-open popover and click header Close button
+    // Re-open popover, switch guide type via Select, and click header Close button
     act(() => {
       popoverTrigger.click();
     });
+    const guideTypeTrigger = container.querySelector(
+      '[data-slot="select-trigger"]',
+    ) as HTMLButtonElement;
+    expect(guideTypeTrigger).not.toBeNull();
+    act(() => {
+      guideTypeTrigger.click();
+    });
+    const rowsTypeOption = Array.from(
+      container.querySelectorAll('[data-slot="select-item"]'),
+    ).find((el) => el.textContent === 'Rows') as HTMLElement | undefined;
+    expect(rowsTypeOption).toBeDefined();
+    act(() => {
+      rowsTypeOption?.click();
+    });
+    expect(onTypeChange).toHaveBeenCalledWith('rows');
+
     const closeHeaderBtn = container.querySelector(
       'button[aria-label="Close"]',
     ) as HTMLButtonElement;
@@ -181,7 +197,7 @@ describe('LayoutGuidesTool & Fields', () => {
     });
   });
 
-  it('updates LinearGuideFields count, maxSize (input, blur, presets), itemSize, margin, gutter, offset, followScroll, and unlinks tracked element', () => {
+  it('updates LinearGuideFields count, maxSize (input, blur, presets), itemSize, margin, gutter, offset, followScroll, and unlinks tracked element', async () => {
     const onChange = vi.fn();
     const onClearTrackedElement = vi.fn();
 
@@ -288,21 +304,51 @@ describe('LayoutGuidesTool & Fields', () => {
     const presetsTrigger = container.querySelector(
       'button[aria-label="Max width presets"]',
     ) as HTMLButtonElement;
-    act(() => {
+    await act(async () => {
       presetsTrigger.click();
     });
 
     const presetItem = Array.from(
       container.querySelectorAll('[role="menuitem"]'),
-    ).find((el) => el.textContent?.includes('1440px')) as
+    ).find((el) => el.textContent?.includes('1440 px')) as
       | HTMLElement
       | undefined;
-    if (presetItem) {
-      act(() => {
-        presetItem.click();
-      });
-      expect(onChange).toHaveBeenLastCalledWith({ maxSize: 1440 });
-    }
+    expect(presetItem).toBeDefined();
+    await act(async () => {
+      presetItem?.click();
+    });
+    expect(onChange).toHaveBeenLastCalledWith({ maxSize: 1440 });
+
+    // Clearing max-size input in onChange immediately emits null
+    onChange.mockClear();
+    act(() => {
+      maxSizeInput.focus();
+      setNativeInputValue(maxSizeInput, '800');
+      setNativeInputValue(maxSizeInput, '');
+    });
+    expect(onChange).toHaveBeenLastCalledWith({ maxSize: null });
+
+    // Alignment Select change to 'stretch' resets itemSize to null
+    act(() => {
+      maxSizeInput.blur();
+    });
+    const alignmentTrigger = container.querySelector(
+      '#guide-alignment',
+    ) as HTMLButtonElement;
+    await act(async () => {
+      alignmentTrigger.click();
+    });
+    const stretchOption = Array.from(
+      container.querySelectorAll('[data-slot="select-item"]'),
+    ).find((el) => el.textContent === 'Stretch') as HTMLElement | undefined;
+    expect(stretchOption).toBeDefined();
+    await act(async () => {
+      stretchOption?.click();
+    });
+    expect(onChange).toHaveBeenLastCalledWith({
+      alignment: 'stretch',
+      itemSize: null,
+    });
 
     // Follow scroll toggle
     const positionToggle = Array.from(

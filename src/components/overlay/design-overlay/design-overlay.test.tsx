@@ -305,4 +305,308 @@ describe('DesignOverlayLayer & DesignOverlayTool', () => {
     });
     expect(onClear).toHaveBeenCalledTimes(1);
   });
+
+  it('handles DesignOverlayLayer canvas fallback on img error, followScroll=false, and non-left clicks', async () => {
+    const drawImage = vi.fn();
+    const clearRect = vi.fn();
+    vi.spyOn(HTMLCanvasElement.prototype, 'getContext').mockReturnValue({
+      drawImage,
+      clearRect,
+    } as unknown as CanvasRenderingContext2D);
+
+    const closeBitmap = vi.fn();
+    Object.defineProperty(window, 'createImageBitmap', {
+      value: vi.fn().mockResolvedValue({
+        width: 100,
+        height: 80,
+        close: closeBitmap,
+      }),
+      configurable: true,
+    });
+
+    const onMove = vi.fn();
+    const state: DesignOverlayState = {
+      ...buildDefaultDesignOverlayState(false),
+      enabled: true,
+      imageUrl:
+        'data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3C%2Fsvg%3E',
+      fileName: 'icon.svg',
+      naturalWidth: 100,
+      naturalHeight: 80,
+      x: 15,
+      y: 25,
+      scale: 1,
+      locked: false,
+      followScroll: false,
+    };
+
+    act(() => {
+      root.render(
+        <DesignOverlayLayer
+          state={state}
+          scroll={{ x: 50, y: 200 }}
+          isInteractiveAllowed={true}
+          onMove={onMove}
+        />,
+      );
+    });
+
+    const layer = document.body.querySelector(
+      '[data-testid="design-overlay-layer"]',
+    ) as HTMLDivElement;
+    // followScroll: false ignores scroll offset
+    expect(layer.style.transform).toContain('translate3d(15px, 25px, 0)');
+
+    // Non-left mouse button should not initiate drag
+    act(() => {
+      layer.dispatchEvent(
+        new MouseEvent('mousedown', { button: 2, bubbles: true }),
+      );
+      window.dispatchEvent(
+        new MouseEvent('mousemove', { clientX: 200, clientY: 200 }),
+      );
+    });
+    expect(onMove).not.toHaveBeenCalled();
+
+    // Trigger img onError to switch to canvas fallback
+    const img = layer.querySelector('img') as HTMLImageElement;
+    await act(async () => {
+      img.dispatchEvent(new Event('error'));
+      await Promise.resolve();
+      await Promise.resolve();
+    });
+
+    expect(layer.querySelector('canvas')).not.toBeNull();
+    expect(drawImage).toHaveBeenCalledTimes(1);
+    expect(closeBitmap).toHaveBeenCalledTimes(1);
+
+    // Base64 data URL canvas fallback
+    await act(async () => {
+      root.render(
+        <DesignOverlayLayer
+          state={{
+            ...state,
+            imageUrl: 'data:image/png;base64,SGVsbG8=',
+          }}
+          scroll={{ x: 0, y: 0 }}
+          isInteractiveAllowed={true}
+          onMove={onMove}
+        />,
+      );
+    });
+    const img2 = layer.querySelector('img') as HTMLImageElement;
+    await act(async () => {
+      img2.dispatchEvent(new Event('error'));
+      await Promise.resolve();
+      await Promise.resolve();
+    });
+    expect(drawImage).toHaveBeenCalledTimes(2);
+  });
+
+  it('handles DesignOverlayTool toggle without image, drag-and-drop, file input, errors, scale/opacity/XY inputs, and pick target', async () => {
+    const onToggle = vi.fn();
+    const onPatch = vi.fn();
+    const onLoadFile = vi
+      .fn()
+      .mockRejectedValueOnce(new Error('Unsupported'))
+      .mockResolvedValue(undefined);
+    const onTogglePickTarget = vi.fn();
+    const onCenterHorizontal = vi.fn();
+
+    const emptyState = buildDefaultDesignOverlayState(true);
+
+    act(() => {
+      root.render(
+        <PortalContext.Provider value={container}>
+          <TooltipProvider>
+            <DesignOverlayTool
+              state={emptyState}
+              quotaExceeded={false}
+              isPickingTarget={false}
+              onToggle={onToggle}
+              onPatch={onPatch}
+              onLoadFile={onLoadFile}
+              onAutoFit={vi.fn()}
+              onTogglePickTarget={onTogglePickTarget}
+              onCenterHorizontal={onCenterHorizontal}
+              onFitToViewportWidth={vi.fn()}
+              onResetPosition={vi.fn()}
+              onClear={vi.fn()}
+            />
+          </TooltipProvider>
+        </PortalContext.Provider>,
+      );
+    });
+
+    // Clicking dock toggle when no image is loaded opens the popover instead of toggling
+    const dockToggle = container.querySelector(
+      'button[aria-label="Toggle design overlay"]',
+    ) as HTMLButtonElement;
+    act(() => {
+      dockToggle.click();
+    });
+    expect(onToggle).not.toHaveBeenCalled();
+
+    const dropzone = container.querySelector(
+      '[data-testid="design-overlay-dropzone"]',
+    ) as HTMLButtonElement;
+    expect(dropzone).not.toBeNull();
+
+    // Clicking dropzone and upload button triggers hidden file input click
+    const fileInput = container.querySelector(
+      '[data-testid="design-overlay-file-input"]',
+    ) as HTMLInputElement;
+    const fileInputClickSpy = vi.spyOn(fileInput, 'click');
+    act(() => {
+      dropzone.click();
+    });
+    expect(fileInputClickSpy).toHaveBeenCalledTimes(1);
+
+    const uploadBtn = container.querySelector(
+      '[data-testid="design-overlay-upload-btn"]',
+    ) as HTMLButtonElement;
+    act(() => {
+      uploadBtn.click();
+    });
+    expect(fileInputClickSpy).toHaveBeenCalledTimes(2);
+
+    // Drop an invalid file -> shows error alert
+    const badFile = new File(['bad'], 'notes.txt', { type: 'text/plain' });
+    const popoverContent = dropzone.closest(
+      '[data-slot="popover-content"]',
+    ) as HTMLElement;
+    await act(async () => {
+      popoverContent.dispatchEvent(
+        new Event('dragover', { bubbles: true, cancelable: true }),
+      );
+      popoverContent.dispatchEvent(new Event('dragleave', { bubbles: false }));
+      const dropEvent = new Event('drop', {
+        bubbles: true,
+        cancelable: true,
+      }) as unknown as DragEvent;
+      Object.defineProperty(dropEvent, 'dataTransfer', {
+        value: { files: [badFile] },
+      });
+      popoverContent.dispatchEvent(dropEvent);
+      await Promise.resolve();
+    });
+    expect(
+      container.querySelector('[data-testid="design-overlay-error"]'),
+    ).not.toBeNull();
+
+    // File input change with valid file clears error and calls onLoadFile
+    const goodFile = new File(['ok'], 'mockup.png', { type: 'image/png' });
+    Object.defineProperty(fileInput, 'files', {
+      value: [goodFile],
+      configurable: true,
+    });
+    await act(async () => {
+      fileInput.dispatchEvent(new Event('change', { bubbles: true }));
+      await Promise.resolve();
+    });
+    expect(onLoadFile).toHaveBeenLastCalledWith(goodFile, 'mockup.png');
+    expect(
+      container.querySelector('[data-testid="design-overlay-error"]'),
+    ).toBeNull();
+
+    // Render with loaded image
+    const loadedState: DesignOverlayState = {
+      ...emptyState,
+      imageUrl: 'data:image/png;base64,AAAA',
+      fileName: 'hero.png',
+      naturalWidth: 1440,
+      naturalHeight: 900,
+      scale: 1,
+      opacity: 50,
+    };
+
+    await act(async () => {
+      root.render(
+        <PortalContext.Provider value={container}>
+          <TooltipProvider>
+            <DesignOverlayTool
+              state={loadedState}
+              quotaExceeded={false}
+              isPickingTarget={true}
+              onToggle={onToggle}
+              onPatch={onPatch}
+              onLoadFile={onLoadFile}
+              onAutoFit={vi.fn()}
+              onTogglePickTarget={onTogglePickTarget}
+              onCenterHorizontal={onCenterHorizontal}
+              onFitToViewportWidth={vi.fn()}
+              onResetPosition={vi.fn()}
+              onClear={vi.fn()}
+            />
+          </TooltipProvider>
+        </PortalContext.Provider>,
+      );
+    });
+
+    // Dock toggle with image calls onToggle
+    act(() => {
+      dockToggle.click();
+    });
+    expect(onToggle).toHaveBeenCalledWith(false);
+
+    // Center X, X/Y inputs, scale %, opacity input
+    act(() => {
+      (
+        container.querySelector(
+          '[data-testid="design-overlay-center-x"]',
+        ) as HTMLButtonElement
+      ).click();
+    });
+    expect(onCenterHorizontal).toHaveBeenCalledTimes(1);
+
+    const xInput = container.querySelector(
+      '#design-overlay-x',
+    ) as HTMLInputElement;
+    const yInput = container.querySelector(
+      '#design-overlay-y',
+    ) as HTMLInputElement;
+    const scalePctInput = container.querySelector(
+      '#design-overlay-scale-pct',
+    ) as HTMLInputElement;
+    const opacityInput = container.querySelector(
+      '#design-overlay-opacity',
+    ) as HTMLInputElement;
+
+    act(() => {
+      xInput.dispatchEvent(
+        new KeyboardEvent('keydown', { key: 'ArrowUp', bubbles: true }),
+      );
+    });
+    expect(onPatch).toHaveBeenLastCalledWith({ x: 1 });
+
+    act(() => {
+      yInput.dispatchEvent(
+        new KeyboardEvent('keydown', { key: 'ArrowDown', bubbles: true }),
+      );
+    });
+    expect(onPatch).toHaveBeenLastCalledWith({ y: -1 });
+
+    act(() => {
+      scalePctInput.dispatchEvent(
+        new KeyboardEvent('keydown', { key: 'ArrowUp', bubbles: true }),
+      );
+    });
+    expect(onPatch).toHaveBeenLastCalledWith({ scale: 1.01 });
+
+    act(() => {
+      opacityInput.dispatchEvent(
+        new KeyboardEvent('keydown', { key: 'ArrowUp', bubbles: true }),
+      );
+    });
+    expect(onPatch).toHaveBeenLastCalledWith({ opacity: 51 });
+
+    // Close popover via header close button
+    act(() => {
+      (
+        container.querySelector(
+          'button[aria-label="Close"]',
+        ) as HTMLButtonElement
+      ).click();
+    });
+  });
 });

@@ -1,7 +1,12 @@
 import { act } from 'react';
 import ReactDOM from 'react-dom/client';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { InspectDetailsCard } from '@/components/overlay/inspect/inspect-details-card';
 import { InspectMeasureOverlay } from '@/components/overlay/inspect/inspect-measure-overlay';
+import { InspectTool } from '@/components/overlay/inspect/inspect-tool';
+import { TooltipProvider } from '@/components/ui/tooltip';
+import { PortalContext } from '@/lib/portal-context';
+import { DEFAULT_EXTENSION_SETTINGS } from '@/lib/settings-storage';
 
 function mockRect(rect: Partial<DOMRect>): DOMRect {
   const left = rect.left ?? 0;
@@ -339,5 +344,260 @@ describe('InspectMeasureOverlay', () => {
     expect(
       container.querySelector('[data-testid="inspect-details-card"]'),
     ).toBeNull();
+  });
+
+  it('supports Alt-to-inspect, Escape clearing selection first, Shift+Enter/ArrowDown navigation, gap overlays, and scroll/resize updates', () => {
+    const flexParent = document.createElement('div');
+    flexParent.id = 'flex-wrap';
+    flexParent.style.display = 'flex';
+    flexParent.style.margin = '12px';
+
+    const hiddenChild = document.createElement('span');
+    hiddenChild.style.display = 'none';
+    const visibleChild = document.createElement('div');
+    visibleChild.id = 'item-1';
+    const siblingTwo = document.createElement('div');
+    siblingTwo.id = 'item-2';
+
+    flexParent.append(hiddenChild, visibleChild, siblingTwo);
+    document.body.appendChild(flexParent);
+
+    vi.spyOn(flexParent, 'getBoundingClientRect').mockReturnValue(
+      mockRect({ left: 20, top: 20, width: 500, height: 100 }),
+    );
+    vi.spyOn(visibleChild, 'getBoundingClientRect').mockReturnValue(
+      mockRect({ left: 20, top: 20, width: 100, height: 60 }),
+    );
+    vi.spyOn(siblingTwo, 'getBoundingClientRect').mockReturnValue(
+      mockRect({ left: 144, top: 20, width: 100, height: 60 }),
+    );
+    vi.spyOn(document, 'elementFromPoint').mockReturnValue(flexParent);
+
+    const onCancel = vi.fn();
+    act(() => {
+      root.render(<InspectMeasureOverlay active={false} onCancel={onCancel} />);
+    });
+
+    // Holding Alt enables temporary hover inspect even when active=false
+    act(() => {
+      window.dispatchEvent(new KeyboardEvent('keydown', { key: 'Alt' }));
+      window.dispatchEvent(
+        new MouseEvent('mousemove', { clientX: 50, clientY: 50, altKey: true }),
+      );
+    });
+    expect(
+      container.querySelectorAll('[data-testid="inspect-gap-overlay"]'),
+    ).toHaveLength(1);
+    expect(container.textContent).toContain('24');
+
+    // Releasing Alt / window blur clears hover
+    act(() => {
+      window.dispatchEvent(new KeyboardEvent('keyup', { key: 'Alt' }));
+    });
+    expect(container.innerHTML).toBe('');
+
+    act(() => {
+      window.dispatchEvent(new KeyboardEvent('keydown', { key: 'Alt' }));
+      window.dispatchEvent(new Event('blur'));
+    });
+    expect(container.innerHTML).toBe('');
+
+    // Activate mode, lock flexParent, navigate down to visibleChild (skipping hiddenChild), Shift+Enter back to parent
+    act(() => {
+      root.render(<InspectMeasureOverlay active={true} onCancel={onCancel} />);
+    });
+    act(() => {
+      flexParent.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    });
+    expect(container.textContent).toContain('div#flex-wrap');
+
+    act(() => {
+      window.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown' }));
+    });
+    expect(container.textContent).toContain('div#item-1');
+
+    act(() => {
+      window.dispatchEvent(
+        new KeyboardEvent('keydown', { key: 'Enter', shiftKey: true }),
+      );
+    });
+    expect(container.textContent).toContain('div#flex-wrap');
+
+    // Scroll & resize events trigger layout update; hovering overlay clears hover
+    vi.spyOn(document, 'elementFromPoint').mockReturnValue(container);
+    act(() => {
+      window.dispatchEvent(new Event('scroll'));
+      window.dispatchEvent(new Event('resize'));
+      window.dispatchEvent(
+        new MouseEvent('mousemove', { clientX: 10, clientY: 10 }),
+      );
+    });
+
+    // First Escape clears selection, second Escape calls onCancel
+    act(() => {
+      window.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
+    });
+    expect(
+      container.querySelector('[data-testid="inspect-details-card"]'),
+    ).toBeNull();
+    expect(onCancel).not.toHaveBeenCalled();
+
+    act(() => {
+      window.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
+    });
+    expect(onCancel).toHaveBeenCalledTimes(1);
+  });
+
+  it('covers InspectDetailsCard Figma SVG export (with and without img), direct <svg> copy, timer reset, and InspectTool reset fallback', async () => {
+    vi.useFakeTimers();
+    const writeText = vi.fn().mockResolvedValue(undefined);
+    Object.defineProperty(navigator, 'clipboard', {
+      value: { writeText },
+      configurable: true,
+    });
+
+    const cardEl = document.createElement('div');
+    cardEl.id = 'figma-card';
+    cardEl.style.margin = '12px';
+    cardEl.style.borderRadius = '8px';
+    cardEl.style.gap = '8px';
+    const img = document.createElement('img');
+    img.setAttribute('src', 'data:image/png;base64,iVBORw0KGgo=');
+    cardEl.appendChild(img);
+    document.body.appendChild(cardEl);
+
+    vi.spyOn(img, 'getBoundingClientRect').mockReturnValue(
+      mockRect({ left: 10, top: 10, width: 32, height: 32 }),
+    );
+
+    const cardRect = mockRect({ left: 10, top: 10, width: 200, height: 120 });
+
+    await act(async () => {
+      root.render(
+        <PortalContext.Provider value={container}>
+          <TooltipProvider>
+            <InspectDetailsCard
+              element={cardEl}
+              rect={cardRect}
+              inspectSettings={{
+                ...DEFAULT_EXTENSION_SETTINGS.inspect,
+                codeFormat: 'css',
+                unitFormat: 'rem',
+              }}
+            />
+          </TooltipProvider>
+        </PortalContext.Provider>,
+      );
+    });
+
+    // Click Copy Figma SVG button (with <img> -> calls preloadImagesForFigma)
+    const figmaBtn = container.querySelector(
+      '[data-testid="inspect-copy-figma"]',
+    ) as HTMLButtonElement;
+    await act(async () => {
+      figmaBtn.click();
+    });
+    expect(writeText).toHaveBeenCalledWith(
+      expect.stringContaining('data:image/png;base64,iVBORw0KGgo='),
+    );
+
+    // Advance timer 1400ms to reset copiedId
+    act(() => {
+      vi.advanceTimersByTime(1400);
+    });
+
+    // Direct <svg> element copy uses buildFigmaSvg instead of buildCodeSnippet
+    const svgEl = document.createElement('svg') as unknown as HTMLElement;
+    document.body.appendChild(svgEl);
+    await act(async () => {
+      root.render(
+        <PortalContext.Provider value={container}>
+          <TooltipProvider>
+            <InspectDetailsCard
+              element={svgEl}
+              rect={mockRect({ left: 0, top: 0, width: 24, height: 24 })}
+            />
+          </TooltipProvider>
+        </PortalContext.Provider>,
+      );
+    });
+
+    const copyCssBtn = container.querySelector(
+      '[data-testid="inspect-copy-css"]',
+    ) as HTMLButtonElement;
+    await act(async () => {
+      copyCssBtn.click();
+    });
+    expect(writeText).toHaveBeenLastCalledWith(
+      expect.stringContaining('<svg xmlns="http://www.w3.org/2000/svg"'),
+    );
+
+    // Clicking Figma SVG button on element without <img>
+    await act(async () => {
+      (
+        container.querySelector(
+          '[data-testid="inspect-copy-figma"]',
+        ) as HTMLButtonElement
+      ).click();
+    });
+
+    // InspectTool without onResetInspectSettings falls back to onUpdateInspectSettings(defaultInspectSettings)
+    const onUpdateInspectSettings = vi.fn();
+    await act(async () => {
+      root.render(
+        <PortalContext.Provider value={container}>
+          <TooltipProvider>
+            <InspectTool
+              active={true}
+              inspectSettings={{
+                ...DEFAULT_EXTENSION_SETTINGS.inspect,
+                showPadding: false,
+                showMargin: false,
+              }}
+              onToggle={vi.fn()}
+              onUpdateInspectSettings={onUpdateInspectSettings}
+            />
+          </TooltipProvider>
+        </PortalContext.Provider>,
+      );
+    });
+
+    const trigger = container.querySelector(
+      '[data-testid="inspect-popover-trigger"]',
+    ) as HTMLButtonElement;
+    act(() => {
+      trigger.click();
+    });
+
+    act(() => {
+      (
+        container.querySelector(
+          '[data-testid="dock-inspect-padding"]',
+        ) as HTMLButtonElement
+      ).click();
+      (
+        container.querySelector(
+          '[data-testid="dock-inspect-margin"]',
+        ) as HTMLButtonElement
+      ).click();
+      (
+        container.querySelector(
+          '[data-testid="inspect-popover-reset"]',
+        ) as HTMLButtonElement
+      ).click();
+    });
+    expect(onUpdateInspectSettings).toHaveBeenCalledWith(
+      DEFAULT_EXTENSION_SETTINGS.inspect,
+    );
+
+    act(() => {
+      (
+        container.querySelector(
+          'button[aria-label="Close"]',
+        ) as HTMLButtonElement
+      ).click();
+    });
+
+    vi.useRealTimers();
   });
 });

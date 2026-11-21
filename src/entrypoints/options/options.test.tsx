@@ -166,9 +166,6 @@ describe('OptionsApp', () => {
     expect(getCachedSettings().behavior.designOverlayLockedByDefault).toBe(
       false,
     );
-    expect(getCachedSettings().behavior.designOverlayLockedByDefault).toBe(
-      false,
-    );
 
     // Record a new hotkey for toggleGuides (Shift+X), cancel another with Escape, and reset single + all hotkeys
     const recordToggleGuidesBtn = container.querySelector(
