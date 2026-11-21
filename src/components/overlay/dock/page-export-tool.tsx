@@ -90,6 +90,11 @@ export function PageExportTool({
     }, 1400);
   }, []);
 
+  const showExportError = useCallback(() => {
+    setError(i18n.t('pageExport.error'));
+    setOpen(true);
+  }, []);
+
   const handleAction = useCallback(
     async (action: PageExportAction) => {
       if (exportingAction !== null) return;
@@ -97,52 +102,56 @@ export function PageExportTool({
       setError(null);
 
       try {
+        let exporter: {
+          copy: () => Promise<boolean>;
+          save: () => void;
+        } | null = null;
+
         if (format === 'svg') {
           const svg = await onBuildPageSvg();
-          if (!svg) {
-            setError(i18n.t('pageExport.error'));
-            setOpen(true);
-            return;
-          }
-          if (action === 'copy') {
-            const copied = await onCopySvg(svg);
-            if (!copied) {
-              setError(i18n.t('pageExport.error'));
-              setOpen(true);
-              return;
-            }
-            setStatus('copied');
-          } else {
-            onSaveSvg(
-              svg,
-              buildPageExportFilename(document, window.location, 'svg'),
-            );
-            setStatus('saved');
+          if (svg) {
+            exporter = {
+              copy: () => onCopySvg(svg),
+              save: () =>
+                onSaveSvg(
+                  svg,
+                  buildPageExportFilename(document, window.location, 'svg'),
+                ),
+            };
           }
         } else {
           const pngBlob = await onCapturePagePng();
-          if (action === 'copy') {
-            const copied = await onCopyPng(pngBlob);
-            if (!copied) {
-              setError(i18n.t('pageExport.error'));
-              setOpen(true);
-              return;
-            }
-            setStatus('copied');
-          } else {
-            onSavePng(
-              pngBlob,
-              buildPageExportFilename(document, window.location, 'png'),
-            );
-            setStatus('saved');
+          exporter = {
+            copy: () => onCopyPng(pngBlob),
+            save: () =>
+              onSavePng(
+                pngBlob,
+                buildPageExportFilename(document, window.location, 'png'),
+              ),
+          };
+        }
+
+        if (!exporter) {
+          showExportError();
+          return;
+        }
+
+        if (action === 'copy') {
+          const copied = await exporter.copy();
+          if (!copied) {
+            showExportError();
+            return;
           }
+          setStatus('copied');
+        } else {
+          exporter.save();
+          setStatus('saved');
         }
 
         setOpen(false);
         scheduleStatusReset();
       } catch {
-        setError(i18n.t('pageExport.error'));
-        setOpen(true);
+        showExportError();
       } finally {
         setExportingAction(null);
       }
@@ -157,6 +166,7 @@ export function PageExportTool({
       onSavePng,
       onSaveSvg,
       scheduleStatusReset,
+      showExportError,
     ],
   );
 
