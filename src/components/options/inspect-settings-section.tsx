@@ -66,10 +66,15 @@ export function InspectSettingsSection({
       <div className="divide-y">
         {/* Code Format */}
         <div className="flex flex-col gap-3 py-3.5 first:pt-0 sm:flex-row sm:items-center sm:justify-between">
-          <div className="text-xs font-medium">
-            {i18n.t('inspect.settings.codeFormat')}
+          <div className="space-y-0.5">
+            <div className="text-xs font-medium">
+              {i18n.t('inspect.settings.codeFormat')}
+            </div>
+            <div className="text-xs text-muted-foreground">
+              {i18n.t('inspect.settings.codeFormatDescription')}
+            </div>
           </div>
-          <div className="flex items-center gap-1 rounded-lg border bg-muted/40 p-1 w-fit">
+          <div className="flex items-center gap-1 rounded-lg border bg-muted/40 p-1 w-fit shrink-0">
             {CODE_FORMATS.map((item) => (
               <Button
                 key={item.value}
@@ -90,10 +95,15 @@ export function InspectSettingsSection({
 
         {/* Color Format */}
         <div className="flex flex-col gap-3 py-3.5 sm:flex-row sm:items-center sm:justify-between">
-          <div className="text-xs font-medium">
-            {i18n.t('inspect.settings.colorFormat')}
+          <div className="space-y-0.5">
+            <div className="text-xs font-medium">
+              {i18n.t('inspect.settings.colorFormat')}
+            </div>
+            <div className="text-xs text-muted-foreground">
+              {i18n.t('inspect.settings.colorFormatDescription')}
+            </div>
           </div>
-          <div className="flex items-center gap-1 rounded-lg border bg-muted/40 p-1 w-fit">
+          <div className="flex items-center gap-1 rounded-lg border bg-muted/40 p-1 w-fit shrink-0">
             {COLOR_FORMATS.map((item) => (
               <Button
                 key={item.value}
@@ -114,10 +124,15 @@ export function InspectSettingsSection({
 
         {/* Units */}
         <div className="flex flex-col gap-3 py-3.5 sm:flex-row sm:items-center sm:justify-between">
-          <div className="text-xs font-medium">
-            {i18n.t('inspect.settings.unitFormat')}
+          <div className="space-y-0.5">
+            <div className="text-xs font-medium">
+              {i18n.t('inspect.settings.unitFormat')}
+            </div>
+            <div className="text-xs text-muted-foreground">
+              {i18n.t('inspect.settings.unitFormatDescription')}
+            </div>
           </div>
-          <div className="flex items-center gap-1 rounded-lg border bg-muted/40 p-1 w-fit">
+          <div className="flex items-center gap-1 rounded-lg border bg-muted/40 p-1 w-fit shrink-0">
             {UNIT_FORMATS.map((item) => (
               <Button
                 key={item.value}
@@ -138,10 +153,15 @@ export function InspectSettingsSection({
 
         {/* Card Placement */}
         <div className="flex flex-col gap-3 py-3.5 sm:flex-row sm:items-center sm:justify-between">
-          <div className="text-xs font-medium">
-            {i18n.t('inspect.settings.cardPlacement')}
+          <div className="space-y-0.5">
+            <div className="text-xs font-medium">
+              {i18n.t('inspect.settings.cardPlacement')}
+            </div>
+            <div className="text-xs text-muted-foreground">
+              {i18n.t('inspect.settings.cardPlacementDescription')}
+            </div>
           </div>
-          <div className="flex items-center gap-1 rounded-lg border bg-muted/40 p-1 w-fit">
+          <div className="flex items-center gap-1 rounded-lg border bg-muted/40 p-1 w-fit shrink-0">
             {placements.map((item) => (
               <Button
                 key={item.value}
@@ -162,10 +182,15 @@ export function InspectSettingsSection({
 
         {/* Box Model Overlays */}
         <div className="flex flex-col gap-3 py-3.5 last:pb-0 sm:flex-row sm:items-center sm:justify-between">
-          <div className="text-xs font-medium">
-            {i18n.t('inspect.settings.boxOverlays')}
+          <div className="space-y-0.5">
+            <div className="text-xs font-medium">
+              {i18n.t('inspect.settings.boxOverlays')}
+            </div>
+            <div className="text-xs text-muted-foreground">
+              {i18n.t('inspect.settings.boxOverlaysDescription')}
+            </div>
           </div>
-          <div className="flex flex-wrap items-center gap-1.5">
+          <div className="flex flex-wrap items-center gap-1.5 shrink-0">
             <Toggle
               size="sm"
               variant="outline"
