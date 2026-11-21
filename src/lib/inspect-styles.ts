@@ -518,7 +518,9 @@ export function resolveEffectiveBackgroundColor(
       const gradColor = parseGradientColor(style.backgroundImage, ratio);
       if (gradColor) {
         if (current === el) ownHasBg = true;
-        if (!matchedGradient) matchedGradient = style.backgroundImage;
+        if (!matchedGradient && layers.length === 0) {
+          matchedGradient = style.backgroundImage;
+        }
         layers.push(gradColor);
         if (gradColor.a >= 1) {
           break;
@@ -761,8 +763,14 @@ export function extractInspectedStyles(
     : style.lineHeight || 'normal';
 
   const borderRadiusRaw = style.borderRadius?.trim();
-  const borderRadius =
+  let borderRadius =
     borderRadiusRaw && borderRadiusRaw !== '' ? borderRadiusRaw : '0px';
+  if (/^\d+(?:\.\d+)?(?:e[+-]?\d+)?px$/i.test(borderRadius)) {
+    const rNum = Number.parseFloat(borderRadius);
+    if (Number.isFinite(rNum) && rNum >= 9999) {
+      borderRadius = '9999px';
+    }
+  }
 
   return {
     width: Math.round(rect.width),

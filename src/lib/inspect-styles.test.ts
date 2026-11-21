@@ -221,4 +221,36 @@ describe('inspect-styles & WCAG 2.1 contrast', () => {
     expect(styles.colors.contrast.level).toBe('AAA');
     expect(styles.colors.contrast.ratio).toBeGreaterThan(7);
   });
+
+  it('does not leak ancestor gradient into swatch when element has its own background color, and normalizes infinity border-radius', () => {
+    const page = document.createElement('div');
+    page.style.backgroundColor = 'rgb(0, 0, 0)';
+    page.style.backgroundImage =
+      'linear-gradient(180deg, rgb(0, 0, 0), rgb(17, 17, 17))';
+
+    const badge = document.createElement('p');
+    badge.style.backgroundColor = 'rgba(16, 185, 129, 0.25)';
+    badge.style.color = 'rgb(123, 241, 168)';
+    badge.style.borderRadius = '33554432px';
+
+    page.appendChild(badge);
+    document.body.appendChild(page);
+
+    const styles = extractInspectedStyles(badge, {
+      x: 0,
+      y: 0,
+      left: 0,
+      top: 0,
+      width: 61,
+      height: 30,
+      right: 61,
+      bottom: 30,
+      toJSON: () => ({}),
+    });
+
+    expect(styles.colors.isInheritedBackground).toBe(false);
+    expect(styles.colors.background.gradient).toBeUndefined();
+    expect(styles.colors.background.hex).not.toBe('#000000');
+    expect(styles.layout.borderRadius).toBe('9999px');
+  });
 });
