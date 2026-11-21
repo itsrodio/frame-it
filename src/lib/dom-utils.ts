@@ -2,8 +2,8 @@ const OVERLAY_HOST_TAG = 'FRAMEIT-OVERLAY';
 const OVERLAY_ROOT_ID = 'frameit-root';
 
 /**
- * Проверяет, принадлежит ли элемент самому оверлею FrameIt,
- * не блокируя при этом сторонние Web Components (Shadow DOM) на странице сайта.
+ * Checks whether an element belongs to the FrameIt overlay itself,
+ * without blocking third-party Shadow DOM Web Components on the host page.
  */
 export function isOverlayElement(el: Element | null): boolean {
   if (!el) return true;
@@ -34,8 +34,8 @@ export function isOverlayElement(el: Element | null): boolean {
 }
 
 /**
- * Проверяет, находится ли фокус в поле ввода (input, textarea, select, contenteditable),
- * чтобы глобальные хоткеи не перехватывали ввод текста.
+ * Checks whether focus is inside an editable field (input, textarea, select, contenteditable)
+ * so global hotkeys do not intercept text typing.
  */
 export function isEditableTarget(target: EventTarget | null): boolean {
   if (!(target instanceof HTMLElement)) return false;
@@ -45,7 +45,7 @@ export function isEditableTarget(target: EventTarget | null): boolean {
 }
 
 /**
- * Формирует компактную читаемую метку DOM-элемента (например, `div#app` или `section.container.mx-auto`).
+ * Builds a compact readable label for a DOM element (e.g., `div#app` or `section.container.mx-auto`).
  */
 export function getElementLabel(el: HTMLElement, maxClassLength = 24): string {
   const tag = el.tagName.toLowerCase();
@@ -59,4 +59,34 @@ export function getElementLabel(el: HTMLElement, maxClassLength = 24): string {
     return `${tag}.${classes.join('.')}`;
   }
   return tag;
+}
+
+/**
+ * Copies text to the system clipboard with a textarea execCommand fallback.
+ */
+export async function copyTextToClipboard(text: string): Promise<boolean> {
+  if (navigator.clipboard?.writeText) {
+    try {
+      await navigator.clipboard.writeText(text);
+      return true;
+    } catch {
+      // Fallback to execCommand below
+    }
+  }
+
+  try {
+    const textarea = document.createElement('textarea');
+    textarea.value = text;
+    textarea.setAttribute('readonly', '');
+    textarea.style.position = 'fixed';
+    textarea.style.opacity = '0';
+    textarea.style.pointerEvents = 'none';
+    document.body.appendChild(textarea);
+    textarea.select();
+    const ok = document.execCommand('copy');
+    textarea.remove();
+    return ok;
+  } catch {
+    return false;
+  }
 }

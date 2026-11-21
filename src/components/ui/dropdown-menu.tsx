@@ -35,6 +35,7 @@ function DropdownMenuContent({
   const defaultContainer = usePortalContainer();
 
   return (
+    // Portal into the Shadow DOM container; pointer-events-auto re-enables interaction over the pointer-events-none host.
     <MenuPrimitive.Portal container={container ?? defaultContainer}>
       <MenuPrimitive.Positioner
         className="isolate z-50 outline-none pointer-events-auto"

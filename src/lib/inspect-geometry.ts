@@ -50,8 +50,8 @@ export function parseMargin(el: HTMLElement): BoxPadding {
 }
 
 /**
- * Вычисляет прямоугольники визуальных отступов (gap) между прямыми видимыми детьми
- * flex- или grid-контейнера для отображения на холсте в стиле Figma Auto Layout.
+ * Computes gap overlay rectangles between direct visible children
+ * of a flex or grid container for Figma Auto Layout-style canvas visualization.
  */
 export function calculateFlexGridGaps(el: HTMLElement): GapOverlayBox[] {
   const style = window.getComputedStyle(el);
@@ -112,10 +112,10 @@ export function calculateFlexGridGaps(el: HTMLElement): GapOverlayBox[] {
 }
 
 /**
- * Вычисляет расстояния в пикселях от sourceRect до targetRect (как по Alt в Figma).
- * Поддерживает два случая:
- * 1. Непересекающиеся элементы (внешние расстояния по X и Y + пунктирные проекции).
- * 2. Вложенные/пересекающиеся элементы (расстояния до 4 внутренних граней родителя или экрана).
+ * Computes pixel distances from `source` to `target` (Figma Alt-measure style).
+ * Supports two cases:
+ * 1. Non-overlapping elements (outer X/Y distances + dashed projection guide lines).
+ * 2. Nested/overlapping elements (distances to the 4 inner edges of the parent or target).
  */
 export function calculateDistances(
   source: DOMRect,
@@ -130,7 +130,7 @@ export function calculateDistances(
   const separatedTop = target.bottom <= source.top;
   const separatedBottom = target.top >= source.bottom;
 
-  // Если элементы разделены снаружи (sibling / другой блок на странице)
+  // Case 1: Elements are separated outside each other (siblings or distinct blocks).
   if (separatedLeft || separatedRight || separatedTop || separatedBottom) {
     if (separatedLeft) {
       const dist = Math.round(source.left - target.right);
@@ -227,7 +227,7 @@ export function calculateDistances(
     return lines;
   }
 
-  // Иначе один элемент находится внутри другого (или пересекается) — меряем 4 стороны до граней
+  // Case 2: One element is nested inside or overlaps the other — measure to all 4 edges.
   const topDist = Math.round(Math.abs(source.top - target.top));
   if (topDist > 0) {
     lines.push({
@@ -285,8 +285,8 @@ export interface InspectCardPosition {
 }
 
 /**
- * Вычисляет позицию карточки инспектора рядом с зафиксированным элементом так,
- * чтобы она не перекрывала сам элемент и не выходила за края вьюпорта.
+ * Computes the inspect card position near the locked element so it avoids overlapping
+ * the element itself and stays within the viewport bounds.
  */
 export function calculateInspectCardPosition(
   targetRect: DOMRect,
@@ -296,7 +296,7 @@ export function calculateInspectCardPosition(
 ): InspectCardPosition {
   const gap = 12;
   const margin = 12;
-  const bottomSafeMargin = 72; // Оставляем место под Dock внизу экрана
+  const bottomSafeMargin = 72; // Reserve space for the bottom Dock.
 
   const clampX = (x: number) =>
     Math.max(
@@ -319,7 +319,7 @@ export function calculateInspectCardPosition(
     };
   }
 
-  // 1. Справа от элемента
+  // 1. Right of element
   if (targetRect.right + gap + cardSize.width <= viewport.width - margin) {
     return {
       left: Math.round(targetRect.right + gap),
@@ -327,7 +327,7 @@ export function calculateInspectCardPosition(
     };
   }
 
-  // 2. Слева от элемента
+  // 2. Left of element
   if (targetRect.left - gap - cardSize.width >= margin) {
     return {
       left: Math.round(targetRect.left - gap - cardSize.width),
@@ -335,7 +335,7 @@ export function calculateInspectCardPosition(
     };
   }
 
-  // 3. Снизу от элемента
+  // 3. Below element
   if (
     targetRect.bottom + gap + cardSize.height <=
     viewport.height - bottomSafeMargin
@@ -346,7 +346,7 @@ export function calculateInspectCardPosition(
     };
   }
 
-  // 4. Сверху от элемента
+  // 4. Above element
   if (targetRect.top - gap - cardSize.height >= margin) {
     return {
       left: Math.round(clampX(targetRect.left)),
@@ -354,7 +354,7 @@ export function calculateInspectCardPosition(
     };
   }
 
-  // 5. Если элемент занимает почти весь экран — фиксируем в правом верхнем углу вьюпорта
+  // 5. Fallback for near-fullscreen elements: pin to top-right corner of viewport.
   return {
     left: Math.round(clampX(viewport.width - cardSize.width - margin)),
     top: Math.round(margin + 40),

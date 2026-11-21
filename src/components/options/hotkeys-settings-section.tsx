@@ -1,7 +1,8 @@
 import { Keyboard, RotateCcw } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { OptionsSectionCard } from '@/components/options/options-section-card';
 import { Button } from '@/components/ui/button';
-import { Toggle } from '@/components/ui/toggle';
+import { Switch } from '@/components/ui/switch';
 import {
   DEFAULT_HOTKEYS,
   eventToHotkeyBinding,
@@ -63,22 +64,11 @@ export function HotkeysSettingsSection({
   }, [hotkeys, onChange, recordingAction]);
 
   return (
-    <section className="rounded-xl border bg-card p-6 shadow-xs">
-      <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex items-start gap-3">
-          <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-muted text-muted-foreground">
-            <Keyboard className="size-4" />
-          </div>
-          <div>
-            <h2 className="text-sm font-semibold">
-              {i18n.t('options.hotkeys.title')}
-            </h2>
-            <p className="text-xs text-muted-foreground">
-              {i18n.t('options.hotkeys.description')}
-            </p>
-          </div>
-        </div>
-
+    <OptionsSectionCard
+      icon={Keyboard}
+      title={i18n.t('options.hotkeys.title')}
+      description={i18n.t('options.hotkeys.description')}
+      action={
         <Button
           variant="outline"
           size="xs"
@@ -91,8 +81,8 @@ export function HotkeysSettingsSection({
           <RotateCcw className="size-3" />
           {i18n.t('options.hotkeys.resetHotkeys')}
         </Button>
-      </div>
-
+      }
+    >
       <div className="divide-y">
         <div className="flex items-center justify-between gap-4 pb-4">
           <div className="space-y-0.5">
@@ -103,24 +93,18 @@ export function HotkeysSettingsSection({
               {i18n.t('options.hotkeys.enableHotkeysDescription')}
             </div>
           </div>
-          <Toggle
-            size="sm"
-            variant="outline"
+          <Switch
+            aria-label={i18n.t('options.hotkeys.enableHotkeys')}
             data-testid="toggle-hotkeys-enabled"
-            pressed={hotkeys.enabled}
-            onPressedChange={(enabled) => {
+            checked={hotkeys.enabled}
+            onCheckedChange={(enabled) => {
               setRecordingAction(null);
               onChange({
                 ...hotkeys,
                 enabled,
               });
             }}
-            className="h-7 min-w-22 text-xs"
-          >
-            {hotkeys.enabled
-              ? i18n.t('options.behavior.enabled')
-              : i18n.t('options.behavior.disabled')}
-          </Toggle>
+          />
         </div>
 
         {HOTKEY_ACTIONS.map((action) => {
@@ -175,6 +159,6 @@ export function HotkeysSettingsSection({
           );
         })}
       </div>
-    </section>
+    </OptionsSectionCard>
   );
 }

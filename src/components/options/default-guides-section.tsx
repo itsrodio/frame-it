@@ -1,10 +1,12 @@
 import { Columns3, Grid2X2, RotateCcw, Rows3 } from 'lucide-react';
 import { useState } from 'react';
+import { OptionsSectionCard } from '@/components/options/options-section-card';
 import { GridGuideFields } from '@/components/overlay/layout-guides/grid-guide-fields';
 import { LayoutGuidesOverlay } from '@/components/overlay/layout-guides/layout-guides-overlay';
 import { LinearGuideFields } from '@/components/overlay/layout-guides/linear-guide-fields';
 import { Button } from '@/components/ui/button';
 import { FieldGroup } from '@/components/ui/field';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { buildColorOpacityProps } from '@/lib/guide-utils';
 import { DEFAULT_EXTENSION_SETTINGS } from '@/lib/settings-storage';
 import type {
@@ -71,23 +73,30 @@ export function DefaultGuidesSection({
     updateActiveDefaultBase,
   );
 
-  return (
-    <section className="rounded-xl border bg-card p-6 shadow-xs">
-      <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex items-start gap-3">
-          <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-muted text-muted-foreground">
-            <Columns3 className="size-4" />
-          </div>
-          <div>
-            <h2 className="text-sm font-semibold">
-              {i18n.t('options.defaults.title')}
-            </h2>
-            <p className="text-xs text-muted-foreground">
-              {i18n.t('options.defaults.description')}
-            </p>
-          </div>
-        </div>
+  const guideTabs = [
+    {
+      value: 'columns',
+      label: i18n.t('guides.types.columns'),
+      icon: Columns3,
+    },
+    {
+      value: 'rows',
+      label: i18n.t('guides.types.rows'),
+      icon: Rows3,
+    },
+    {
+      value: 'grid',
+      label: i18n.t('guides.types.grid'),
+      icon: Grid2X2,
+    },
+  ] as const;
 
+  return (
+    <OptionsSectionCard
+      icon={Columns3}
+      title={i18n.t('options.defaults.title')}
+      description={i18n.t('options.defaults.description')}
+      action={
         <Button
           variant="outline"
           size="xs"
@@ -99,46 +108,30 @@ export function DefaultGuidesSection({
           <RotateCcw className="size-3" />
           {i18n.t('options.defaults.resetDefaults')}
         </Button>
-      </div>
-
-      <div className="mb-5 flex items-center gap-1 rounded-lg border bg-muted/40 p-1 w-fit">
-        {(
-          [
-            {
-              value: 'columns',
-              label: i18n.t('guides.types.columns'),
-              icon: Columns3,
-            },
-            {
-              value: 'rows',
-              label: i18n.t('guides.types.rows'),
-              icon: Rows3,
-            },
-            {
-              value: 'grid',
-              label: i18n.t('guides.types.grid'),
-              icon: Grid2X2,
-            },
-          ] as const
-        ).map((tab) => {
-          const Icon = tab.icon;
-          const isActive = activeDefaultTab === tab.value;
-          return (
-            <Button
-              key={tab.value}
-              variant={isActive ? 'default' : 'ghost'}
-              size="xs"
-              aria-pressed={isActive}
-              data-testid={`default-tab-${tab.value}`}
-              onClick={() => setActiveDefaultTab(tab.value)}
-              className="h-7 px-3 text-xs"
-            >
-              <Icon className="size-3.5" />
-              {tab.label}
-            </Button>
-          );
-        })}
-      </div>
+      }
+    >
+      <Tabs
+        value={activeDefaultTab}
+        onValueChange={(val) => setActiveDefaultTab(val as GuideType)}
+        className="mb-5"
+      >
+        <TabsList>
+          {guideTabs.map((tab) => {
+            const Icon = tab.icon;
+            return (
+              <TabsTrigger
+                key={tab.value}
+                value={tab.value}
+                data-testid={`default-tab-${tab.value}`}
+                className="px-3 text-xs"
+              >
+                <Icon className="size-3.5" />
+                {tab.label}
+              </TabsTrigger>
+            );
+          })}
+        </TabsList>
+      </Tabs>
 
       <div className="grid gap-6 md:grid-cols-2">
         <div className="rounded-lg border bg-background p-4">
@@ -187,6 +180,6 @@ export function DefaultGuidesSection({
           </div>
         </div>
       </div>
-    </section>
+    </OptionsSectionCard>
   );
 }

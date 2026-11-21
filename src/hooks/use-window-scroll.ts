@@ -1,8 +1,7 @@
 import { useEffect, useState } from 'react';
 
 /**
- * Отслеживает позицию скролла окна с батчингом через requestAnimationFrame,
- * когда `enabled === true`.
+ * Tracks window scroll position batched via requestAnimationFrame when `enabled` is true.
  */
 export function useWindowScroll(enabled: boolean): { x: number; y: number } {
   const [scroll, setScroll] = useState({ x: 0, y: 0 });

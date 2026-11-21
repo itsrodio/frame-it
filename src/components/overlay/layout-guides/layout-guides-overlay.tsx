@@ -33,7 +33,7 @@ function LinearGuideLayer({
           ? 'center'
           : undefined;
 
-  // Позиционирование самого контейнера сетки внутри вьюпорта
+  // Position the guide container itself within the viewport.
   const outerJustify =
     settings.alignment === 'start'
       ? 'flex-start'
@@ -149,7 +149,7 @@ export interface LayoutGuidesOverlayProps {
 }
 
 /**
- * Рендерит строго ОДИН активный тип сетки (state.type): Columns ИЛИ Rows ИЛИ Grid.
+ * Renders strictly ONE active guide type (`state.type`): Columns, Rows, or Grid.
  */
 export function LayoutGuidesOverlay({
   state,

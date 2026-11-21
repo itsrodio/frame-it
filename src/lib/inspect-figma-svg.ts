@@ -96,8 +96,8 @@ function resolveFigmaFontFamily(rawFontFamily: string): string {
 }
 
 /**
- * Находит ближайший контейнер с `overflow: hidden` / `text-overflow: ellipsis`
- * и его правую границу в координатах окна.
+ * Finds the nearest ancestor with `overflow: hidden` / `text-overflow: ellipsis`
+ * and its right boundary in viewport coordinates.
  */
 function getClippingInfo(
   el: HTMLElement,
@@ -164,7 +164,7 @@ function extractTextNodeLines(
   const collapsed = raw.replace(/\s+/g, ' ').trim();
   if (!collapsed) return [];
 
-  // Сохраняем пробел перед или после инлайн-ссылки (например, `hooks (` и `#15`)
+  // Preserve whitespace before or after inline links (e.g., `hooks (` and `#15`).
   const hasLeadingSpace = /^\s/.test(raw);
   const hasTrailingSpace = /\s$/.test(raw);
 
@@ -187,7 +187,7 @@ function extractTextNodeLines(
 
       if (clientRects.length === 1 && clientRects[0]) {
         const r = clientRects[0];
-        // Если текст начинается за пределами правой границы overflow:hidden контейнера — он полностью скрыт
+        // If text starts past the right boundary of an overflow:hidden container, it is fully clipped.
         if (r.left >= clipRight - 1) {
           if (clipContainer) truncatedContainers.add(clipContainer);
           return [];
@@ -285,7 +285,7 @@ function extractTextNodeLines(
     }
   }
 
-  // Fallback (когда Range не дал clientRects — например, в happy-dom или у <relative-time>)
+  // Fallback when Range yields no clientRects (e.g., happy-dom or <relative-time>).
   const pRect = parentEl.getBoundingClientRect();
   if (pRect.width > 0 && pRect.left >= clipRight - 6) {
     if (clipContainer) truncatedContainers.add(clipContainer);
@@ -304,7 +304,7 @@ function extractTextNodeLines(
   const firstBaselineY =
     baseTop + (lineHeightPx - fontSize) / 2 + fontSize * 0.8;
 
-  // Если элемент однострочный по высоте или имеет white-space: nowrap — никогда не переносим его на 2 строки!
+  // Never wrap single-line or white-space:nowrap boxes onto multiple lines.
   const isSingleLineBox =
     pStyle.whiteSpace === 'nowrap' ||
     pStyle.whiteSpace === 'pre' ||
@@ -390,9 +390,9 @@ function serializeInlineSvg(
 }
 
 /**
- * Отрисовывает источник изображения (`HTMLImageElement` или `ImageBitmap`) на `<canvas>`
- * с учётом `object-fit: cover` и возвращает `data:image/png;base64,...`
- * (Figma поддерживает в SVG `<image>` только PNG и JPEG, но НЕ поддерживает `data:image/webp`).
+ * Draws an image source (`HTMLImageElement` or `ImageBitmap`) onto a `<canvas>`
+ * respecting `object-fit: cover` and returns a `data:image/png;base64,...` URL
+ * (Figma SVG `<image>` supports PNG and JPEG, not `data:image/webp`).
  */
 function drawSourceToPngDataUrl(
   source: CanvasImageSource,
@@ -460,7 +460,7 @@ async function blobToPngDataUrl(
   targetH: number,
   objectFit: string,
 ): Promise<string | null> {
-  // Конвертируем WebP / AVIF / JPEG Blob через ImageBitmap + Canvas строго в PNG для Figma
+  // Convert WebP / AVIF / JPEG blobs via ImageBitmap + Canvas to PNG for Figma compatibility.
   if (typeof createImageBitmap === 'function') {
     try {
       const bitmap = await createImageBitmap(blob);
@@ -489,8 +489,8 @@ async function blobToPngDataUrl(
 }
 
 /**
- * Асинхронно подготавливает `data:image/png;base64,...` для всех `<img>` внутри выбранного элемента
- * (конвертируя в том числе `.webp` и `.avif` в PNG, так как импортер SVG в Figma не поддерживает WebP).
+ * Asynchronously prepares `data:image/png;base64,...` URLs for all `<img>` elements inside `rootEl`
+ * (converting `.webp` and `.avif` to PNG because Figma's SVG importer rejects WebP).
  */
 export async function preloadImagesForFigma(
   rootEl: HTMLElement,
@@ -656,9 +656,8 @@ export function buildFigmaSvg(
     opacityAttr: string,
   ) => {
     const last = layerItems[layerItems.length - 1];
-    // Если на той же визуальной строке идёт следующий текстовый фрагмент того же размера
-    // (например, курсивный `<em>It's the sharpest point</em>` после `decoration.`),
-    // выравниваем его базовую линию Y по первому фрагменту строки, чтобы курсив не подскакивал вверх!
+    // Align consecutive inline text fragments of the same font size on the same visual line
+    // (e.g., italic `<em>` after normal text) to the first fragment's baseline Y so italics don't shift upward.
     let alignedY = line.y;
     if (
       last &&
@@ -672,8 +671,8 @@ export function buildFigmaSvg(
       alignedY = last.y;
     }
 
-    // Объединяем через `<tspan>` только непрерывные инлайн-фрагменты одной строки с одинаковым font-weight и font-family
-    // (например, `hooks (` + `#15` + `)`), сохраняя отдельные flex-элементы (`itsrodio` и коммит) на своих точных X.
+    // Merge only contiguous inline spans sharing font-family and font-weight via `<tspan>`,
+    // keeping separate flex items at their exact X coordinates.
     if (
       last &&
       last.kind === 'text' &&
@@ -796,8 +795,8 @@ export function buildFigmaSvg(
         ? parseCssColor(nStyle.borderBottomColor || nStyle.borderTopColor)
         : null;
 
-    // Для корневого контейнера с дочерними элементами (секция, сетка, карточка) всегда сохраняем
-    // вычисленный фон страницы/секции, чтобы скопированный блок не оказывался на прозрачном тёмном фоне Figma.
+    // Always preserve the resolved page/section background on container roots so copied blocks
+    // do not appear on Figma's transparent dark canvas.
     const isContainerRoot = isRoot && el.children.length > 0;
     const hasBoxFill =
       bgColor !== null ||
@@ -898,8 +897,8 @@ export function buildFigmaSvg(
       }
     }
 
-    // Если у Web Component (например, <relative-time> на GitHub) есть открытый shadowRoot —
-    // обходим его реальное отрендеренное дерево вместо скрытого fallback light DOM.
+    // Traverse open shadowRoot on Web Components (e.g. GitHub's <relative-time>)
+    // instead of their hidden fallback light DOM.
     const childSource: Node = node.shadowRoot ?? node;
 
     for (const childNode of Array.from(childSource.childNodes)) {

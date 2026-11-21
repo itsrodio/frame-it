@@ -45,8 +45,8 @@ const CONTAINER_CLASS_REGEX =
   /\b(container|wrapper|max-w-|layout|content|grid|page|main|shell|inner)\b/i;
 
 /**
- * Автоматически находит основной контентный контейнер на текущей странице
- * на основе анализа max-width, центровки, семантических тегов и площади.
+ * Automatically detects the primary content container on the page
+ * by scoring max-width, centering, semantic tags, and visible area.
  */
 export function autoDetectPageContainer(): DetectedContainerInfo | null {
   const viewportWidth =

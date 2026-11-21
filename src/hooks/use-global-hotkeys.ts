@@ -39,7 +39,7 @@ export function useGlobalHotkeys({
         return;
       }
 
-      // Shift + G (или кастомный хоткей) или Ctrl + ; (как в Figma) — вкл/выкл направляющие
+      // Shift+G (or custom binding) or Ctrl+; (Figma-style) toggles layout guides.
       if (
         matchesHotkey(e, hotkeys.toggleGuides) ||
         ((e.ctrlKey || e.metaKey) &&

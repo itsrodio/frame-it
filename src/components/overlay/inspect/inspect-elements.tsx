@@ -1,3 +1,4 @@
+import { Kbd } from '@/components/ui/kbd';
 import { getElementLabel } from '@/lib/dom-utils';
 import type { BoxPadding, GapOverlayBox } from '@/lib/inspect-geometry';
 
@@ -7,17 +8,13 @@ export function InspectHintBanner() {
       <span>
         <strong className="font-semibold">{i18n.t('inspect.clickKey')}</strong>{' '}
         {i18n.t('inspect.lockElement')} •{' '}
-        <kbd className="rounded bg-muted px-1 py-0.5 font-mono text-[10px]">
-          Alt
-        </kbd>{' '}
+        <Kbd className="h-auto px-1 py-0.5 font-mono text-[10px]">Alt</Kbd>{' '}
         {i18n.t('inspect.measureDistances')} •{' '}
-        <kbd className="rounded bg-muted px-1 py-0.5 font-mono text-[10px]">
+        <Kbd className="h-auto px-1 py-0.5 font-mono text-[10px]">
           {i18n.t('inspect.shiftClickKey')}
-        </kbd>{' '}
+        </Kbd>{' '}
         {i18n.t('inspect.snapGrid')} •{' '}
-        <kbd className="rounded bg-muted px-1 py-0.5 font-mono text-[10px]">
-          Esc
-        </kbd>{' '}
+        <Kbd className="h-auto px-1 py-0.5 font-mono text-[10px]">Esc</Kbd>{' '}
         {i18n.t('inspect.exit')}
       </span>
     </div>
@@ -96,7 +93,7 @@ export function HoveredElementBox({
           height: rect.height,
         }}
       >
-        {/* Внешние margin элемента (оранжевый слой) */}
+        {/* Outer element margins (amber layer) */}
         {margin && margin.top > 0 && (
           <div
             data-testid="inspect-margin-top"
@@ -126,7 +123,7 @@ export function HoveredElementBox({
           />
         )}
 
-        {/* Внутренние padding элемента (зелёный слой) */}
+        {/* Inner element padding (emerald layer) */}
         {padding && padding.top > 0 && (
           <div
             className="absolute inset-x-0 top-0 bg-emerald-500/15"
@@ -163,7 +160,7 @@ export function HoveredElementBox({
         )}
       </div>
 
-      {/* Визуализация Flex / Grid Gap между дочерними элементами (фиолетовый слой в стиле Figma Auto Layout) */}
+      {/* Flex / Grid gap overlays between child elements (Figma Auto Layout style) */}
       {gaps?.map((gap) => (
         <div
           key={`gap-${gap.axis}-${gap.left}-${gap.top}-${gap.width}-${gap.height}`}
@@ -177,7 +174,7 @@ export function HoveredElementBox({
           }}
         >
           {(gap.width >= 16 || gap.height >= 14) && (
-            <span className="rounded bg-purple-600 px-1 py-0.2 font-mono text-[9px] leading-none font-semibold text-white shadow-2xs">
+            <span className="rounded bg-purple-600 px-1 py-0.5 font-mono text-[9px] leading-none font-semibold text-white shadow-2xs">
               {gap.value}
             </span>
           )}

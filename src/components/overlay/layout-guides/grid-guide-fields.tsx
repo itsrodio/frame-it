@@ -1,6 +1,4 @@
-import { Lock, Scroll } from 'lucide-react';
-import { Field, FieldLabel } from '@/components/ui/field';
-import { Toggle } from '@/components/ui/toggle';
+import { FollowScrollField } from '@/components/overlay/shared/follow-scroll-field';
 import type { GridGuideSettings } from '@/types/layout-guides';
 import {
   ColorOpacityField,
@@ -49,32 +47,10 @@ export function GridGuideFields({
         onChange={(offsetY) => onChange({ offsetY })}
       />
 
-      <Field orientation="horizontal">
-        <FieldLabel className="w-2/5 text-xs text-muted-foreground">
-          {i18n.t('guides.fields.position')}
-        </FieldLabel>
-        <div className="flex w-3/5 items-center gap-1">
-          <Toggle
-            size="sm"
-            variant="outline"
-            pressed={settings.followScroll}
-            onPressedChange={(followScroll) => onChange({ followScroll })}
-            className="h-7 w-full text-xs gap-1.5"
-          >
-            {settings.followScroll ? (
-              <>
-                <Scroll className="size-3" />
-                {i18n.t('guides.position.scrollWithPage')}
-              </>
-            ) : (
-              <>
-                <Lock className="size-3" />
-                {i18n.t('guides.position.fixedToViewport')}
-              </>
-            )}
-          </Toggle>
-        </div>
-      </Field>
+      <FollowScrollField
+        followScroll={settings.followScroll}
+        onChange={(followScroll) => onChange({ followScroll })}
+      />
     </>
   );
 }

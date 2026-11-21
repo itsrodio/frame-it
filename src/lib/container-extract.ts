@@ -38,8 +38,8 @@ export function parseGridColumns(
 }
 
 /**
- * Рассчитывает адаптивное количество колонок и межколоночный отступ (gutter)
- * в зависимости от внутренней ширины контейнера (если у элемента нет явного CSS Grid).
+ * Suggests an adaptive column count and gutter based on the container's inner width
+ * when the element has no explicit CSS Grid columns.
  */
 export function suggestColumnsForWidth(innerWidth: number): {
   count: number;
@@ -61,8 +61,7 @@ export function suggestColumnsForWidth(innerWidth: number): {
 }
 
 /**
- * Извлекает параметры сетки (ширину контейнера, внутренние отступы, смещение, колонки)
- * из конкретного DOM-элемента.
+ * Extracts layout guide parameters (width, inline padding, offset, columns) from a DOM element.
  */
 export function extractContainerInfo(
   el: HTMLElement,
@@ -149,7 +148,7 @@ export function extractContainerInfo(
 }
 
 /**
- * Конвертирует информацию о контейнере в настройки направляющих колонок.
+ * Converts detected container info into a partial columns guide settings patch.
  */
 export function containerInfoToColumnsPatch(
   info: DetectedContainerInfo,

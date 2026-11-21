@@ -13,13 +13,16 @@ import {
   CopyableFieldBox,
   DomBreadcrumbsTitle,
 } from '@/components/overlay/inspect/inspect-card-fields';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
 import { Field, FieldGroup, FieldLabel } from '@/components/ui/field';
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
+import { copyTextToClipboard } from '@/lib/dom-utils';
 import {
   buildCodeSnippet,
   buildFigmaSvg,
@@ -52,33 +55,6 @@ export interface InspectDetailsCardProps {
 const CARD_WIDTH = 272;
 const CARD_MIN_HEIGHT = 120;
 const VIEWPORT_MARGIN = 8;
-
-async function copyTextToClipboard(text: string): Promise<boolean> {
-  if (navigator.clipboard?.writeText) {
-    try {
-      await navigator.clipboard.writeText(text);
-      return true;
-    } catch {
-      // Fallback to execCommand below
-    }
-  }
-
-  try {
-    const textarea = document.createElement('textarea');
-    textarea.value = text;
-    textarea.setAttribute('readonly', '');
-    textarea.style.position = 'fixed';
-    textarea.style.opacity = '0';
-    textarea.style.pointerEvents = 'none';
-    document.body.appendChild(textarea);
-    textarea.select();
-    const ok = document.execCommand('copy');
-    textarea.remove();
-    return ok;
-  } catch {
-    return false;
-  }
-}
 
 export function InspectDetailsCard({
   element,
@@ -157,6 +133,7 @@ export function InspectDetailsCard({
     await handleCopy('figma-svg', svgWithImages);
   }, [element, handleCopy, rect, styles]);
 
+  // Estimate card height from visible optional rows so auto-positioning avoids viewport overflow.
   const optionalRowsCount =
     (styles.layout.gap ? 1 : 0) +
     (styles.layout.margin !== '0px' ? 1 : 0) +
@@ -263,15 +240,16 @@ export function InspectDetailsCard({
       : `${i18n.t('inspect.card.copyCss')} ${CODE_FORMAT_LABELS[inspectSettings.codeFormat]}`;
 
   return (
-    <div
+    <Card
+      size="sm"
       data-testid="inspect-details-card"
-      className="fixed z-50 flex w-68 flex-col overflow-hidden rounded-xl bg-popover p-0 text-sm text-popover-foreground shadow-md ring-1 ring-foreground/10 pointer-events-auto"
+      className="fixed z-50 w-68 gap-0 bg-popover py-0 text-popover-foreground shadow-md pointer-events-auto"
       style={{
         top: position.top,
         left: position.left,
       }}
     >
-      {/* Цветная (primary) полоска сверху карточки для перетаскивания без конфликта с кнопками */}
+      {/* Dedicated top drag handle bar so dragging never conflicts with header buttons */}
       <div
         aria-hidden="true"
         data-testid="inspect-card-drag-handle"
@@ -289,7 +267,7 @@ export function InspectDetailsCard({
         />
       </div>
 
-      {/* Лаконичная шапка: слева путь элемента (родитель › элемент), справа действия (Figma SVG, Copy Code, Pin, Close) */}
+      {/* Header: DOM breadcrumbs on the left, export/pin/close actions on the right */}
       <div className="flex items-center justify-between border-b px-3 py-2">
         <DomBreadcrumbsTitle
           element={element}
@@ -406,7 +384,6 @@ export function InspectDetailsCard({
         </div>
       </div>
 
-      {/* Поля свойств в едином стиле с LinearGuideFields / GridGuideFields */}
       <FieldGroup className="gap-2 p-3">
         <Field orientation="horizontal">
           <FieldLabel className="w-2/5 text-xs text-muted-foreground">
@@ -519,14 +496,15 @@ export function InspectDetailsCard({
             className="flex h-7 w-3/5 items-center justify-between rounded-md border border-input bg-transparent px-2 font-mono text-xs"
           >
             <span>{styles.colors.contrast.formattedRatio}</span>
-            <span
+            <Badge
+              variant="secondary"
               className={cn(
-                'rounded px-1.5 py-0.5 text-[10px] leading-none font-semibold',
+                'h-4 rounded px-1.5 py-0 text-[10px] leading-none font-semibold',
                 contrastBadgeClass,
               )}
             >
               {styles.colors.contrast.level}
-            </span>
+            </Badge>
           </div>
         </Field>
 
@@ -600,6 +578,6 @@ export function InspectDetailsCard({
           </Field>
         )}
       </FieldGroup>
-    </div>
+    </Card>
   );
 }
