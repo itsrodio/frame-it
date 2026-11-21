@@ -1,0 +1,199 @@
+export interface DistanceLine {
+  direction: 'top' | 'right' | 'bottom' | 'left';
+  value: number;
+  x1: number;
+  y1: number;
+  x2: number;
+  y2: number;
+  guideLine?: {
+    x1: number;
+    y1: number;
+    x2: number;
+    y2: number;
+  };
+}
+
+export interface BoxPadding {
+  top: number;
+  right: number;
+  bottom: number;
+  left: number;
+}
+
+export function parsePadding(el: HTMLElement): BoxPadding {
+  const style = window.getComputedStyle(el);
+  return {
+    top: Math.round(Number.parseFloat(style.paddingTop) || 0),
+    right: Math.round(Number.parseFloat(style.paddingRight) || 0),
+    bottom: Math.round(Number.parseFloat(style.paddingBottom) || 0),
+    left: Math.round(Number.parseFloat(style.paddingLeft) || 0),
+  };
+}
+
+/**
+ * Вычисляет расстояния в пикселях от sourceRect до targetRect (как по Alt в Figma).
+ * Поддерживает два случая:
+ * 1. Непересекающиеся элементы (внешние расстояния по X и Y + пунктирные проекции).
+ * 2. Вложенные/пересекающиеся элементы (расстояния до 4 внутренних граней родителя или экрана).
+ */
+export function calculateDistances(
+  source: DOMRect,
+  target: DOMRect,
+): DistanceLine[] {
+  const lines: DistanceLine[] = [];
+  const midX = source.left + source.width / 2;
+  const midY = source.top + source.height / 2;
+
+  const separatedLeft = target.right <= source.left;
+  const separatedRight = target.left >= source.right;
+  const separatedTop = target.bottom <= source.top;
+  const separatedBottom = target.top >= source.bottom;
+
+  // Если элементы разделены снаружи (sibling / другой блок на странице)
+  if (separatedLeft || separatedRight || separatedTop || separatedBottom) {
+    if (separatedLeft) {
+      const dist = Math.round(source.left - target.right);
+      if (dist > 0) {
+        const guideY =
+          midY < target.top
+            ? target.top
+            : midY > target.bottom
+              ? target.bottom
+              : null;
+        lines.push({
+          direction: 'left',
+          value: dist,
+          x1: target.right,
+          y1: midY,
+          x2: source.left,
+          y2: midY,
+          guideLine:
+            guideY !== null
+              ? { x1: target.right, y1: guideY, x2: target.right, y2: midY }
+              : undefined,
+        });
+      }
+    } else if (separatedRight) {
+      const dist = Math.round(target.left - source.right);
+      if (dist > 0) {
+        const guideY =
+          midY < target.top
+            ? target.top
+            : midY > target.bottom
+              ? target.bottom
+              : null;
+        lines.push({
+          direction: 'right',
+          value: dist,
+          x1: source.right,
+          y1: midY,
+          x2: target.left,
+          y2: midY,
+          guideLine:
+            guideY !== null
+              ? { x1: target.left, y1: guideY, x2: target.left, y2: midY }
+              : undefined,
+        });
+      }
+    }
+
+    if (separatedTop) {
+      const dist = Math.round(source.top - target.bottom);
+      if (dist > 0) {
+        const guideX =
+          midX < target.left
+            ? target.left
+            : midX > target.right
+              ? target.right
+              : null;
+        lines.push({
+          direction: 'top',
+          value: dist,
+          x1: midX,
+          y1: target.bottom,
+          x2: midX,
+          y2: source.top,
+          guideLine:
+            guideX !== null
+              ? { x1: guideX, y1: target.bottom, x2: midX, y2: target.bottom }
+              : undefined,
+        });
+      }
+    } else if (separatedBottom) {
+      const dist = Math.round(target.top - source.bottom);
+      if (dist > 0) {
+        const guideX =
+          midX < target.left
+            ? target.left
+            : midX > target.right
+              ? target.right
+              : null;
+        lines.push({
+          direction: 'bottom',
+          value: dist,
+          x1: midX,
+          y1: source.bottom,
+          x2: midX,
+          y2: target.top,
+          guideLine:
+            guideX !== null
+              ? { x1: guideX, y1: target.top, x2: midX, y2: target.top }
+              : undefined,
+        });
+      }
+    }
+
+    return lines;
+  }
+
+  // Иначе один элемент находится внутри другого (или пересекается) — меряем 4 стороны до граней
+  const topDist = Math.round(Math.abs(source.top - target.top));
+  if (topDist > 0) {
+    lines.push({
+      direction: 'top',
+      value: topDist,
+      x1: midX,
+      y1: Math.min(source.top, target.top),
+      x2: midX,
+      y2: Math.max(source.top, target.top),
+    });
+  }
+
+  const bottomDist = Math.round(Math.abs(target.bottom - source.bottom));
+  if (bottomDist > 0) {
+    lines.push({
+      direction: 'bottom',
+      value: bottomDist,
+      x1: midX,
+      y1: Math.min(source.bottom, target.bottom),
+      x2: midX,
+      y2: Math.max(source.bottom, target.bottom),
+    });
+  }
+
+  const leftDist = Math.round(Math.abs(source.left - target.left));
+  if (leftDist > 0) {
+    lines.push({
+      direction: 'left',
+      value: leftDist,
+      x1: Math.min(source.left, target.left),
+      y1: midY,
+      x2: Math.max(source.left, target.left),
+      y2: midY,
+    });
+  }
+
+  const rightDist = Math.round(Math.abs(target.right - source.right));
+  if (rightDist > 0) {
+    lines.push({
+      direction: 'right',
+      value: rightDist,
+      x1: Math.min(source.right, target.right),
+      y1: midY,
+      x2: Math.max(source.right, target.right),
+      y2: midY,
+    });
+  }
+
+  return lines;
+}

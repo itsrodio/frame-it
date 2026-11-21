@@ -1,7 +1,7 @@
 import { act } from 'react';
 import ReactDOM from 'react-dom/client';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { InspectMeasureOverlay } from '@/components/overlay/inspect-measure-overlay';
+import { InspectMeasureOverlay } from '@/components/overlay/inspect/inspect-measure-overlay';
 
 function mockRect(rect: Partial<DOMRect>): DOMRect {
   const left = rect.left ?? 0;

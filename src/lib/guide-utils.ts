@@ -1,4 +1,5 @@
 import type {
+  BaseGuideSettings,
   GridGuideSettings,
   LinearGuideSettings,
 } from '@/types/layout-guides';
@@ -19,6 +20,35 @@ export function normalizeHexColor(
     ? `#${cleanHex}`
     : fallback;
   return { cleanHex, validCssHex };
+}
+
+/**
+ * Builds the color & opacity props for `ColorOpacityField`, `LinearGuideFields`, and `GridGuideFields`.
+ */
+export function buildColorOpacityProps(
+  settings: BaseGuideSettings,
+  onUpdate: (patch: Partial<BaseGuideSettings>) => void,
+) {
+  const { cleanHex, validCssHex } = normalizeHexColor(settings.color);
+
+  const onHexChange = (raw: string) => {
+    const sanitized = raw.replace(/[^0-9a-fA-F]/g, '').slice(0, 6);
+    onUpdate({ color: `#${sanitized}` });
+  };
+
+  const onOpacityChange = (raw: string) => {
+    const num = Number(raw);
+    if (Number.isNaN(num)) return;
+    onUpdate({ opacity: Math.max(0, Math.min(100, num)) });
+  };
+
+  return {
+    cleanHex,
+    validCssHex,
+    opacity: settings.opacity,
+    onHexChange,
+    onOpacityChange,
+  };
 }
 
 /**

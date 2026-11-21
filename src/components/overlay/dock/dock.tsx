@@ -1,6 +1,6 @@
-import { CloseTool } from '@/components/overlay/close-tool';
-import { InspectTool } from '@/components/overlay/inspect-tool';
-import { LayoutGuidesTool } from '@/components/overlay/layout-guides-tool';
+import { CloseTool } from '@/components/overlay/dock/close-tool';
+import { InspectTool } from '@/components/overlay/inspect/inspect-tool';
+import { LayoutGuidesTool } from '@/components/overlay/layout-guides/layout-guides-tool';
 import { Separator } from '@/components/ui/separator';
 import type { LayoutGuidesToolProps } from '@/types/layout-guides';
 

@@ -7,8 +7,8 @@ import {
   DEFAULT_LAYOUT_GUIDES_STATE,
 } from '@/components/overlay/layout-guides/constants';
 import { GridGuideFields } from '@/components/overlay/layout-guides/grid-guide-fields';
+import { LayoutGuidesTool } from '@/components/overlay/layout-guides/layout-guides-tool';
 import { LinearGuideFields } from '@/components/overlay/layout-guides/linear-guide-fields';
-import { LayoutGuidesTool } from '@/components/overlay/layout-guides-tool';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { PortalContext } from '@/lib/portal-context';
 

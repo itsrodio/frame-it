@@ -6,8 +6,8 @@ import { act } from 'react';
 import ReactDOM from 'react-dom/client';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { App } from '@/App';
-import { ContainerPickerOverlay } from '@/components/overlay/container-picker-overlay';
-import { InspectMeasureOverlay } from '@/components/overlay/inspect-measure-overlay';
+import { InspectMeasureOverlay } from '@/components/overlay/inspect/inspect-measure-overlay';
+import { ContainerPickerOverlay } from '@/components/overlay/layout-guides/container-picker-overlay';
 import {
   getTestLocale,
   LOCALE_RAW_MAPS,
