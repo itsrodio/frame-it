@@ -236,6 +236,9 @@ describe('DesignOverlayLayer & DesignOverlayTool', () => {
     const scaleHalfBtn = container.querySelector(
       '[data-testid="design-overlay-scale-0.5"]',
     ) as HTMLButtonElement;
+    const scaleOneBtn = container.querySelector(
+      '[data-testid="design-overlay-scale-1"]',
+    ) as HTMLButtonElement;
     const fitWidthBtn = container.querySelector(
       '[data-testid="design-overlay-fit-width"]',
     ) as HTMLButtonElement;
@@ -260,10 +263,12 @@ describe('DesignOverlayLayer & DesignOverlayTool', () => {
     });
     expect(onAutoFit).toHaveBeenCalledTimes(1);
 
+    expect(scaleHalfBtn.getAttribute('aria-pressed')).toBe('true');
+
     act(() => {
-      scaleHalfBtn.click();
+      scaleOneBtn.click();
     });
-    expect(onPatch).toHaveBeenLastCalledWith({ scale: 0.5 });
+    expect(onPatch).toHaveBeenLastCalledWith({ scale: 1 });
 
     act(() => {
       fitWidthBtn.click();
