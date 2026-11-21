@@ -32,7 +32,7 @@
     "snapGrid": "ajustar cuadrícula al contenedor",
     "exit": "salir",
     "card": {
-      "copyCss": "Copiar CSS",
+      "copyCss": "Copiar",
       "copied": "Copiado",
       "clickToCopy": "Clic para copiar",
       "unpinAriaLabel": "Desfijar elemento",
@@ -52,7 +52,7 @@
       "navChild": "Primer hijo (↓)",
       "navPrev": "Hermano anterior (←)",
       "navNext": "Hermano siguiente (→)",
-      "copyFigma": "Copiar a Figma (SVG)",
+      "copyFigma": "Copiar a Figma",
       "copySvg": "Copiar SVG",
       "pinCard": "Fijar tarjeta en esquina",
       "floatCard": "Tarjeta junto al elemento",

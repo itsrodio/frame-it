@@ -32,7 +32,7 @@
     "snapGrid": "将网格吸附到容器",
     "exit": "退出",
     "card": {
-      "copyCss": "复制 CSS",
+      "copyCss": "复制",
       "copied": "已复制",
       "clickToCopy": "点击复制",
       "unpinAriaLabel": "取消锁定元素",
@@ -52,7 +52,7 @@
       "navChild": "第一个子元素 (↓)",
       "navPrev": "上一个兄弟元素 (←)",
       "navNext": "下一个兄弟元素 (→)",
-      "copyFigma": "复制到 Figma (SVG)",
+      "copyFigma": "复制到 Figma",
       "copySvg": "复制 SVG",
       "pinCard": "将卡片固定在角落",
       "floatCard": "卡片跟随元素",

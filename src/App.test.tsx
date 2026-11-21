@@ -5,6 +5,7 @@ import { App } from '@/App';
 import { LAYOUT_GUIDES_STORAGE_KEY } from '@/components/overlay/layout-guides/constants';
 import {
   DEFAULT_EXTENSION_SETTINGS,
+  getCachedSettings,
   saveExtensionSettings,
 } from '@/lib/settings-storage';
 
@@ -242,9 +243,12 @@ describe('App', () => {
     });
 
     // Open LayoutGuidesTool popover
-    const popoverTrigger = portalContainer.querySelector(
+    const popoverTriggers = portalContainer.querySelectorAll(
       '[data-slot="popover-trigger"]',
-    ) as HTMLButtonElement;
+    );
+    const popoverTrigger = popoverTriggers[
+      popoverTriggers.length - 1
+    ] as HTMLButtonElement;
     act(() => {
       popoverTrigger.click();
     });
@@ -449,5 +453,70 @@ describe('App', () => {
       closeBtn.click();
     });
     expect(onClose).toHaveBeenCalledTimes(1);
+  });
+
+  it('opens InspectTool dropdown popover in Dock, keeps Option defaults intact, and resets back to Option defaults', async () => {
+    await saveExtensionSettings({
+      ...DEFAULT_EXTENSION_SETTINGS,
+      inspect: {
+        ...DEFAULT_EXTENSION_SETTINGS.inspect,
+        codeFormat: 'jsx',
+        colorFormat: 'rgb',
+      },
+    });
+
+    await act(async () => {
+      root.render(<App portalContainer={portalContainer} onClose={vi.fn()} />);
+    });
+
+    const inspectPopoverTrigger = portalContainer.querySelector(
+      '[data-testid="inspect-popover-trigger"]',
+    ) as HTMLButtonElement;
+    expect(inspectPopoverTrigger).not.toBeNull();
+
+    await act(async () => {
+      inspectPopoverTrigger.click();
+    });
+
+    const twBtn = portalContainer.querySelector(
+      '[data-testid="dock-inspect-code-tailwind"]',
+    ) as HTMLButtonElement;
+    const oklchBtn = portalContainer.querySelector(
+      '[data-testid="dock-inspect-color-oklch"]',
+    ) as HTMLButtonElement;
+    const remBtn = portalContainer.querySelector(
+      '[data-testid="dock-inspect-unit-rem"]',
+    ) as HTMLButtonElement;
+    const gapToggle = portalContainer.querySelector(
+      '[data-testid="dock-inspect-gap"]',
+    ) as HTMLButtonElement;
+    const placementToggle = portalContainer.querySelector(
+      '[data-testid="dock-inspect-placement"]',
+    ) as HTMLButtonElement;
+    const resetBtn = portalContainer.querySelector(
+      '[data-testid="inspect-popover-reset"]',
+    ) as HTMLButtonElement;
+
+    expect(resetBtn.disabled).toBe(true);
+
+    await act(async () => {
+      twBtn.click();
+      oklchBtn.click();
+      remBtn.click();
+      gapToggle.click();
+      placementToggle.click();
+    });
+
+    expect(resetBtn.disabled).toBe(false);
+
+    // Defaults saved in Options must remain untouched
+    expect(getCachedSettings().inspect.codeFormat).toBe('jsx');
+    expect(getCachedSettings().inspect.colorFormat).toBe('rgb');
+
+    await act(async () => {
+      resetBtn.click();
+    });
+
+    expect(resetBtn.disabled).toBe(true);
   });
 });

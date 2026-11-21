@@ -32,7 +32,7 @@
     "snapGrid": "Raster an Container anpassen",
     "exit": "Beenden",
     "card": {
-      "copyCss": "CSS kopieren",
+      "copyCss": "Kopieren",
       "copied": "Kopiert",
       "clickToCopy": "Klicken zum Kopieren",
       "unpinAriaLabel": "Element lösen",
@@ -52,7 +52,7 @@
       "navChild": "Erstes Kindelement (↓)",
       "navPrev": "Vorheriges Geschwister (←)",
       "navNext": "Nächstes Geschwister (→)",
-      "copyFigma": "Für Figma kopieren (SVG)",
+      "copyFigma": "Für Figma kopieren",
       "copySvg": "SVG kopieren",
       "pinCard": "Karte in Ecke anheften",
       "floatCard": "Karte am Element",

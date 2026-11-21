@@ -32,7 +32,7 @@
     "snapGrid": "ajustar grade ao contêiner",
     "exit": "sair",
     "card": {
-      "copyCss": "Copiar CSS",
+      "copyCss": "Copiar",
       "copied": "Copiado",
       "clickToCopy": "Clique para copiar",
       "unpinAriaLabel": "Desafixar elemento",
@@ -52,7 +52,7 @@
       "navChild": "Primeiro filho (↓)",
       "navPrev": "Irmão anterior (←)",
       "navNext": "Próximo irmão (→)",
-      "copyFigma": "Copiar para o Figma (SVG)",
+      "copyFigma": "Copiar para o Figma",
       "copySvg": "Copiar SVG",
       "pinCard": "Fixar cartão no canto",
       "floatCard": "Cartão próximo ao elemento",

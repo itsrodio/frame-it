@@ -1,6 +1,12 @@
 import { cn } from 'cn';
 import { Check, Copy, Layers, Pin, X } from 'lucide-react';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import {
+  type MouseEvent as ReactMouseEvent,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import {
   ColorInspectField,
   CopyableFieldBox,
@@ -23,7 +29,16 @@ import { preloadImagesForFigma } from '@/lib/inspect-figma-svg';
 import { calculateInspectCardPosition } from '@/lib/inspect-geometry';
 import { extractInspectedStyles } from '@/lib/inspect-styles';
 import { DEFAULT_EXTENSION_SETTINGS } from '@/lib/settings-storage';
-import type { ExtensionInspectSettings } from '@/types/settings';
+import type {
+  ExtensionInspectSettings,
+  InspectCodeFormat,
+} from '@/types/settings';
+
+const CODE_FORMAT_LABELS: Record<InspectCodeFormat, string> = {
+  css: 'CSS',
+  tailwind: 'Tailwind',
+  jsx: 'JSX',
+};
 
 export interface InspectDetailsCardProps {
   element: HTMLElement;
@@ -35,6 +50,10 @@ export interface InspectDetailsCardProps {
   onClose?: () => void;
 }
 
+const CARD_WIDTH = 272;
+const CARD_MIN_HEIGHT = 120;
+const VIEWPORT_MARGIN = 8;
+
 export function InspectDetailsCard({
   element,
   rect,
@@ -44,7 +63,18 @@ export function InspectDetailsCard({
   onClose,
 }: InspectDetailsCardProps) {
   const [copiedId, setCopiedId] = useState<string | null>(null);
+  const [draggedPos, setDraggedPos] = useState<{
+    top: number;
+    left: number;
+  } | null>(null);
+  const [isDragging, setIsDragging] = useState(false);
   const timerRef = useRef<number | null>(null);
+  const dragSessionRef = useRef<{
+    startX: number;
+    startY: number;
+    initialTop: number;
+    initialLeft: number;
+  } | null>(null);
 
   useEffect(() => {
     return () => {
@@ -75,37 +105,95 @@ export function InspectDetailsCard({
   const figmaSvgPayload = buildFigmaSvg(element, styles, rect);
   const copyPayload = isDirectSvg
     ? figmaSvgPayload
-    : buildCodeSnippet(element, styles, inspectSettings.codeFormat, rect);
+    : buildCodeSnippet(element, styles, inspectSettings.codeFormat);
 
-  const handleCopyFigma = useCallback(
-    async (copySlotId: 'figma-svg' | 'all-css' = 'figma-svg') => {
-      const hasImgs =
-        element instanceof HTMLImageElement ||
-        element.querySelector('img') !== null;
-      if (!hasImgs) {
-        handleCopy(copySlotId, figmaSvgPayload);
-        return;
-      }
-      const preloaded = await preloadImagesForFigma(element);
-      const svgWithImages = buildFigmaSvg(element, styles, rect, preloaded);
-      handleCopy(copySlotId, svgWithImages);
-    },
-    [element, figmaSvgPayload, handleCopy, rect, styles],
-  );
+  const handleCopyFigma = useCallback(async () => {
+    const hasImgs =
+      element instanceof HTMLImageElement ||
+      element.querySelector('img') !== null;
+    if (!hasImgs) {
+      handleCopy('figma-svg', figmaSvgPayload);
+      return;
+    }
+    const preloaded = await preloadImagesForFigma(element);
+    const svgWithImages = buildFigmaSvg(element, styles, rect, preloaded);
+    handleCopy('figma-svg', svgWithImages);
+  }, [element, figmaSvgPayload, handleCopy, rect, styles]);
 
   const viewport = {
     width: document.documentElement.clientWidth || window.innerWidth || 1280,
     height: window.innerHeight || 800,
   };
-  const position = calculateInspectCardPosition(
+  const autoPosition = calculateInspectCardPosition(
     rect,
     viewport,
     {
-      width: 272,
+      width: CARD_WIDTH,
       height: 320,
     },
     inspectSettings.cardPlacement,
   );
+  const position = draggedPos ?? autoPosition;
+
+  const handleDragBarMouseDown = useCallback(
+    (e: ReactMouseEvent<HTMLDivElement>) => {
+      if (e.button !== 0) return;
+      e.preventDefault();
+      e.stopPropagation();
+      dragSessionRef.current = {
+        startX: e.clientX,
+        startY: e.clientY,
+        initialTop: position.top,
+        initialLeft: position.left,
+      };
+      setIsDragging(true);
+    },
+    [position.left, position.top],
+  );
+
+  useEffect(() => {
+    if (!isDragging) return;
+
+    const handleMouseMove = (e: MouseEvent) => {
+      const session = dragSessionRef.current;
+      if (!session) return;
+      const vw =
+        document.documentElement.clientWidth || window.innerWidth || 1280;
+      const vh = window.innerHeight || 800;
+      const dx = e.clientX - session.startX;
+      const dy = e.clientY - session.startY;
+      const maxLeft = Math.max(
+        VIEWPORT_MARGIN,
+        vw - CARD_WIDTH - VIEWPORT_MARGIN,
+      );
+      const maxTop = Math.max(
+        VIEWPORT_MARGIN,
+        vh - CARD_MIN_HEIGHT - VIEWPORT_MARGIN,
+      );
+      setDraggedPos({
+        left: Math.min(
+          maxLeft,
+          Math.max(VIEWPORT_MARGIN, Math.round(session.initialLeft + dx)),
+        ),
+        top: Math.min(
+          maxTop,
+          Math.max(VIEWPORT_MARGIN, Math.round(session.initialTop + dy)),
+        ),
+      });
+    };
+
+    const handleMouseUp = () => {
+      dragSessionRef.current = null;
+      setIsDragging(false);
+    };
+
+    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('mouseup', handleMouseUp);
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('mouseup', handleMouseUp);
+    };
+  }, [isDragging]);
 
   const contrastLevel = styles.colors.contrast.level;
   const contrastBadgeClass =
@@ -126,19 +214,37 @@ export function InspectDetailsCard({
     ? i18n.t('inspect.card.copied')
     : isDirectSvg
       ? i18n.t('inspect.card.copySvg')
-      : `${i18n.t('inspect.card.copyCss')} (${inspectSettings.codeFormat.toUpperCase()})`;
+      : `${i18n.t('inspect.card.copyCss')} ${CODE_FORMAT_LABELS[inspectSettings.codeFormat]}`;
 
   return (
     <div
       data-testid="inspect-details-card"
-      className="fixed z-50 flex w-68 flex-col rounded-xl bg-popover p-0 text-sm text-popover-foreground shadow-md ring-1 ring-foreground/10 pointer-events-auto"
+      className="fixed z-50 flex w-68 flex-col overflow-hidden rounded-xl bg-popover p-0 text-sm text-popover-foreground shadow-md ring-1 ring-foreground/10 pointer-events-auto"
       style={{
         top: position.top,
         left: position.left,
       }}
     >
+      {/* Цветная (primary) полоска сверху карточки для перетаскивания без конфликта с кнопками */}
+      <div
+        role="toolbar"
+        data-testid="inspect-card-drag-handle"
+        onMouseDown={handleDragBarMouseDown}
+        className={cn(
+          'group flex h-3 w-full items-center justify-center bg-primary/15 transition-colors hover:bg-primary/25 select-none',
+          isDragging ? 'cursor-grabbing bg-primary/35' : 'cursor-grab',
+        )}
+      >
+        <div
+          className={cn(
+            'h-1 w-10 rounded-full bg-primary/70 transition-all group-hover:w-12 group-hover:bg-primary',
+            isDragging && 'w-12 bg-primary',
+          )}
+        />
+      </div>
+
       {/* Лаконичная шапка: слева путь элемента (родитель › элемент), справа действия (Figma SVG, Copy Code, Pin, Close) */}
-      <div className="flex items-center justify-between border-b px-3 py-2.5">
+      <div className="flex items-center justify-between border-b px-3 py-2">
         <DomBreadcrumbsTitle
           element={element}
           onSelectElement={onSelectElement}
@@ -189,13 +295,7 @@ export function InspectDetailsCard({
                       ? 'text-emerald-600 dark:text-emerald-400'
                       : 'text-muted-foreground hover:text-foreground',
                   )}
-                  onClick={() => {
-                    if (!isDirectSvg && inspectSettings.codeFormat === 'svg') {
-                      void handleCopyFigma('all-css');
-                    } else {
-                      handleCopy('all-css', copyPayload);
-                    }
-                  }}
+                  onClick={() => handleCopy('all-css', copyPayload)}
                   aria-label={i18n.t('inspect.card.copyCss')}
                 >
                   {isCodeCopied ? (
@@ -223,11 +323,12 @@ export function InspectDetailsCard({
                     'size-6',
                     !isPinned && 'text-muted-foreground hover:text-foreground',
                   )}
-                  onClick={() =>
+                  onClick={() => {
+                    setDraggedPos(null);
                     onUpdateInspectSettings?.({
                       cardPlacement: isPinned ? 'floating' : 'pinned',
-                    })
-                  }
+                    });
+                  }}
                   aria-label={
                     isPinned
                       ? i18n.t('inspect.card.floatCard')

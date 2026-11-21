@@ -220,7 +220,7 @@ describe('InspectMeasureOverlay', () => {
     expect(writeText).toHaveBeenCalledWith('#111827');
     expect(textHexBtn.textContent).toContain('Copied');
 
-    // Click Copy CSS button
+    // Click Copy button (default format is Tailwind)
     const copyCssBtn = card.querySelector(
       '[data-testid="inspect-copy-css"]',
     ) as HTMLButtonElement;
@@ -228,7 +228,7 @@ describe('InspectMeasureOverlay', () => {
       copyCssBtn.click();
     });
     expect(writeText).toHaveBeenLastCalledWith(
-      expect.stringContaining('font-family: Inter;'),
+      expect.stringContaining('text-[16px]/[24px]'),
     );
     expect(copyCssBtn.textContent).toContain('Copied');
 
@@ -280,7 +280,31 @@ describe('InspectMeasureOverlay', () => {
     }
     expect(writeText).toHaveBeenCalledWith('rgb(17, 24, 39)');
 
-    // Toggle card pin placement
+    // Drag card by its top primary drag bar
+    const dragHandle = card.querySelector(
+      '[data-testid="inspect-card-drag-handle"]',
+    ) as HTMLElement;
+    expect(dragHandle).not.toBeNull();
+    act(() => {
+      dragHandle.dispatchEvent(
+        new MouseEvent('mousedown', {
+          button: 0,
+          clientX: 100,
+          clientY: 100,
+          bubbles: true,
+        }),
+      );
+      window.dispatchEvent(
+        new MouseEvent('mousemove', {
+          clientX: 180,
+          clientY: 160,
+          bubbles: true,
+        }),
+      );
+      window.dispatchEvent(new MouseEvent('mouseup', { bubbles: true }));
+    });
+
+    // Toggle card pin placement (resets manual drag position)
     const pinBtn = card.querySelector(
       '[data-testid="inspect-toggle-pin"]',
     ) as HTMLButtonElement;

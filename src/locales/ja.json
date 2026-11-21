@@ -32,7 +32,7 @@
     "snapGrid": "グリッドをコンテナにスナップ",
     "exit": "終了",
     "card": {
-      "copyCss": "CSSをコピー",
+      "copyCss": "コピー",
       "copied": "コピー完了",
       "clickToCopy": "クリックしてコピー",
       "unpinAriaLabel": "要素の固定を解除",
@@ -52,7 +52,7 @@
       "navChild": "最初の子要素 (↓)",
       "navPrev": "前の兄弟要素 (←)",
       "navNext": "次の兄弟要素 (→)",
-      "copyFigma": "Figma用にコピー (SVG)",
+      "copyFigma": "Figma用にコピー",
       "copySvg": "SVGをコピー",
       "pinCard": "カードを画面端に固定",
       "floatCard": "要素の近くに配置",

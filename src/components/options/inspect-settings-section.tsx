@@ -18,7 +18,6 @@ const CODE_FORMATS: Array<{ value: InspectCodeFormat; label: string }> = [
   { value: 'css', label: 'CSS' },
   { value: 'tailwind', label: 'Tailwind' },
   { value: 'jsx', label: 'JSX' },
-  { value: 'svg', label: 'SVG (Figma)' },
 ];
 
 const COLOR_FORMATS: Array<{ value: InspectColorFormat; label: string }> = [

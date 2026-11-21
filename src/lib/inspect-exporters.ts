@@ -222,16 +222,12 @@ export function buildCodeSnippet(
   el: HTMLElement,
   styles: InspectedElementStyles,
   format: InspectCodeFormat,
-  rect?: DOMRect,
 ): string {
   if (format === 'tailwind') {
     return buildTailwindClasses(styles);
   }
   if (format === 'jsx') {
     return buildJsxSnippet(el, styles);
-  }
-  if (format === 'svg') {
-    return buildFigmaSvg(el, styles, rect ?? el.getBoundingClientRect());
   }
   return buildInspectedCssSnippet(styles);
 }

@@ -50,6 +50,9 @@ export function App({ portalContainer, onClose }: AppProps) {
     initialSetup.hasCustomSiteSettings,
   );
   const [activeTool, setActiveTool] = useState<ActiveOverlayTool>('none');
+  const [inspectSettings, setInspectSettings] = useState(
+    () => getCachedSettings().inspect,
+  );
   const [trackedElement, setTrackedElement] = useState<HTMLElement | null>(
     initialSetup.trackedElement,
   );
@@ -59,6 +62,7 @@ export function App({ portalContainer, onClose }: AppProps) {
 
   const handleExternalSettingsChange = useCallback(
     (nextSettings: ExtensionSettings) => {
+      setInspectSettings(nextSettings.inspect);
       setHasCustomSiteSettings((currentHasCustom) => {
         if (!currentHasCustom || !nextSettings.behavior.rememberSiteSettings) {
           const setup = getInitialGuidesSetup(nextSettings);
@@ -73,7 +77,7 @@ export function App({ portalContainer, onClose }: AppProps) {
     [],
   );
 
-  const { settings, persistSettings } = useExtensionSettings({
+  const { settings } = useExtensionSettings({
     onExternalChange: handleExternalSettingsChange,
   });
 
@@ -224,6 +228,17 @@ export function App({ portalContainer, onClose }: AppProps) {
     }));
   }, [settings]);
 
+  const handleUpdateInspectSettings = useCallback(
+    (patch: Partial<typeof inspectSettings>) => {
+      setInspectSettings((prev) => ({ ...prev, ...patch }));
+    },
+    [],
+  );
+
+  const handleResetInspectSettings = useCallback(() => {
+    setInspectSettings(settings.inspect);
+  }, [settings.inspect]);
+
   const isInspectActive = activeTool === 'inspect';
   const isPickingContainer = activeTool === 'pick-container';
 
@@ -238,13 +253,8 @@ export function App({ portalContainer, onClose }: AppProps) {
               {!isPickingContainer && (
                 <InspectMeasureOverlay
                   active={isInspectActive}
-                  inspectSettings={settings.inspect}
-                  onUpdateInspectSettings={(patch) =>
-                    persistSettings((prev) => ({
-                      ...prev,
-                      inspect: { ...prev.inspect, ...patch },
-                    }))
-                  }
+                  inspectSettings={inspectSettings}
+                  onUpdateInspectSettings={handleUpdateInspectSettings}
                   onSnapToElement={(el) =>
                     applyDetectedContainer(extractContainerInfo(el), true)
                   }
@@ -264,6 +274,8 @@ export function App({ portalContainer, onClose }: AppProps) {
               <Dock
                 state={guidesState}
                 isInspectActive={isInspectActive}
+                inspectSettings={inspectSettings}
+                defaultInspectSettings={settings.inspect}
                 isPickingContainer={isPickingContainer}
                 trackedElementLabel={trackedElementLabel}
                 hasCustomSiteSettings={hasCustomSiteSettings}
@@ -272,6 +284,8 @@ export function App({ portalContainer, onClose }: AppProps) {
                 onToggleInspect={(active) =>
                   setActiveTool(active ? 'inspect' : 'none')
                 }
+                onUpdateInspectSettings={handleUpdateInspectSettings}
+                onResetInspectSettings={handleResetInspectSettings}
                 onTypeChange={handleTypeChange}
                 onColumnsChange={handleColumnsChange}
                 onRowsChange={handleRowsChange}

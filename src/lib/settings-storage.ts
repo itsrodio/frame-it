@@ -38,7 +38,7 @@ export const DEFAULT_EXTENSION_SETTINGS: ExtensionSettings = {
     holdToClose: true,
   },
   inspect: {
-    codeFormat: 'css',
+    codeFormat: 'tailwind',
     colorFormat: 'hex',
     unitFormat: 'px',
     cardPlacement: 'floating',
@@ -128,8 +128,7 @@ export function normalizeExtensionSettings(
       codeFormat:
         inspect.codeFormat === 'css' ||
         inspect.codeFormat === 'tailwind' ||
-        inspect.codeFormat === 'jsx' ||
-        inspect.codeFormat === 'svg'
+        inspect.codeFormat === 'jsx'
           ? inspect.codeFormat
           : DEFAULT_EXTENSION_SETTINGS.inspect.codeFormat,
       colorFormat:

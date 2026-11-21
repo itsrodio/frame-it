@@ -53,7 +53,7 @@ export interface ExtensionBehaviorSettings {
   holdToClose: boolean;
 }
 
-export type InspectCodeFormat = 'css' | 'tailwind' | 'jsx' | 'svg';
+export type InspectCodeFormat = 'css' | 'tailwind' | 'jsx';
 export type InspectColorFormat = 'hex' | 'rgb' | 'oklch';
 export type InspectUnitFormat = 'px' | 'rem' | 'both';
 export type InspectCardPlacement = 'floating' | 'pinned';
