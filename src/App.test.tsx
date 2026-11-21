@@ -336,14 +336,13 @@ describe('App', () => {
 
     const scrollToggle = Array.from(
       portalContainer.querySelectorAll('button'),
-    ).find((b) => b.textContent?.includes('Fixed to viewport')) as
-      | HTMLButtonElement
-      | undefined;
-    if (scrollToggle) {
-      act(() => {
-        scrollToggle.click();
-      });
-    }
+    ).find((b) =>
+      b.textContent?.includes('Fixed to viewport'),
+    ) as HTMLButtonElement;
+    expect(scrollToggle).toBeDefined();
+    act(() => {
+      scrollToggle.click();
+    });
 
     act(() => {
       Object.defineProperty(window, 'scrollY', {
@@ -696,5 +695,56 @@ describe('App', () => {
     ) as HTMLDivElement;
     expect(pastedLayer).not.toBeNull();
     expect(pastedLayer.style.pointerEvents).toBe('none');
+
+    // Pick target element flow (snap design overlay to page element)
+    const targetSection = document.createElement('section');
+    targetSection.id = 'snap-target';
+    document.body.appendChild(targetSection);
+    vi.spyOn(targetSection, 'getBoundingClientRect').mockReturnValue({
+      x: 120,
+      y: 80,
+      left: 120,
+      top: 80,
+      width: 720,
+      height: 400,
+      right: 840,
+      bottom: 480,
+      toJSON: () => ({}),
+    });
+    vi.spyOn(document, 'elementFromPoint').mockReturnValue(targetSection);
+    vi.spyOn(window, 'requestAnimationFrame').mockImplementation((cb) => {
+      cb(0);
+      return 1;
+    });
+
+    const designPopoverTrigger = portalContainer.querySelector(
+      '[data-testid="design-overlay-popover-trigger"]',
+    ) as HTMLButtonElement;
+    await act(async () => {
+      designPopoverTrigger.click();
+    });
+
+    const pickTargetBtn = portalContainer.querySelector(
+      '[data-testid="design-overlay-pick-target"]',
+    ) as HTMLButtonElement;
+    act(() => {
+      pickTargetBtn.click();
+    });
+
+    expect(portalContainer.textContent).toContain(
+      'Click any element on the page to align and fit the mockup',
+    );
+
+    act(() => {
+      window.dispatchEvent(
+        new MouseEvent('mousemove', { clientX: 200, clientY: 120 }),
+      );
+      targetSection.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    });
+
+    expect(pastedLayer.style.transform).toContain(
+      'translate3d(120px, 80px, 0)',
+    );
+    expect(pastedLayer.style.transform).toContain('scale(0.5)');
   });
 });

@@ -229,4 +229,35 @@ describe('inspect-exporters', () => {
     expect(svg).toContain('preserveAspectRatio="xMidYMid meet"');
     expect(svg).toContain('data:image/png;base64,iVBORw0KGgo=');
   });
+
+  it('covers 4-value box shorthands, 2-value gap, arbitrary radius, normal lineHeight, and empty JSX children', () => {
+    expect(formatDimensionWithUnit('auto', 'rem')).toBe('auto');
+
+    const el = document.createElement('section');
+    el.style.display = 'grid';
+    el.style.rowGap = '12px';
+    el.style.columnGap = '24px';
+    el.style.padding = '4px 8px 12px 16px';
+    el.style.margin = '0px 13px';
+    el.style.borderRadius = '10px 20px';
+    el.style.fontSize = '14px';
+    el.style.lineHeight = 'normal';
+    el.style.fontWeight = '700';
+    el.style.color = 'rgb(17, 24, 39)';
+    document.body.appendChild(el);
+
+    const styles = extractInspectedStyles(el, mockRect(0, 0, 400, 200));
+    const tw = buildTailwindClasses(styles);
+    expect(tw).toContain('grid');
+    expect(tw).toContain('gap-y-3');
+    expect(tw).toContain('gap-x-6');
+    expect(tw).toContain('pt-1 pr-2 pb-3 pl-4');
+    expect(tw).toContain('mx-[13px]');
+    expect(tw).toContain('rounded-[10px_20px]');
+    expect(tw).toContain('text-[14px]');
+    expect(tw).toContain('font-bold');
+
+    const jsx = buildJsxSnippet(el, styles);
+    expect(jsx).toContain('{/* children */}');
+  });
 });

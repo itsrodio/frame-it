@@ -24,6 +24,14 @@ function mockRect(rect: Partial<DOMRect>): DOMRect {
 describe('ContainerPickerOverlay', () => {
   let container: HTMLDivElement;
   let root: ReactDOM.Root;
+  let rafQueue: FrameRequestCallback[];
+
+  const flushRaf = () => {
+    while (rafQueue.length > 0) {
+      const cb = rafQueue.shift();
+      cb?.(0);
+    }
+  };
 
   beforeEach(() => {
     container = document.createElement('div');
@@ -31,9 +39,10 @@ describe('ContainerPickerOverlay', () => {
     document.body.appendChild(container);
     root = ReactDOM.createRoot(container);
 
+    rafQueue = [];
     vi.spyOn(window, 'requestAnimationFrame').mockImplementation((cb) => {
-      cb(0);
-      return 1;
+      rafQueue.push(cb);
+      return rafQueue.length;
     });
   });
 
@@ -76,6 +85,7 @@ describe('ContainerPickerOverlay', () => {
       window.dispatchEvent(
         new MouseEvent('mousemove', { clientX: 120, clientY: 110 }),
       );
+      flushRaf();
     });
 
     expect(container.textContent).toContain('section#hero');
@@ -107,6 +117,75 @@ describe('ContainerPickerOverlay', () => {
       window.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
     });
 
+    expect(onCancel).toHaveBeenCalledTimes(1);
+  });
+
+  it('shows padding/column badges, updates on scroll/resize, clears on overlay hover, and cancels when clicking without hovered target', () => {
+    const onSelect = vi.fn();
+    const onCancel = vi.fn();
+
+    const grid = document.createElement('div');
+    grid.id = 'grid-wrap';
+    grid.style.display = 'grid';
+    grid.style.gridTemplateColumns = '100px 100px 100px';
+    grid.style.paddingLeft = '24px';
+    grid.style.paddingRight = '24px';
+    grid.style.gap = '16px';
+    document.body.appendChild(grid);
+
+    vi.spyOn(grid, 'getBoundingClientRect').mockReturnValue(
+      mockRect({ left: 50, top: 60, width: 600, height: 300 }),
+    );
+    vi.spyOn(document, 'elementFromPoint').mockReturnValue(grid);
+
+    act(() => {
+      root.render(
+        <ContainerPickerOverlay
+          active={true}
+          onSelect={onSelect}
+          onCancel={onCancel}
+        />,
+      );
+    });
+
+    act(() => {
+      window.dispatchEvent(
+        new MouseEvent('mousemove', { clientX: 100, clientY: 100 }),
+      );
+      flushRaf();
+    });
+    expect(container.textContent).toContain('div#grid-wrap');
+    expect(container.textContent).toContain('3 cols');
+    expect(container.textContent).toContain('(pad 24px)');
+
+    // Moving mouse again over same target hits early-return cache; scroll updates rect
+    vi.spyOn(grid, 'getBoundingClientRect').mockReturnValue(
+      mockRect({ left: 50, top: 20, width: 640, height: 300 }),
+    );
+    act(() => {
+      window.dispatchEvent(
+        new MouseEvent('mousemove', { clientX: 102, clientY: 102 }),
+      );
+      flushRaf();
+      window.dispatchEvent(new Event('scroll'));
+    });
+    expect(container.textContent).toContain('640px');
+
+    // Hovering overlay element clears hovered info, then clicking page calls onCancel
+    vi.spyOn(document, 'elementFromPoint').mockReturnValue(container);
+    act(() => {
+      window.dispatchEvent(
+        new MouseEvent('mousemove', { clientX: 10, clientY: 10 }),
+      );
+      flushRaf();
+    });
+    expect(container.textContent).not.toContain('div#grid-wrap');
+
+    const outsideDiv = document.createElement('div');
+    document.body.appendChild(outsideDiv);
+    act(() => {
+      outsideDiv.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    });
     expect(onCancel).toHaveBeenCalledTimes(1);
   });
 });

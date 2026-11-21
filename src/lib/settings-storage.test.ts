@@ -1,7 +1,9 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
+import { fakeBrowser } from 'wxt/testing/fake-browser';
 import { getLanguageOverride, setLanguageOverride } from '@/lib/locale-manager';
 import {
   DEFAULT_EXTENSION_SETTINGS,
+  EXTENSION_SETTINGS_STORAGE_KEY,
   getCachedSettings,
   loadExtensionSettings,
   normalizeExtensionSettings,
@@ -78,5 +80,55 @@ describe('settings-storage & locale-manager', () => {
 
     setLanguageOverride('auto');
     expect(i18n.t('guides.types.columns')).toBe('Columns');
+  });
+
+  it('falls back to localStorage when browser.storage.local throws and filters storage change events', async () => {
+    window.localStorage.clear();
+
+    const setSpy = vi
+      .spyOn(browser.storage.local, 'set')
+      .mockRejectedValue(new Error('storage disabled'));
+    const getSpy = vi
+      .spyOn(browser.storage.local, 'get')
+      .mockRejectedValue(new Error('storage disabled'));
+
+    const saved = await saveExtensionSettings({
+      ...DEFAULT_EXTENSION_SETTINGS,
+      theme: 'dark',
+    });
+    expect(saved.theme).toBe('dark');
+    expect(
+      window.localStorage.getItem(EXTENSION_SETTINGS_STORAGE_KEY),
+    ).toContain('"dark"');
+
+    const loaded = await loadExtensionSettings();
+    expect(loaded.theme).toBe('dark');
+
+    window.localStorage.removeItem(EXTENSION_SETTINGS_STORAGE_KEY);
+    const defaultLoaded = await loadExtensionSettings();
+    expect(defaultLoaded).toEqual(DEFAULT_EXTENSION_SETTINGS);
+
+    setSpy.mockRestore();
+    getSpy.mockRestore();
+
+    const listener = vi.fn();
+    const unsub = subscribeExtensionSettings(listener);
+    await fakeBrowser.storage.onChanged.trigger(
+      { [EXTENSION_SETTINGS_STORAGE_KEY]: { newValue: { theme: 'light' } } },
+      'sync',
+    );
+    await fakeBrowser.storage.onChanged.trigger(
+      { unrelated_key: { newValue: { theme: 'light' } } },
+      'local',
+    );
+    expect(listener).not.toHaveBeenCalled();
+
+    await fakeBrowser.storage.onChanged.trigger(
+      { [EXTENSION_SETTINGS_STORAGE_KEY]: { newValue: { theme: 'light' } } },
+      'local',
+    );
+    expect(listener).toHaveBeenCalledTimes(1);
+    expect(listener.mock.calls[0]?.[0].theme).toBe('light');
+    unsub();
   });
 });

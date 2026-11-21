@@ -8,6 +8,9 @@ import {
   computeSnapToElementPlacement,
   extractImageFromClipboard,
   isSupportedDesignImage,
+  measureImageDimensions,
+  readDesignImageFile,
+  readFileAsDataUrl,
 } from '@/lib/design-overlay-image';
 import {
   buildDefaultDesignOverlayState,
@@ -184,5 +187,244 @@ describe('design-overlay-image & design-overlay-storage', () => {
       'https://huge-site.test',
     );
     expect(failedResult).toEqual({ ok: false, quotaExceeded: true });
+  });
+
+  it('covers clipboard files fallback, FileReader/Image dimension helpers, and edge-case smart/snap placements', async () => {
+    const webpBlob = new Blob(['webp'], { type: 'image/webp' });
+    expect(isSupportedDesignImage(webpBlob)).toBe(true);
+    expect(
+      isSupportedDesignImage(new Blob(['x'], { type: '' }), 'screen.jpg'),
+    ).toBe(true);
+
+    const pngFile = new File(['png'], 'paste.png', { type: 'image/png' });
+    const filesOnlyClipboard = {
+      items: [],
+      files: [pngFile],
+    } as unknown as DataTransfer;
+    expect(extractImageFromClipboard(filesOnlyClipboard)).toEqual({
+      file: pngFile,
+      fileName: 'paste.png',
+    });
+
+    const nonImageClipboard = {
+      items: [{ kind: 'string', type: 'text/plain', getAsFile: () => null }],
+      files: [new File(['hi'], 'doc.txt', { type: 'text/plain' })],
+    } as unknown as DataTransfer;
+    expect(extractImageFromClipboard(nonImageClipboard)).toBeNull();
+
+    // Edge cases for clamping & dimensions
+    expect(clampOpacity(Number.NaN)).toBe(50);
+    expect(clampScale(Number.NaN)).toBe(1);
+    expect(clampScale(-2)).toBe(1);
+    expect(calculateFitWidthScale(0, 1440)).toBe(1);
+    expect(calculateCenteredX(0, 1, 1440)).toBe(0);
+
+    // Smart placement branches:
+    // Invalid dimensions
+    expect(
+      computeSmartDesignPlacement({
+        naturalWidth: 0,
+        naturalHeight: 0,
+        viewportWidth: 1440,
+        viewportHeight: 900,
+        scrollX: 10,
+        scrollY: 100,
+        followScroll: false,
+      }),
+    ).toEqual({ x: 0, y: 0, scale: 1 });
+
+    // Container 1x match
+    expect(
+      computeSmartDesignPlacement({
+        naturalWidth: 1200,
+        naturalHeight: 400,
+        viewportWidth: 1440,
+        viewportHeight: 900,
+        scrollX: 0,
+        scrollY: 50,
+        followScroll: true,
+        containerRect: { left: 120, top: 40, width: 1200 },
+      }),
+    ).toEqual({ x: 120, y: 90, scale: 1 });
+
+    // Exact 1x viewport match
+    expect(
+      computeSmartDesignPlacement({
+        naturalWidth: 1440,
+        naturalHeight: 900,
+        viewportWidth: 1440,
+        viewportHeight: 900,
+        scrollX: 0,
+        scrollY: 0,
+        followScroll: false,
+      }),
+    ).toEqual({ x: 0, y: 0, scale: 1 });
+
+    // Exact 2x viewport match
+    expect(
+      computeSmartDesignPlacement({
+        naturalWidth: 2880,
+        naturalHeight: 1800,
+        viewportWidth: 1440,
+        viewportHeight: 900,
+        scrollX: 0,
+        scrollY: 0,
+        followScroll: true,
+      }),
+    ).toEqual({ x: 0, y: 0, scale: 0.5 });
+
+    // Wider than 2x viewport -> fit width
+    expect(
+      computeSmartDesignPlacement({
+        naturalWidth: 4000,
+        naturalHeight: 2000,
+        viewportWidth: 1000,
+        viewportHeight: 800,
+        scrollX: 0,
+        scrollY: 0,
+        followScroll: true,
+      }),
+    ).toEqual({ x: 0, y: 0, scale: 0.25 });
+
+    // Narrower than viewport -> 1x centered
+    expect(
+      computeSmartDesignPlacement({
+        naturalWidth: 800,
+        naturalHeight: 600,
+        viewportWidth: 1200,
+        viewportHeight: 800,
+        scrollX: 0,
+        scrollY: 0,
+        followScroll: true,
+      }),
+    ).toEqual({ x: 200, y: 0, scale: 1 });
+
+    // Snap to element branches: zero width, 1x match, arbitrary width
+    expect(
+      computeSnapToElementPlacement({
+        naturalWidth: 0,
+        rect: { left: 10, top: 20, width: 500 },
+        scrollX: 5,
+        scrollY: 15,
+        followScroll: false,
+      }),
+    ).toEqual({ x: 10, y: 20, scale: 1 });
+
+    expect(
+      computeSnapToElementPlacement({
+        naturalWidth: 500,
+        rect: { left: 10, top: 20, width: 500 },
+        scrollX: 0,
+        scrollY: 0,
+        followScroll: true,
+      }),
+    ).toEqual({ x: 10, y: 20, scale: 1 });
+
+    expect(
+      computeSnapToElementPlacement({
+        naturalWidth: 1000,
+        rect: { left: 10, top: 20, width: 250 },
+        scrollX: 0,
+        scrollY: 0,
+        followScroll: true,
+      }),
+    ).toEqual({ x: 10, y: 20, scale: 0.25 });
+
+    // readFileAsDataUrl, measureImageDimensions, readDesignImageFile error & success paths
+    await expect(
+      readDesignImageFile(
+        new File(['txt'], 'readme.txt', { type: 'text/plain' }),
+      ),
+    ).rejects.toThrow('Unsupported image format');
+
+    class MockFileReader {
+      result: string | ArrayBuffer | null = null;
+      error: Error | null = null;
+      onload: (() => void) | null = null;
+      onerror: (() => void) | null = null;
+      readAsDataURL(blob: Blob) {
+        if (blob.size === 1) {
+          this.result = new ArrayBuffer(4);
+          this.onload?.();
+          return;
+        }
+        if (blob.size === 2) {
+          this.error = new Error('read failed');
+          this.onerror?.();
+          return;
+        }
+        this.result = 'data:image/png;base64,AAAA';
+        this.onload?.();
+      }
+    }
+    vi.spyOn(window, 'FileReader').mockImplementation(
+      MockFileReader as unknown as typeof FileReader,
+    );
+
+    await expect(readFileAsDataUrl(new Blob(['a']))).rejects.toThrow(
+      'Failed to read image as data URL',
+    );
+    await expect(readFileAsDataUrl(new Blob(['ab']))).rejects.toThrow(
+      'read failed',
+    );
+    await expect(readFileAsDataUrl(new Blob(['abcd']))).resolves.toBe(
+      'data:image/png;base64,AAAA',
+    );
+
+    class MockImage {
+      naturalWidth = 0;
+      naturalHeight = 0;
+      width = 0;
+      height = 0;
+      onload: (() => void) | null = null;
+      onerror: (() => void) | null = null;
+      set src(val: string) {
+        queueMicrotask(() => {
+          if (val === 'bad') {
+            this.onerror?.();
+          } else {
+            this.naturalWidth = 640;
+            this.naturalHeight = 480;
+            this.onload?.();
+          }
+        });
+      }
+    }
+    vi.spyOn(window, 'Image').mockImplementation(
+      MockImage as unknown as typeof Image,
+    );
+
+    await expect(measureImageDimensions('bad')).rejects.toThrow(
+      'Failed to decode image dimensions',
+    );
+    await expect(measureImageDimensions('good')).resolves.toEqual({
+      width: 640,
+      height: 480,
+    });
+
+    const loadedImg = await readDesignImageFile(
+      new File(['1234'], 'hero.png', { type: 'image/png' }),
+    );
+    expect(loadedImg).toEqual({
+      imageUrl: 'data:image/png;base64,AAAA',
+      fileName: 'hero.png',
+      naturalWidth: 640,
+      naturalHeight: 480,
+    });
+
+    // Storage edge cases: normalize null, load/clear error resilience
+    expect(normalizeDesignOverlayState(null, false).locked).toBe(false);
+    vi.spyOn(browser.storage.local, 'get').mockRejectedValueOnce(
+      new Error('storage error'),
+    );
+    const fallbackLoad = await loadSiteDesignOverlay(false, 'https://err.test');
+    expect(fallbackLoad.locked).toBe(false);
+
+    vi.spyOn(browser.storage.local, 'remove').mockRejectedValueOnce(
+      new Error('remove error'),
+    );
+    await expect(
+      clearSiteDesignOverlay('https://err.test'),
+    ).resolves.toBeUndefined();
   });
 });
