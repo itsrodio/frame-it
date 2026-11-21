@@ -10,7 +10,10 @@ export function isOverlayElement(el: Element | null): boolean {
   if (el.id === OVERLAY_ROOT_ID || el.tagName === OVERLAY_HOST_TAG) {
     return true;
   }
-  if (el.closest(OVERLAY_HOST_TAG.toLowerCase())) {
+  if (
+    el.closest(OVERLAY_HOST_TAG.toLowerCase()) ||
+    el.closest(`#${OVERLAY_ROOT_ID}`)
+  ) {
     return true;
   }
   const rootNode = el.getRootNode();

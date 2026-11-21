@@ -30,7 +30,29 @@
     "measureDistances": "测量间距",
     "shiftClickKey": "Shift+点击",
     "snapGrid": "将网格吸附到容器",
-    "exit": "退出"
+    "exit": "退出",
+    "card": {
+      "copyCss": "复制 CSS",
+      "copied": "已复制",
+      "clickToCopy": "点击复制",
+      "unpinAriaLabel": "取消锁定元素",
+      "dimensions": "尺寸",
+      "font": "字体",
+      "typography": "排版",
+      "color": "文字颜色",
+      "background": "背景颜色",
+      "contrast": "对比度",
+      "display": "显示模式",
+      "gap": "间距",
+      "padding": "内边距",
+      "margin": "外边距",
+      "radius": "圆角",
+      "domTree": "DOM 树",
+      "navParent": "父元素 (↑)",
+      "navChild": "第一个子元素 (↓)",
+      "navPrev": "上一个兄弟元素 (←)",
+      "navNext": "下一个兄弟元素 (→)"
+    }
   },
   "guides": {
     "types": {

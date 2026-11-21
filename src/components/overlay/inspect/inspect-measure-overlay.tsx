@@ -1,4 +1,5 @@
 import { DistanceRedlines } from '@/components/overlay/inspect/distance-redlines';
+import { InspectDetailsCard } from '@/components/overlay/inspect/inspect-details-card';
 import {
   HoveredElementBox,
   InspectHintBanner,
@@ -19,11 +20,12 @@ export function InspectMeasureOverlay({
   onSnapToElement,
   onCancel,
 }: InspectMeasureOverlayProps) {
-  const { selectedEl, hoveredEl, isAltPressed } = useInspectInteraction({
-    active,
-    onSnapToElement,
-    onCancel,
-  });
+  const { selectedEl, hoveredEl, isAltPressed, navigateDom, clearSelection } =
+    useInspectInteraction({
+      active,
+      onSnapToElement,
+      onCancel,
+    });
 
   const isVisible = active || isAltPressed;
   if (!isVisible) return null;
@@ -66,7 +68,15 @@ export function InspectMeasureOverlay({
       )}
 
       {validSelected && sourceRect && (
-        <SelectedElementBox element={validSelected} rect={sourceRect} />
+        <>
+          <SelectedElementBox element={validSelected} rect={sourceRect} />
+          <InspectDetailsCard
+            element={validSelected}
+            rect={sourceRect}
+            onNavigateDom={navigateDom}
+            onClose={clearSelection}
+          />
+        </>
       )}
 
       {validHovered && (

@@ -30,7 +30,29 @@
     "measureDistances": "замерить расстояния",
     "shiftClickKey": "Shift+Клик",
     "snapGrid": "привязать сетку к контейнеру",
-    "exit": "выход"
+    "exit": "выход",
+    "card": {
+      "copyCss": "Копировать CSS",
+      "copied": "Скопировано",
+      "clickToCopy": "Нажмите, чтобы скопировать",
+      "unpinAriaLabel": "Открепить элемент",
+      "dimensions": "Размеры",
+      "font": "Шрифт",
+      "typography": "Типографика",
+      "color": "Цвет текста",
+      "background": "Фон",
+      "contrast": "Контраст",
+      "display": "Отображение",
+      "gap": "Отступ",
+      "padding": "Внутр. поля",
+      "margin": "Внеш. поля",
+      "radius": "Скругление",
+      "domTree": "DOM-дерево",
+      "navParent": "Родительский элемент (↑)",
+      "navChild": "Первый дочерний (↓)",
+      "navPrev": "Предыдущий сосед (←)",
+      "navNext": "Следующий сосед (→)"
+    }
   },
   "guides": {
     "types": {

@@ -30,7 +30,29 @@
     "measureDistances": "거리 측정",
     "shiftClickKey": "Shift+클릭",
     "snapGrid": "컨테이너에 그리드 스냅",
-    "exit": "종료"
+    "exit": "종료",
+    "card": {
+      "copyCss": "CSS 복사",
+      "copied": "복사됨",
+      "clickToCopy": "클릭하여 복사",
+      "unpinAriaLabel": "요소 고정 해제",
+      "dimensions": "크기",
+      "font": "글꼴",
+      "typography": "타이포그래피",
+      "color": "텍스트 색상",
+      "background": "배경색",
+      "contrast": "대비",
+      "display": "표시 방식",
+      "gap": "간격",
+      "padding": "안쪽 여백",
+      "margin": "바깥 여백",
+      "radius": "모서리 반경",
+      "domTree": "DOM 트리",
+      "navParent": "상위 요소 (↑)",
+      "navChild": "첫 번째 하위 요소 (↓)",
+      "navPrev": "이전 형제 요소 (←)",
+      "navNext": "다음 형제 요소 (→)"
+    }
   },
   "guides": {
     "types": {

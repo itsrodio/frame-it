@@ -154,4 +154,175 @@ describe('InspectMeasureOverlay', () => {
     });
     expect(onCancel).toHaveBeenCalledTimes(1);
   });
+
+  it('navigates DOM tree with arrow keys / Enter when an element is locked and copies styles from InspectDetailsCard', () => {
+    const writeText = vi.fn().mockResolvedValue(undefined);
+    Object.defineProperty(navigator, 'clipboard', {
+      value: { writeText },
+      configurable: true,
+    });
+
+    const parent = document.createElement('section');
+    parent.id = 'parent-sec';
+    parent.style.backgroundColor = 'rgb(255, 255, 255)';
+
+    const firstChild = document.createElement('div');
+    firstChild.id = 'child-1';
+    firstChild.style.color = 'rgb(17, 24, 39)';
+    firstChild.style.fontFamily = 'Inter, sans-serif';
+    firstChild.style.fontSize = '16px';
+    firstChild.style.lineHeight = '24px';
+    firstChild.style.fontWeight = '500';
+
+    const secondChild = document.createElement('div');
+    secondChild.id = 'child-2';
+
+    parent.appendChild(firstChild);
+    parent.appendChild(secondChild);
+    document.body.appendChild(parent);
+
+    vi.spyOn(parent, 'getBoundingClientRect').mockReturnValue(
+      mockRect({ left: 40, top: 40, width: 600, height: 300 }),
+    );
+    vi.spyOn(firstChild, 'getBoundingClientRect').mockReturnValue(
+      mockRect({ left: 60, top: 60, width: 200, height: 80 }),
+    );
+    vi.spyOn(secondChild, 'getBoundingClientRect').mockReturnValue(
+      mockRect({ left: 280, top: 60, width: 200, height: 80 }),
+    );
+
+    act(() => {
+      root.render(<InspectMeasureOverlay active={true} />);
+    });
+
+    // Lock firstChild by clicking it
+    act(() => {
+      firstChild.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    });
+
+    const card = container.querySelector(
+      '[data-testid="inspect-details-card"]',
+    ) as HTMLElement;
+    expect(card).not.toBeNull();
+    expect(card.textContent).toContain('div#child-1');
+    expect(card.textContent).toContain('Inter');
+    expect(card.textContent).toContain('#111827');
+    expect(card.textContent).toContain('rgb(17, 24, 39)');
+    expect(card.textContent).toContain('AAA');
+
+    // Click HEX color chip to copy and verify "Copied" feedback
+    const textHexBtn = card.querySelector(
+      '[data-testid="inspect-copy-text-hex"]',
+    ) as HTMLButtonElement;
+    act(() => {
+      textHexBtn.click();
+    });
+    expect(writeText).toHaveBeenCalledWith('#111827');
+    expect(textHexBtn.textContent).toContain('Copied');
+
+    // Click Copy CSS button
+    const copyCssBtn = card.querySelector(
+      '[data-testid="inspect-copy-css"]',
+    ) as HTMLButtonElement;
+    act(() => {
+      copyCssBtn.click();
+    });
+    expect(writeText).toHaveBeenLastCalledWith(
+      expect.stringContaining('font-family: Inter;'),
+    );
+    expect(copyCssBtn.textContent).toContain('Copied');
+
+    // Press ArrowRight -> selects sibling div#child-2
+    act(() => {
+      window.dispatchEvent(
+        new KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true }),
+      );
+    });
+    expect(card.textContent).toContain('div#child-2');
+
+    // Press ArrowLeft -> back to div#child-1
+    act(() => {
+      window.dispatchEvent(
+        new KeyboardEvent('keydown', { key: 'ArrowLeft', bubbles: true }),
+      );
+    });
+    expect(card.textContent).toContain('div#child-1');
+
+    // Press ArrowUp -> selects parent section#parent-sec
+    act(() => {
+      window.dispatchEvent(
+        new KeyboardEvent('keydown', { key: 'ArrowUp', bubbles: true }),
+      );
+    });
+    expect(card.textContent).toContain('section#parent-sec');
+
+    // Press ArrowDown (or Enter) -> drills into first visible child div#child-1
+    act(() => {
+      window.dispatchEvent(
+        new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }),
+      );
+    });
+    expect(card.textContent).toContain('div#child-1');
+
+    // Test card header DOM navigation buttons (next, prev, parent, child)
+    const navNextBtn = card.querySelector(
+      '[data-testid="inspect-nav-next"]',
+    ) as HTMLButtonElement;
+    const navPrevBtn = card.querySelector(
+      '[data-testid="inspect-nav-prev"]',
+    ) as HTMLButtonElement;
+    const navParentBtn = card.querySelector(
+      '[data-testid="inspect-nav-parent"]',
+    ) as HTMLButtonElement;
+    const navChildBtn = card.querySelector(
+      '[data-testid="inspect-nav-child"]',
+    ) as HTMLButtonElement;
+
+    act(() => {
+      navNextBtn.click();
+    });
+    expect(card.textContent).toContain('div#child-2');
+
+    act(() => {
+      navPrevBtn.click();
+    });
+    expect(card.textContent).toContain('div#child-1');
+
+    act(() => {
+      navParentBtn.click();
+    });
+    expect(card.textContent).toContain('section#parent-sec');
+
+    act(() => {
+      navChildBtn.click();
+    });
+    expect(card.textContent).toContain('div#child-1');
+
+    // Test clicking size, font-size, font-weight, and RGB copy buttons
+    for (const testId of [
+      'inspect-copy-size',
+      'inspect-copy-font-size',
+      'inspect-copy-font-weight',
+      'inspect-copy-text-rgb',
+    ]) {
+      const btn = card.querySelector(
+        `[data-testid="${testId}"]`,
+      ) as HTMLButtonElement;
+      act(() => {
+        btn.click();
+      });
+    }
+    expect(writeText).toHaveBeenCalledWith('rgb(17, 24, 39)');
+
+    // Unpin element via close button in card header
+    const unpinBtn = card.querySelector(
+      'button[aria-label="Unpin element"]',
+    ) as HTMLButtonElement;
+    act(() => {
+      unpinBtn.click();
+    });
+    expect(
+      container.querySelector('[data-testid="inspect-details-card"]'),
+    ).toBeNull();
+  });
 });

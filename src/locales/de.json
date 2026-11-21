@@ -30,7 +30,29 @@
     "measureDistances": "Abstände messen",
     "shiftClickKey": "Shift+Klick",
     "snapGrid": "Raster an Container anpassen",
-    "exit": "Beenden"
+    "exit": "Beenden",
+    "card": {
+      "copyCss": "CSS kopieren",
+      "copied": "Kopiert",
+      "clickToCopy": "Klicken zum Kopieren",
+      "unpinAriaLabel": "Element lösen",
+      "dimensions": "Maße",
+      "font": "Schriftart",
+      "typography": "Typografie",
+      "color": "Textfarbe",
+      "background": "Hintergrund",
+      "contrast": "Kontrast",
+      "display": "Anzeige",
+      "gap": "Abstand",
+      "padding": "Innenabstand",
+      "margin": "Außenabstand",
+      "radius": "Radius",
+      "domTree": "DOM-Baum",
+      "navParent": "Elternelement (↑)",
+      "navChild": "Erstes Kindelement (↓)",
+      "navPrev": "Vorheriges Geschwister (←)",
+      "navNext": "Nächstes Geschwister (→)"
+    }
   },
   "guides": {
     "types": {

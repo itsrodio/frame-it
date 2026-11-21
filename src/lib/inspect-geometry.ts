@@ -197,3 +197,77 @@ export function calculateDistances(
 
   return lines;
 }
+
+export interface InspectCardPosition {
+  top: number;
+  left: number;
+}
+
+/**
+ * Вычисляет позицию карточки инспектора рядом с зафиксированным элементом так,
+ * чтобы она не перекрывала сам элемент и не выходила за края вьюпорта.
+ */
+export function calculateInspectCardPosition(
+  targetRect: DOMRect,
+  viewport: { width: number; height: number },
+  cardSize: { width: number; height: number } = { width: 300, height: 290 },
+): InspectCardPosition {
+  const gap = 12;
+  const margin = 12;
+  const bottomSafeMargin = 72; // Оставляем место под Dock внизу экрана
+
+  const clampX = (x: number) =>
+    Math.max(
+      margin,
+      Math.min(x, Math.max(margin, viewport.width - cardSize.width - margin)),
+    );
+  const clampY = (y: number) =>
+    Math.max(
+      margin,
+      Math.min(
+        y,
+        Math.max(margin, viewport.height - cardSize.height - bottomSafeMargin),
+      ),
+    );
+
+  // 1. Справа от элемента
+  if (targetRect.right + gap + cardSize.width <= viewport.width - margin) {
+    return {
+      left: Math.round(targetRect.right + gap),
+      top: Math.round(clampY(targetRect.top)),
+    };
+  }
+
+  // 2. Слева от элемента
+  if (targetRect.left - gap - cardSize.width >= margin) {
+    return {
+      left: Math.round(targetRect.left - gap - cardSize.width),
+      top: Math.round(clampY(targetRect.top)),
+    };
+  }
+
+  // 3. Снизу от элемента
+  if (
+    targetRect.bottom + gap + cardSize.height <=
+    viewport.height - bottomSafeMargin
+  ) {
+    return {
+      left: Math.round(clampX(targetRect.left)),
+      top: Math.round(targetRect.bottom + gap),
+    };
+  }
+
+  // 4. Сверху от элемента
+  if (targetRect.top - gap - cardSize.height >= margin) {
+    return {
+      left: Math.round(clampX(targetRect.left)),
+      top: Math.round(targetRect.top - gap - cardSize.height),
+    };
+  }
+
+  // 5. Если элемент занимает почти весь экран — фиксируем в правом верхнем углу вьюпорта
+  return {
+    left: Math.round(clampX(viewport.width - cardSize.width - margin)),
+    top: Math.round(margin + 40),
+  };
+}

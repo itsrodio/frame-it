@@ -30,7 +30,29 @@
     "measureDistances": "medir distancias",
     "shiftClickKey": "Shift+Clic",
     "snapGrid": "ajustar cuadrícula al contenedor",
-    "exit": "salir"
+    "exit": "salir",
+    "card": {
+      "copyCss": "Copiar CSS",
+      "copied": "Copiado",
+      "clickToCopy": "Clic para copiar",
+      "unpinAriaLabel": "Desfijar elemento",
+      "dimensions": "Tamaño",
+      "font": "Fuente",
+      "typography": "Tipografía",
+      "color": "Color",
+      "background": "Fondo",
+      "contrast": "Contraste",
+      "display": "Visualización",
+      "gap": "Espaciado",
+      "padding": "Relleno",
+      "margin": "Margen",
+      "radius": "Radio",
+      "domTree": "Árbol DOM",
+      "navParent": "Elemento padre (↑)",
+      "navChild": "Primer hijo (↓)",
+      "navPrev": "Hermano anterior (←)",
+      "navNext": "Hermano siguiente (→)"
+    }
   },
   "guides": {
     "types": {
