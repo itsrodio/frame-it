@@ -15,6 +15,14 @@ describe('App', () => {
 
   beforeEach(() => {
     window.localStorage.clear();
+    Object.defineProperty(window, 'scrollY', {
+      value: 0,
+      configurable: true,
+    });
+    Object.defineProperty(window, 'scrollX', {
+      value: 0,
+      configurable: true,
+    });
     const overlayHost = document.createElement('frameit-overlay');
     portalContainer = document.createElement('div');
     portalContainer.id = 'frameit-root';
@@ -41,10 +49,10 @@ describe('App', () => {
     document.body.innerHTML = '';
   });
 
-  it('renders dock and layout guides overlay and responds to global hotkeys (Shift+G, Ctrl+;, Shift+1/2/3, Shift+A, Shift+I, Shift+C)', () => {
+  it('renders dock and layout guides overlay and responds to global hotkeys (Shift+G, Ctrl+;, Shift+1/2/3, Shift+A, Shift+I, Shift+C)', async () => {
     const onClose = vi.fn();
 
-    act(() => {
+    await act(async () => {
       root.render(<App portalContainer={portalContainer} onClose={onClose} />);
     });
 
@@ -155,11 +163,11 @@ describe('App', () => {
     );
   });
 
-  it('ignores global hotkeys when focus is inside an input element', () => {
+  it('ignores global hotkeys when focus is inside an input element', async () => {
     const input = document.createElement('input');
     document.body.appendChild(input);
 
-    act(() => {
+    await act(async () => {
       root.render(<App portalContainer={portalContainer} onClose={vi.fn()} />);
     });
 
@@ -181,7 +189,7 @@ describe('App', () => {
     expect(toggleGuidesBtn.getAttribute('aria-pressed')).toBe('true');
   });
 
-  it('supports container snapping, resize tracking, scroll tracking, field edits across modes, and reset', () => {
+  it('supports container snapping, resize tracking, scroll tracking, field edits across modes, and reset', async () => {
     Object.defineProperty(window, 'innerWidth', {
       value: 1400,
       configurable: true,
@@ -202,7 +210,7 @@ describe('App', () => {
       toJSON: () => ({}),
     });
 
-    act(() => {
+    await act(async () => {
       root.render(<App portalContainer={portalContainer} onClose={vi.fn()} />);
     });
 
@@ -243,12 +251,9 @@ describe('App', () => {
     });
 
     // Open LayoutGuidesTool popover
-    const popoverTriggers = portalContainer.querySelectorAll(
-      '[data-slot="popover-trigger"]',
-    );
-    const popoverTrigger = popoverTriggers[
-      popoverTriggers.length - 1
-    ] as HTMLButtonElement;
+    const popoverTrigger = portalContainer.querySelector(
+      '[data-testid="guides-popover-trigger"]',
+    ) as HTMLButtonElement;
     act(() => {
       popoverTrigger.click();
     });
@@ -518,5 +523,178 @@ describe('App', () => {
     });
 
     expect(resetBtn.disabled).toBe(true);
+  });
+
+  it('pastes design overlay image globally, respects default lock, toggles via Shift+O/Shift+L, nudges with arrows, and persists across reload', async () => {
+    const { saveSiteDesignOverlay, loadSiteDesignOverlay } = await import(
+      '@/lib/design-overlay-storage'
+    );
+
+    // Pre-populate saved design overlay in browser.storage.local (simulating reload persistence)
+    await saveSiteDesignOverlay({
+      enabled: true,
+      imageUrl: 'data:image/png;base64,AAAA',
+      fileName: 'figma-frame.png',
+      naturalWidth: 1440,
+      naturalHeight: 900,
+      x: 100,
+      y: 200,
+      scale: 1,
+      opacity: 50,
+      blendMode: 'normal',
+      locked: true,
+      followScroll: true,
+    });
+
+    await act(async () => {
+      root.render(<App portalContainer={portalContainer} onClose={vi.fn()} />);
+    });
+
+    const layer = document.documentElement.querySelector(
+      '[data-testid="design-overlay-layer"]',
+    ) as HTMLDivElement;
+    expect(layer).not.toBeNull();
+    expect(layer.style.pointerEvents).toBe('none');
+
+    // Arrow key does nothing while locked
+    await act(async () => {
+      window.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight' }));
+    });
+    expect(layer.style.transform).toContain('translate3d(100px, 200px, 0)');
+
+    // Shift+L unlocks overlay
+    await act(async () => {
+      window.dispatchEvent(
+        new KeyboardEvent('keydown', {
+          code: 'KeyL',
+          shiftKey: true,
+          bubbles: true,
+        }),
+      );
+    });
+    expect(layer.style.pointerEvents).toBe('auto');
+
+    // ArrowRight moves 1px, Shift+ArrowDown moves 10px
+    await act(async () => {
+      window.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight' }));
+      window.dispatchEvent(
+        new KeyboardEvent('keydown', { key: 'ArrowDown', shiftKey: true }),
+      );
+    });
+    expect(layer.style.transform).toContain('translate3d(101px, 210px, 0)');
+
+    const persisted = await loadSiteDesignOverlay();
+    expect(persisted.x).toBe(101);
+    expect(persisted.y).toBe(210);
+
+    // Shift+O toggles overlay visibility off and back on
+    await act(async () => {
+      window.dispatchEvent(
+        new KeyboardEvent('keydown', {
+          code: 'KeyO',
+          shiftKey: true,
+          bubbles: true,
+        }),
+      );
+    });
+    expect(
+      document.documentElement.querySelector(
+        '[data-testid="design-overlay-layer"]',
+      ),
+    ).toBeNull();
+
+    await act(async () => {
+      window.dispatchEvent(
+        new KeyboardEvent('keydown', {
+          code: 'KeyO',
+          shiftKey: true,
+          bubbles: true,
+        }),
+      );
+    });
+    expect(
+      document.documentElement.querySelector(
+        '[data-testid="design-overlay-layer"]',
+      ),
+    ).not.toBeNull();
+  });
+
+  it('handles global clipboard paste for PNG images and ignores paste inside editable targets', async () => {
+    class MockFileReader {
+      result: string | ArrayBuffer | null = null;
+      onload: ((ev: ProgressEvent<FileReader>) => void) | null = null;
+      readAsDataURL() {
+        this.result = 'data:image/png;base64,iVBORw0KGgo=';
+        this.onload?.(new ProgressEvent('load') as ProgressEvent<FileReader>);
+      }
+    }
+    class MockImage {
+      naturalWidth = 1440;
+      naturalHeight = 900;
+      onload: (() => void) | null = null;
+      set src(_value: string) {
+        queueMicrotask(() => this.onload?.());
+      }
+    }
+    vi.spyOn(window, 'FileReader').mockImplementation(
+      MockFileReader as unknown as typeof FileReader,
+    );
+    vi.spyOn(window, 'Image').mockImplementation(
+      MockImage as unknown as typeof Image,
+    );
+
+    await act(async () => {
+      root.render(<App portalContainer={portalContainer} onClose={vi.fn()} />);
+    });
+
+    const pngFile = new File(['png-bytes'], 'figma-copy.png', {
+      type: 'image/png',
+    });
+    const clipboardData = {
+      items: [
+        {
+          kind: 'file',
+          type: 'image/png',
+          getAsFile: () => pngFile,
+        },
+      ],
+      files: [pngFile],
+    };
+
+    // Paste inside an input element must be ignored
+    const input = document.createElement('input');
+    document.body.appendChild(input);
+    const inputPaste = new Event('paste', {
+      bubbles: true,
+      cancelable: true,
+    }) as ClipboardEvent;
+    Object.defineProperty(inputPaste, 'clipboardData', {
+      value: clipboardData,
+    });
+    await act(async () => {
+      input.dispatchEvent(inputPaste);
+    });
+    expect(
+      document.body.querySelector('[data-testid="design-overlay-layer"]'),
+    ).toBeNull();
+
+    // Global paste on window loads the design overlay mockup (locked by default)
+    const windowPaste = new Event('paste', {
+      bubbles: true,
+      cancelable: true,
+    }) as ClipboardEvent;
+    Object.defineProperty(windowPaste, 'clipboardData', {
+      value: clipboardData,
+    });
+    await act(async () => {
+      window.dispatchEvent(windowPaste);
+      await Promise.resolve();
+    });
+
+    const pastedLayer = document.body.querySelector(
+      '[data-testid="design-overlay-layer"]',
+    ) as HTMLDivElement;
+    expect(pastedLayer).not.toBeNull();
+    expect(pastedLayer.style.pointerEvents).toBe('none');
   });
 });

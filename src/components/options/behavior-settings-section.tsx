@@ -153,7 +153,7 @@ export function BehaviorSettingsSection({
           </Toggle>
         </div>
 
-        <div className="flex items-center justify-between gap-4 py-3.5 last:pb-0">
+        <div className="flex items-center justify-between gap-4 py-3.5">
           <div className="space-y-0.5">
             <div className="text-xs font-medium">
               {i18n.t('options.behavior.holdToClose')}
@@ -171,6 +171,33 @@ export function BehaviorSettingsSection({
             className="h-7 min-w-22 text-xs"
           >
             {behavior.holdToClose
+              ? i18n.t('options.behavior.enabled')
+              : i18n.t('options.behavior.disabled')}
+          </Toggle>
+        </div>
+
+        <div className="flex items-center justify-between gap-4 py-3.5 last:pb-0">
+          <div className="space-y-0.5">
+            <div className="text-xs font-medium">
+              {i18n.t('options.behavior.designOverlayLockedByDefault')}
+            </div>
+            <div className="text-xs text-muted-foreground">
+              {i18n.t(
+                'options.behavior.designOverlayLockedByDefaultDescription',
+              )}
+            </div>
+          </div>
+          <Toggle
+            size="sm"
+            variant="outline"
+            data-testid="toggle-design-overlay-locked"
+            pressed={behavior.designOverlayLockedByDefault}
+            onPressedChange={(designOverlayLockedByDefault) =>
+              onChange({ designOverlayLockedByDefault })
+            }
+            className="h-7 min-w-22 text-xs"
+          >
+            {behavior.designOverlayLockedByDefault
               ? i18n.t('options.behavior.enabled')
               : i18n.t('options.behavior.disabled')}
           </Toggle>

@@ -19,6 +19,8 @@ const HOTKEY_LABEL_KEYS = {
   switchColumns: 'options.hotkeys.switchColumns',
   switchRows: 'options.hotkeys.switchRows',
   switchGrid: 'options.hotkeys.switchGrid',
+  toggleDesignOverlay: 'options.hotkeys.toggleDesignOverlay',
+  toggleDesignOverlayLock: 'options.hotkeys.toggleDesignOverlayLock',
 } as const;
 
 export interface HotkeysSettingsSectionProps {

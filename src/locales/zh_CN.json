@@ -10,6 +10,10 @@
       "toggleAriaLabel": "切换布局参考线",
       "toggleTooltip": "切换布局参考线 (Shift+G)"
     },
+    "designOverlay": {
+      "toggleAriaLabel": "切换设计稿叠加",
+      "toggleTooltip": "设计稿叠加 (Shift+O)"
+    },
     "close": {
       "ariaLabel": "长按关闭 FrameIt",
       "holdToClose": "长按关闭",
@@ -137,6 +141,59 @@
       "fixedToViewport": "固定于视口"
     }
   },
+  "designOverlay": {
+    "header": {
+      "title": "设计稿叠加",
+      "settingsAriaLabel": "设计稿叠加设置",
+      "autoFitAriaLabel": "自动适配页面",
+      "autoFitTooltip": "自动适配页面容器与 Retina 倍率",
+      "pickTargetAriaLabel": "对齐到页面元素",
+      "pickTargetTooltip": "点击页面上的任意元素以对齐设计稿",
+      "clearAriaLabel": "移除设计稿叠加",
+      "clearTooltip": "移除设计稿"
+    },
+    "picker": {
+      "snapHint": "点击页面上的任意元素以对齐并缩放设计稿"
+    },
+    "upload": {
+      "dropTitle": "拖拽图片到此处或点击选择",
+      "dropSubtitle": "PNG, JPG, SVG, WebP",
+      "pasteHint": "在页面按 Ctrl+V 粘贴",
+      "replaceAriaLabel": "替换设计稿图片",
+      "replaceTooltip": "选择图片文件",
+      "unsupportedError": "不支持的格式。请使用 PNG、JPG、SVG 或 WebP。"
+    },
+    "fields": {
+      "position": "位置",
+      "centerX": "居中",
+      "centerXTooltip": "在视口中水平居中",
+      "resetPositionAriaLabel": "重置位置为 0, 0",
+      "resetPositionTooltip": "重置位置 (0, 0)",
+      "scale": "缩放",
+      "scalePercent": "缩放 %",
+      "fitWidthAriaLabel": "适应视口宽度",
+      "fitWidthTooltip": "适应视口宽度",
+      "opacity": "不透明度",
+      "opacityAriaLabel": "设计稿不透明度",
+      "blendMode": "混合",
+      "interaction": "模式"
+    },
+    "blend": {
+      "normal": "正常",
+      "difference": "差值"
+    },
+    "lock": {
+      "lockedLabel": "已锁定",
+      "unlockedLabel": "可移动",
+      "lockAriaLabel": "锁定设计稿",
+      "unlockAriaLabel": "解锁设计稿",
+      "lockTooltip": "锁定点击穿透 (Shift+L)",
+      "unlockTooltip": "解锁以移动 (Shift+L)"
+    },
+    "storage": {
+      "quotaWarning": "图片过大，无法持久保存，仅在当前会话保留。"
+    }
+  },
   "options": {
     "title": "FrameIt 设置",
     "subtitle": "配置界面语言、外观主题、启动行为、键盘快捷键以及默认布局网格。",
@@ -167,6 +224,8 @@
       "rememberSiteSettingsDescription": "自动为每个网站单独保存您的网格自定义参数。",
       "holdToClose": "长按关闭工具栏",
       "holdToCloseDescription": "需要按住关闭按钮 450 毫秒以防止误触关闭。",
+      "designOverlayLockedByDefault": "默认锁定设计稿叠加",
+      "designOverlayLockedByDefaultDescription": "粘贴或上传的设计稿在手动或按 Shift+L 解锁前保持点击穿透。",
       "enabled": "已启用",
       "disabled": "已禁用"
     },
@@ -183,7 +242,9 @@
       "pickContainer": "在页面上选择容器",
       "switchColumns": "切换到列 (Columns)",
       "switchRows": "切换到行 (Rows)",
-      "switchGrid": "切换到网格 (Grid)"
+      "switchGrid": "切换到网格 (Grid)",
+      "toggleDesignOverlay": "切换设计稿叠加",
+      "toggleDesignOverlayLock": "锁定/解锁设计稿叠加"
     },
     "defaults": {
       "title": "默认布局参考线",

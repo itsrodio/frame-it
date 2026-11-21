@@ -36,6 +36,7 @@ export const DEFAULT_EXTENSION_SETTINGS: ExtensionSettings = {
     defaultGuideType: 'columns',
     rememberSiteSettings: true,
     holdToClose: true,
+    designOverlayLockedByDefault: true,
   },
   inspect: {
     codeFormat: 'tailwind',
@@ -123,6 +124,10 @@ export function normalizeExtensionSettings(
         typeof behavior.holdToClose === 'boolean'
           ? behavior.holdToClose
           : DEFAULT_EXTENSION_SETTINGS.behavior.holdToClose,
+      designOverlayLockedByDefault:
+        typeof behavior.designOverlayLockedByDefault === 'boolean'
+          ? behavior.designOverlayLockedByDefault
+          : DEFAULT_EXTENSION_SETTINGS.behavior.designOverlayLockedByDefault,
     },
     inspect: {
       codeFormat:
@@ -193,6 +198,14 @@ export function normalizeExtensionSettings(
       switchGrid: sanitizeHotkeyBinding(
         hotkeys.switchGrid,
         DEFAULT_HOTKEYS.switchGrid,
+      ),
+      toggleDesignOverlay: sanitizeHotkeyBinding(
+        hotkeys.toggleDesignOverlay,
+        DEFAULT_HOTKEYS.toggleDesignOverlay,
+      ),
+      toggleDesignOverlayLock: sanitizeHotkeyBinding(
+        hotkeys.toggleDesignOverlayLock,
+        DEFAULT_HOTKEYS.toggleDesignOverlayLock,
       ),
     },
     defaultGuides: {

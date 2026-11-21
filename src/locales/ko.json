@@ -10,6 +10,10 @@
       "toggleAriaLabel": "레이아웃 가이드 전환",
       "toggleTooltip": "레이아웃 가이드 전환 (Shift+G)"
     },
+    "designOverlay": {
+      "toggleAriaLabel": "디자인 오버레이 전환",
+      "toggleTooltip": "디자인 오버레이 (Shift+O)"
+    },
     "close": {
       "ariaLabel": "길게 눌러 FrameIt 닫기",
       "holdToClose": "길게 눌러 닫기",
@@ -137,6 +141,59 @@
       "fixedToViewport": "화면에 고정"
     }
   },
+  "designOverlay": {
+    "header": {
+      "title": "디자인 오버레이",
+      "settingsAriaLabel": "디자인 오버레이 설정",
+      "autoFitAriaLabel": "페이지에 자동 맞춤",
+      "autoFitTooltip": "컨테이너 및 Retina 배율에 자동 맞춤",
+      "pickTargetAriaLabel": "요소에 목업 맞추기",
+      "pickTargetTooltip": "페이지의 요소를 클릭하여 목업 정렬",
+      "clearAriaLabel": "디자인 오버레이 제거",
+      "clearTooltip": "목업 제거"
+    },
+    "picker": {
+      "snapHint": "페이지의 아무 요소나 클릭하여 목업을 정렬하고 맞춤"
+    },
+    "upload": {
+      "dropTitle": "목업 이미지를 드롭하거나 클릭",
+      "dropSubtitle": "PNG, JPG, SVG, WebP",
+      "pasteHint": "Ctrl+V 로 붙여넣기",
+      "replaceAriaLabel": "목업 이미지 교체",
+      "replaceTooltip": "이미지 파일 선택",
+      "unsupportedError": "지원하지 않는 형식입니다. PNG, JPG, SVG 또는 WebP를 사용하세요."
+    },
+    "fields": {
+      "position": "위치",
+      "centerX": "가운데",
+      "centerXTooltip": "뷰포트 가로 중앙에 맞춤",
+      "resetPositionAriaLabel": "위치를 0, 0으로 초기화",
+      "resetPositionTooltip": "위치 초기화 (0, 0)",
+      "scale": "배율",
+      "scalePercent": "배율 %",
+      "fitWidthAriaLabel": "화면 너비에 맞춤",
+      "fitWidthTooltip": "화면 너비에 맞춤",
+      "opacity": "불투명도",
+      "opacityAriaLabel": "디자인 오버레이 불투명도",
+      "blendMode": "블렌드",
+      "interaction": "모드"
+    },
+    "blend": {
+      "normal": "기본",
+      "difference": "차이"
+    },
+    "lock": {
+      "lockedLabel": "잠김",
+      "unlockedLabel": "이동 가능",
+      "lockAriaLabel": "디자인 오버레이 잠금",
+      "unlockAriaLabel": "디자인 오버레이 잠금 해제",
+      "lockTooltip": "클릭 통과 잠금 (Shift+L)",
+      "unlockTooltip": "이동하려면 잠금 해제 (Shift+L)"
+    },
+    "storage": {
+      "quotaWarning": "이미지가 너무 커서 저장할 수 없으며 이번 세션에서만 유지됩니다."
+    }
+  },
   "options": {
     "title": "FrameIt 설정",
     "subtitle": "언어, 테마, 시작 동작, 키보드 단축키 및 기본 레이아웃 그리드를 설정합니다.",
@@ -167,6 +224,8 @@
       "rememberSiteSettingsDescription": "각 웹사이트마다 사용자 지정 그리드 설정을 자동으로 저장합니다.",
       "holdToClose": "길게 눌러 독 닫기",
       "holdToCloseDescription": "실수로 닫히는 것을 방지하기 위해 닫기 버튼을 450ms 동안 길게 누르도록 합니다.",
+      "designOverlayLockedByDefault": "디자인 오버레이 기본 잠금",
+      "designOverlayLockedByDefaultDescription": "붙여넣거나 업로드한 목업이 잠금 해제 전까지 클릭을 통과시키도록 합니다.",
       "enabled": "켜짐",
       "disabled": "꺼짐"
     },
@@ -183,7 +242,9 @@
       "pickContainer": "페이지에서 컨테이너 선택",
       "switchColumns": "열(Columns)로 전환",
       "switchRows": "행(Rows)으로 전환",
-      "switchGrid": "그리드(Grid)로 전환"
+      "switchGrid": "그리드(Grid)로 전환",
+      "toggleDesignOverlay": "디자인 오버레이 전환",
+      "toggleDesignOverlayLock": "디자인 오버레이 잠금/해제"
     },
     "defaults": {
       "title": "기본 레이아웃 가이드",

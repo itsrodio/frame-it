@@ -10,6 +10,10 @@
       "toggleAriaLabel": "Afficher/masquer les guides de mise en page",
       "toggleTooltip": "Afficher/masquer les guides (Shift+G)"
     },
+    "designOverlay": {
+      "toggleAriaLabel": "Afficher/masquer la maquette",
+      "toggleTooltip": "Calque maquette (Shift+O)"
+    },
     "close": {
       "ariaLabel": "Maintenir pour fermer FrameIt",
       "holdToClose": "Maintenir pour fermer",
@@ -137,6 +141,59 @@
       "fixedToViewport": "Fixé à l'écran"
     }
   },
+  "designOverlay": {
+    "header": {
+      "title": "Calque maquette",
+      "settingsAriaLabel": "Paramètres du calque maquette",
+      "autoFitAriaLabel": "Ajustement automatique de la maquette",
+      "autoFitTooltip": "Ajuster au conteneur et échelle Retina",
+      "pickTargetAriaLabel": "Aligner sur un élément",
+      "pickTargetTooltip": "Cliquez sur un élément pour aligner la maquette",
+      "clearAriaLabel": "Supprimer le calque maquette",
+      "clearTooltip": "Supprimer la maquette"
+    },
+    "picker": {
+      "snapHint": "Cliquez sur un élément de la page pour aligner et ajuster la maquette"
+    },
+    "upload": {
+      "dropTitle": "Déposez une image ou cliquez",
+      "dropSubtitle": "PNG, JPG, SVG, WebP",
+      "pasteHint": "Ctrl+V sur la page pour coller",
+      "replaceAriaLabel": "Remplacer l'image de la maquette",
+      "replaceTooltip": "Choisir un fichier image",
+      "unsupportedError": "Format non pris en charge. Utilisez PNG, JPG, SVG ou WebP."
+    },
+    "fields": {
+      "position": "Position",
+      "centerX": "Centrer",
+      "centerXTooltip": "Centrer horizontalement dans la fenêtre",
+      "resetPositionAriaLabel": "Réinitialiser la position à 0, 0",
+      "resetPositionTooltip": "Réinitialiser la position (0, 0)",
+      "scale": "Échelle",
+      "scalePercent": "Échelle %",
+      "fitWidthAriaLabel": "Ajuster à la largeur de la fenêtre",
+      "fitWidthTooltip": "Ajuster à la largeur de la fenêtre",
+      "opacity": "Opacité",
+      "opacityAriaLabel": "Opacité du calque maquette",
+      "blendMode": "Fusion",
+      "interaction": "Mode"
+    },
+    "blend": {
+      "normal": "Normal",
+      "difference": "Différence"
+    },
+    "lock": {
+      "lockedLabel": "Verrouillé",
+      "unlockedLabel": "Déplaçable",
+      "lockAriaLabel": "Verrouiller le calque maquette",
+      "unlockAriaLabel": "Déverrouiller le calque maquette",
+      "lockTooltip": "Laisser passer les clics (Shift+L)",
+      "unlockTooltip": "Déverrouiller pour déplacer (Shift+L)"
+    },
+    "storage": {
+      "quotaWarning": "L'image est trop volumineuse pour être enregistrée et ne restera que pour cette session."
+    }
+  },
   "options": {
     "title": "Paramètres FrameIt",
     "subtitle": "Configurez la langue, l'apparence, le comportement au lancement, les raccourcis clavier et les grilles par défaut.",
@@ -167,6 +224,8 @@
       "rememberSiteSettingsDescription": "Enregistre automatiquement vos personnalisations de grille pour chaque site web.",
       "holdToClose": "Maintenir pour fermer le dock",
       "holdToCloseDescription": "Exige de maintenir le bouton de fermeture pendant 450 ms pour éviter les fermetures accidentelles.",
+      "designOverlayLockedByDefault": "Verrouiller la maquette par défaut",
+      "designOverlayLockedByDefaultDescription": "Laisse passer les clics à travers les maquettes collées ou importées jusqu'au déverrouillage.",
       "enabled": "Activé",
       "disabled": "Désactivé"
     },
@@ -183,7 +242,9 @@
       "pickContainer": "Choisir un conteneur sur la page",
       "switchColumns": "Passer aux Colonnes",
       "switchRows": "Passer aux Lignes",
-      "switchGrid": "Passer à la Grille"
+      "switchGrid": "Passer à la Grille",
+      "toggleDesignOverlay": "Afficher/masquer le calque maquette",
+      "toggleDesignOverlayLock": "Verrouiller/déverrouiller la maquette"
     },
     "defaults": {
       "title": "Guides de mise en page par défaut",

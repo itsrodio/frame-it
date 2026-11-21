@@ -10,6 +10,10 @@
       "toggleAriaLabel": "Alternar guías de diseño",
       "toggleTooltip": "Alternar guías de diseño (Shift+G)"
     },
+    "designOverlay": {
+      "toggleAriaLabel": "Alternar superposición de diseño",
+      "toggleTooltip": "Superposición de diseño (Shift+O)"
+    },
     "close": {
       "ariaLabel": "Mantener para cerrar FrameIt",
       "holdToClose": "Mantener para cerrar",
@@ -137,6 +141,59 @@
       "fixedToViewport": "Fijo en pantalla"
     }
   },
+  "designOverlay": {
+    "header": {
+      "title": "Superposición",
+      "settingsAriaLabel": "Ajustes de superposición de diseño",
+      "autoFitAriaLabel": "Ajuste automático del mockup",
+      "autoFitTooltip": "Ajuste automático al contenedor y Retina",
+      "pickTargetAriaLabel": "Alinear mockup a un elemento",
+      "pickTargetTooltip": "Haz clic en un elemento para alinear el mockup",
+      "clearAriaLabel": "Eliminar superposición",
+      "clearTooltip": "Eliminar mockup"
+    },
+    "picker": {
+      "snapHint": "Haz clic en cualquier elemento para alinear y ajustar el mockup"
+    },
+    "upload": {
+      "dropTitle": "Suelta la imagen o haz clic",
+      "dropSubtitle": "PNG, JPG, SVG, WebP",
+      "pasteHint": "Ctrl+V en la página para pegar",
+      "replaceAriaLabel": "Reemplazar imagen del mockup",
+      "replaceTooltip": "Elegir archivo de imagen",
+      "unsupportedError": "Formato no compatible. Usa PNG, JPG, SVG o WebP."
+    },
+    "fields": {
+      "position": "Posición",
+      "centerX": "Centrar",
+      "centerXTooltip": "Centrar horizontalmente en pantalla",
+      "resetPositionAriaLabel": "Restablecer posición a 0, 0",
+      "resetPositionTooltip": "Restablecer posición (0, 0)",
+      "scale": "Escala",
+      "scalePercent": "Escala %",
+      "fitWidthAriaLabel": "Ajustar al ancho de pantalla",
+      "fitWidthTooltip": "Ajustar al ancho de pantalla",
+      "opacity": "Opacidad",
+      "opacityAriaLabel": "Opacidad de la superposición",
+      "blendMode": "Fusión",
+      "interaction": "Modo"
+    },
+    "blend": {
+      "normal": "Normal",
+      "difference": "Diferencia"
+    },
+    "lock": {
+      "lockedLabel": "Bloqueado",
+      "unlockedLabel": "Movible",
+      "lockAriaLabel": "Bloquear superposición",
+      "unlockAriaLabel": "Desbloquear superposición",
+      "lockTooltip": "Bloquear clics (Shift+L)",
+      "unlockTooltip": "Desbloquear para mover (Shift+L)"
+    },
+    "storage": {
+      "quotaWarning": "La imagen es demasiado grande para guardarla y solo permanecerá en esta sesión."
+    }
+  },
   "options": {
     "title": "Ajustes de FrameIt",
     "subtitle": "Configura el idioma, la apariencia, el comportamiento de inicio, los atajos de teclado y las cuadrículas predeterminadas.",
@@ -167,6 +224,8 @@
       "rememberSiteSettingsDescription": "Guarda automáticamente tus personalizaciones de cuadrícula en cada sitio web.",
       "holdToClose": "Mantener pulsado para cerrar",
       "holdToCloseDescription": "Requiere mantener pulsado el botón de cierre durante 450 ms para evitar cierres accidentales.",
+      "designOverlayLockedByDefault": "Bloquear superposición por defecto",
+      "designOverlayLockedByDefaultDescription": "Mantiene los mockups pegados o subidos transparentes a los clics hasta desbloquearlos.",
       "enabled": "Activado",
       "disabled": "Desactivado"
     },
@@ -183,7 +242,9 @@
       "pickContainer": "Elegir contenedor en la página",
       "switchColumns": "Cambiar a Columnas",
       "switchRows": "Cambiar a Filas",
-      "switchGrid": "Cambiar a Cuadrícula"
+      "switchGrid": "Cambiar a Cuadrícula",
+      "toggleDesignOverlay": "Alternar superposición de diseño",
+      "toggleDesignOverlayLock": "Bloquear/desbloquear superposición"
     },
     "defaults": {
       "title": "Guías de diseño predeterminadas",

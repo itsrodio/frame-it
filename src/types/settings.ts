@@ -25,7 +25,9 @@ export type HotkeyAction =
   | 'pickContainer'
   | 'switchColumns'
   | 'switchRows'
-  | 'switchGrid';
+  | 'switchGrid'
+  | 'toggleDesignOverlay'
+  | 'toggleDesignOverlayLock';
 
 export interface HotkeyBinding {
   code: string;
@@ -43,6 +45,8 @@ export interface ExtensionHotkeys {
   switchColumns: HotkeyBinding;
   switchRows: HotkeyBinding;
   switchGrid: HotkeyBinding;
+  toggleDesignOverlay: HotkeyBinding;
+  toggleDesignOverlayLock: HotkeyBinding;
 }
 
 export interface ExtensionBehaviorSettings {
@@ -51,6 +55,7 @@ export interface ExtensionBehaviorSettings {
   defaultGuideType: GuideType;
   rememberSiteSettings: boolean;
   holdToClose: boolean;
+  designOverlayLockedByDefault: boolean;
 }
 
 export type InspectCodeFormat = 'css' | 'tailwind' | 'jsx';
