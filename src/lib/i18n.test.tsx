@@ -124,9 +124,12 @@ describe('i18n locales & UI translations', () => {
     expect(closeBtn).not.toBeNull();
 
     // Open LayoutGuidesTool popover and verify Russian labels
-    const popoverTrigger = portalContainer.querySelector(
+    const popoverTriggers = portalContainer.querySelectorAll(
       '[data-slot="popover-trigger"]',
-    ) as HTMLButtonElement;
+    );
+    const popoverTrigger = popoverTriggers[
+      popoverTriggers.length - 1
+    ] as HTMLButtonElement;
     act(() => {
       popoverTrigger.click();
     });

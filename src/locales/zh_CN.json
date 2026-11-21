@@ -30,7 +30,53 @@
     "measureDistances": "测量间距",
     "shiftClickKey": "Shift+点击",
     "snapGrid": "将网格吸附到容器",
-    "exit": "退出"
+    "exit": "退出",
+    "card": {
+      "copyCss": "复制",
+      "copied": "已复制",
+      "clickToCopy": "点击复制",
+      "unpinAriaLabel": "取消锁定元素",
+      "dimensions": "尺寸",
+      "font": "字体",
+      "typography": "排版",
+      "color": "文字颜色",
+      "background": "背景颜色",
+      "contrast": "对比度",
+      "display": "显示模式",
+      "gap": "间距",
+      "padding": "内边距",
+      "margin": "外边距",
+      "radius": "圆角",
+      "domTree": "DOM 树",
+      "navParent": "父元素 (↑)",
+      "navChild": "第一个子元素 (↓)",
+      "navPrev": "上一个兄弟元素 (←)",
+      "navNext": "下一个兄弟元素 (→)",
+      "copyFigma": "复制到 Figma",
+      "copySvg": "复制 SVG",
+      "pinCard": "将卡片固定在角落",
+      "floatCard": "卡片跟随元素",
+      "resetTweaks": "重置实时修改"
+    },
+    "settings": {
+      "title": "检查器与导出",
+      "description": "配置代码导出格式、颜色表示法、单位、卡片位置以及盒模型高亮图层。",
+      "codeFormat": "代码格式",
+      "codeFormatDescription": "复制所选元素样式时使用的默认代码语法。",
+      "colorFormat": "颜色格式",
+      "colorFormatDescription": "检查器卡片及复制值中显示的主要颜色表示法。",
+      "unitFormat": "单位",
+      "unitFormatDescription": "以 px、rem 或同时显示排版与间距数值。",
+      "cardPlacement": "卡片位置",
+      "cardPlacementDescription": "将检查器卡片放置在元素附近或固定在屏幕角落。",
+      "placementFloating": "跟随元素",
+      "placementPinned": "固定在角落",
+      "boxOverlays": "盒模型高亮",
+      "boxOverlaysDescription": "选择在检查模式下悬停时高亮显示的间距图层。",
+      "showPadding": "Padding",
+      "showMargin": "Margin",
+      "showGap": "Flex / Grid Gap"
+    }
   },
   "guides": {
     "types": {
@@ -53,6 +99,7 @@
       "desktopFigma": "Figma 桌面端"
     },
     "header": {
+      "settingsAriaLabel": "布局网格设置",
       "autoDetectAriaLabel": "自动检测页面容器",
       "autoDetectTooltip": "自动检测容器 (Shift+A)",
       "pickContainerAriaLabel": "在页面上选择容器",

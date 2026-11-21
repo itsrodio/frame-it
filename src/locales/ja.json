@@ -30,7 +30,53 @@
     "measureDistances": "距離を測定",
     "shiftClickKey": "Shift+クリック",
     "snapGrid": "グリッドをコンテナにスナップ",
-    "exit": "終了"
+    "exit": "終了",
+    "card": {
+      "copyCss": "コピー",
+      "copied": "コピー完了",
+      "clickToCopy": "クリックしてコピー",
+      "unpinAriaLabel": "要素の固定を解除",
+      "dimensions": "サイズ",
+      "font": "フォント",
+      "typography": "文字設定",
+      "color": "文字色",
+      "background": "背景色",
+      "contrast": "コントラスト",
+      "display": "表示形式",
+      "gap": "間隔",
+      "padding": "パディング",
+      "margin": "マージン",
+      "radius": "角丸",
+      "domTree": "DOMツリー",
+      "navParent": "親要素 (↑)",
+      "navChild": "最初の子要素 (↓)",
+      "navPrev": "前の兄弟要素 (←)",
+      "navNext": "次の兄弟要素 (→)",
+      "copyFigma": "Figma用にコピー",
+      "copySvg": "SVGをコピー",
+      "pinCard": "カードを画面端に固定",
+      "floatCard": "要素の近くに配置",
+      "resetTweaks": "変更をリセット"
+    },
+    "settings": {
+      "title": "インスペクターとエクスポート",
+      "description": "コード出力形式、カラー表記、単位、カードの配置、ボックスモデル表示を設定します。",
+      "codeFormat": "コード形式",
+      "codeFormatDescription": "選択した要素のスタイルをコピーする際のデフォルト構文。",
+      "colorFormat": "カラー形式",
+      "colorFormatDescription": "インスペクターカードやコピー時に使用される主なカラー表記。",
+      "unitFormat": "単位",
+      "unitFormatDescription": "フォントサイズや余白を px、rem、または両方で表示します。",
+      "cardPlacement": "カード位置",
+      "cardPlacementDescription": "選択した要素の近くに配置するか、画面の隅に固定します。",
+      "placementFloating": "要素の近く",
+      "placementPinned": "画面端に固定",
+      "boxOverlays": "ボックスモデル表示",
+      "boxOverlaysDescription": "インスペクト中のホバー時に強調表示する余白レイヤーを選択します。",
+      "showPadding": "Padding",
+      "showMargin": "Margin",
+      "showGap": "Flex / Grid Gap"
+    }
   },
   "guides": {
     "types": {
@@ -53,6 +99,7 @@
       "desktopFigma": "デスクトップ Figma"
     },
     "header": {
+      "settingsAriaLabel": "レイアウトガイド設定",
       "autoDetectAriaLabel": "ページのコンテナを自動検出",
       "autoDetectTooltip": "コンテナを自動検出 (Shift+A)",
       "pickContainerAriaLabel": "ページ上のコンテナを選択",

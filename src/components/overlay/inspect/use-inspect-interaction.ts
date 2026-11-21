@@ -1,5 +1,69 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { isEditableTarget, isOverlayElement } from '@/lib/dom-utils';
+
+const NON_VISUAL_TAGS = new Set([
+  'SCRIPT',
+  'STYLE',
+  'NOSCRIPT',
+  'TEMPLATE',
+  'LINK',
+  'META',
+  'HEAD',
+  'HTML',
+]);
+
+function isSelectableInspectElement(el: Element | null): el is HTMLElement {
+  if (!el || !(el instanceof HTMLElement)) return false;
+  if (NON_VISUAL_TAGS.has(el.tagName) || isOverlayElement(el)) return false;
+  const style = window.getComputedStyle(el);
+  if (style.display === 'none' || style.visibility === 'hidden') return false;
+  return true;
+}
+
+export type DomNavDirection = 'parent' | 'child' | 'prev' | 'next';
+
+export function findAdjacentDomElement(
+  current: HTMLElement,
+  direction: DomNavDirection,
+): HTMLElement | null {
+  if (direction === 'parent') {
+    const parent = current.parentElement;
+    if (
+      parent &&
+      parent !== document.documentElement &&
+      isSelectableInspectElement(parent)
+    ) {
+      return parent;
+    }
+    return null;
+  }
+
+  if (direction === 'child') {
+    for (const child of Array.from(current.children)) {
+      if (isSelectableInspectElement(child)) {
+        return child;
+      }
+    }
+    return null;
+  }
+
+  let sibling: Element | null =
+    direction === 'prev'
+      ? current.previousElementSibling
+      : current.nextElementSibling;
+
+  while (sibling) {
+    if (isSelectableInspectElement(sibling)) {
+      return sibling;
+    }
+    sibling =
+      direction === 'prev'
+        ? sibling.previousElementSibling
+        : sibling.nextElementSibling;
+  }
+
+  return null;
+}
 
 export interface UseInspectInteractionOptions {
   active: boolean;
@@ -26,6 +90,16 @@ export function useInspectInteraction({
   const isAltPressedRef = useRef(isAltPressed);
   isAltPressedRef.current = isAltPressed;
 
+  const navigateDom = useCallback((direction: DomNavDirection): boolean => {
+    const current = selectedElRef.current;
+    if (!current || !document.body.contains(current)) return false;
+    const next = findAdjacentDomElement(current, direction);
+    if (!next) return false;
+    selectedElRef.current = next;
+    setSelectedEl(next);
+    return true;
+  }, []);
+
   useEffect(() => {
     if (!active) {
       setSelectedEl(null);
@@ -48,17 +122,65 @@ export function useInspectInteraction({
     };
 
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (isEditableTarget(e.target)) return;
+      const originTarget = (e.composedPath?.()[0] ??
+        e.target) as EventTarget | null;
+      if (isEditableTarget(e.target) || isEditableTarget(originTarget)) return;
 
       if (e.key === 'Alt') {
         updateAltState(true);
-      } else if (e.key === 'Escape') {
+        return;
+      }
+
+      if (e.key === 'Escape') {
         if (selectedElRef.current) {
           e.preventDefault();
           setSelectedEl(null);
         } else if (activeRef.current && onCancel) {
           e.preventDefault();
           onCancel();
+        }
+        return;
+      }
+
+      // Не перехватываем стрелки и Enter, когда фокус находится внутри UI самого оверлея (Dock, Popover, карточка)
+      if (
+        (e.target instanceof Element && isOverlayElement(e.target)) ||
+        (originTarget instanceof Element && isOverlayElement(originTarget))
+      ) {
+        return;
+      }
+
+      // Навигация по DOM-дереву с клавиатуры при зафиксированном элементе:
+      // ↑ или Shift+Enter -> родитель
+      // ↓ или Enter -> первый видимый ребёнок
+      // ← / → -> соседний элемент
+      if (
+        selectedElRef.current &&
+        document.body.contains(selectedElRef.current)
+      ) {
+        if (e.key === 'ArrowUp' || (e.key === 'Enter' && e.shiftKey)) {
+          e.preventDefault();
+          e.stopPropagation();
+          navigateDom('parent');
+          return;
+        }
+        if (e.key === 'ArrowDown' || (e.key === 'Enter' && !e.shiftKey)) {
+          e.preventDefault();
+          e.stopPropagation();
+          navigateDom('child');
+          return;
+        }
+        if (e.key === 'ArrowLeft') {
+          e.preventDefault();
+          e.stopPropagation();
+          navigateDom('prev');
+          return;
+        }
+        if (e.key === 'ArrowRight') {
+          e.preventDefault();
+          e.stopPropagation();
+          navigateDom('next');
+          return;
         }
       }
     };
@@ -150,11 +272,24 @@ export function useInspectInteraction({
       window.removeEventListener('scroll', handleScrollOrResize, true);
       window.removeEventListener('resize', handleScrollOrResize);
     };
-  }, [onCancel, onSnapToElement]);
+  }, [navigateDom, onCancel, onSnapToElement]);
+
+  const clearSelection = useCallback(() => {
+    selectedElRef.current = null;
+    setSelectedEl(null);
+  }, []);
+
+  const selectElement = useCallback((el: HTMLElement | null) => {
+    selectedElRef.current = el;
+    setSelectedEl(el);
+  }, []);
 
   return {
     selectedEl,
     hoveredEl,
     isAltPressed,
+    navigateDom,
+    clearSelection,
+    selectElement,
   };
 }

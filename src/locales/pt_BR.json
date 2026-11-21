@@ -30,7 +30,53 @@
     "measureDistances": "medir distâncias",
     "shiftClickKey": "Shift+Clique",
     "snapGrid": "ajustar grade ao contêiner",
-    "exit": "sair"
+    "exit": "sair",
+    "card": {
+      "copyCss": "Copiar",
+      "copied": "Copiado",
+      "clickToCopy": "Clique para copiar",
+      "unpinAriaLabel": "Desafixar elemento",
+      "dimensions": "Dimensões",
+      "font": "Fonte",
+      "typography": "Tipografia",
+      "color": "Cor",
+      "background": "Fundo",
+      "contrast": "Contraste",
+      "display": "Exibição",
+      "gap": "Espaçamento",
+      "padding": "Preenchimento",
+      "margin": "Margem",
+      "radius": "Raio",
+      "domTree": "Árvore DOM",
+      "navParent": "Elemento pai (↑)",
+      "navChild": "Primeiro filho (↓)",
+      "navPrev": "Irmão anterior (←)",
+      "navNext": "Próximo irmão (→)",
+      "copyFigma": "Copiar para o Figma",
+      "copySvg": "Copiar SVG",
+      "pinCard": "Fixar cartão no canto",
+      "floatCard": "Cartão próximo ao elemento",
+      "resetTweaks": "Redefinir ajustes ao vivo"
+    },
+    "settings": {
+      "title": "Inspetor e exportação",
+      "description": "Configure o formato de exportação, notação de cor, unidades, posição do cartão e camadas do modelo de caixa.",
+      "codeFormat": "Formato de código",
+      "codeFormatDescription": "Sintaxe padrão usada ao copiar os estilos de um elemento inspecionado.",
+      "colorFormat": "Formato de cor",
+      "colorFormatDescription": "Notação de cor principal exibida no cartão e nos valores copiados.",
+      "unitFormat": "Unidades",
+      "unitFormatDescription": "Exibir valores de tipografia e espaçamento em px, rem ou ambos.",
+      "cardPlacement": "Posição do cartão",
+      "cardPlacementDescription": "Posicionar o cartão próximo ao elemento selecionado ou fixá-lo no canto.",
+      "placementFloating": "Próximo ao elemento",
+      "placementPinned": "Fixado no canto",
+      "boxOverlays": "Camadas do modelo de caixa",
+      "boxOverlaysDescription": "Escolha quais camadas de espaçamento são destacadas ao passar o mouse.",
+      "showPadding": "Padding",
+      "showMargin": "Margin",
+      "showGap": "Flex / Grid Gap"
+    }
   },
   "guides": {
     "types": {
@@ -53,6 +99,7 @@
       "desktopFigma": "Desktop Figma"
     },
     "header": {
+      "settingsAriaLabel": "Configurações de guias de layout",
       "autoDetectAriaLabel": "Detectar contêiner da página automaticamente",
       "autoDetectTooltip": "Detectar contêiner (Shift+A)",
       "pickContainerAriaLabel": "Selecionar contêiner na página",

@@ -30,7 +30,53 @@
     "measureDistances": "mesurer les distances",
     "shiftClickKey": "Shift+Clic",
     "snapGrid": "aligner la grille sur le conteneur",
-    "exit": "quitter"
+    "exit": "quitter",
+    "card": {
+      "copyCss": "Copier",
+      "copied": "Copié",
+      "clickToCopy": "Cliquer pour copier",
+      "unpinAriaLabel": "Détacher l'élément",
+      "dimensions": "Dimensions",
+      "font": "Police",
+      "typography": "Typographie",
+      "color": "Couleur",
+      "background": "Arrière-plan",
+      "contrast": "Contraste",
+      "display": "Affichage",
+      "gap": "Espacement",
+      "padding": "Marge int.",
+      "margin": "Marge ext.",
+      "radius": "Rayon",
+      "domTree": "Arbre DOM",
+      "navParent": "Élément parent (↑)",
+      "navChild": "Premier enfant (↓)",
+      "navPrev": "Frère précédent (←)",
+      "navNext": "Frère suivant (→)",
+      "copyFigma": "Copier vers Figma",
+      "copySvg": "Copier le SVG",
+      "pinCard": "Épingler la carte au coin",
+      "floatCard": "Carte près de l'élément",
+      "resetTweaks": "Réinitialiser les modifications"
+    },
+    "settings": {
+      "title": "Inspecteur et exportation",
+      "description": "Configurez le format d'exportation, la notation des couleurs, les unités, la position de la carte et les calques de boîte.",
+      "codeFormat": "Format de code",
+      "codeFormatDescription": "Syntaxe par défaut lors de la copie des styles d'un élément inspecté.",
+      "colorFormat": "Format de couleur",
+      "colorFormatDescription": "Notation de couleur principale affichée dans la carte et lors de la copie.",
+      "unitFormat": "Unités",
+      "unitFormatDescription": "Afficher les valeurs de typographie et d'espacement en px, rem ou les deux.",
+      "cardPlacement": "Position de la carte",
+      "cardPlacementDescription": "Placer la carte près de l'élément sélectionné ou l'épingler dans un coin.",
+      "placementFloating": "Près de l'élément",
+      "placementPinned": "Épinglée au coin",
+      "boxOverlays": "Calques du modèle de boîte",
+      "boxOverlaysDescription": "Choisissez les marges et espacements mis en surbrillance au survol.",
+      "showPadding": "Padding",
+      "showMargin": "Margin",
+      "showGap": "Flex / Grid Gap"
+    }
   },
   "guides": {
     "types": {
@@ -53,6 +99,7 @@
       "desktopFigma": "Bureau Figma"
     },
     "header": {
+      "settingsAriaLabel": "Paramètres des grilles",
       "autoDetectAriaLabel": "Détecter automatiquement le conteneur",
       "autoDetectTooltip": "Détecter le conteneur (Shift+A)",
       "pickContainerAriaLabel": "Choisir un conteneur sur la page",

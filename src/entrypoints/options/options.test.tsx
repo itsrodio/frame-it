@@ -119,6 +119,31 @@ describe('OptionsApp', () => {
     expect(getCachedSettings().theme).toBe('dark');
     expect(document.documentElement.classList.contains('dark')).toBe(true);
 
+    // Inspector & Export section controls
+    for (const testId of [
+      'inspect-code-format-tailwind',
+      'inspect-color-format-oklch',
+      'inspect-unit-format-rem',
+      'inspect-placement-pinned',
+      'toggle-inspect-padding',
+      'toggle-inspect-margin',
+      'toggle-inspect-gap',
+    ]) {
+      const btn = container.querySelector(
+        `[data-testid="${testId}"]`,
+      ) as HTMLButtonElement;
+      await act(async () => {
+        btn.click();
+      });
+    }
+    expect(getCachedSettings().inspect.codeFormat).toBe('tailwind');
+    expect(getCachedSettings().inspect.colorFormat).toBe('oklch');
+    expect(getCachedSettings().inspect.unitFormat).toBe('rem');
+    expect(getCachedSettings().inspect.cardPlacement).toBe('pinned');
+    expect(getCachedSettings().inspect.showPadding).toBe(false);
+    expect(getCachedSettings().inspect.showMargin).toBe(false);
+    expect(getCachedSettings().inspect.showGap).toBe(false);
+
     // Toggle behavior switches
     for (const testId of [
       'toggle-auto-detect-on-launch',

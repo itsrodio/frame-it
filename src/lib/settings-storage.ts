@@ -37,6 +37,15 @@ export const DEFAULT_EXTENSION_SETTINGS: ExtensionSettings = {
     rememberSiteSettings: true,
     holdToClose: true,
   },
+  inspect: {
+    codeFormat: 'tailwind',
+    colorFormat: 'hex',
+    unitFormat: 'px',
+    cardPlacement: 'floating',
+    showPadding: true,
+    showMargin: true,
+    showGap: true,
+  },
   hotkeys: DEFAULT_HOTKEYS,
   defaultGuides: {
     columns: DEFAULT_COLUMNS_SETTINGS,
@@ -83,6 +92,7 @@ export function normalizeExtensionSettings(
 
   const behavior =
     raw.behavior ?? ({} as Partial<ExtensionSettings['behavior']>);
+  const inspect = raw.inspect ?? ({} as Partial<ExtensionSettings['inspect']>);
   const hotkeys = raw.hotkeys ?? ({} as Partial<ExtensionSettings['hotkeys']>);
   const defaultGuides =
     raw.defaultGuides ?? ({} as Partial<ExtensionSettings['defaultGuides']>);
@@ -113,6 +123,43 @@ export function normalizeExtensionSettings(
         typeof behavior.holdToClose === 'boolean'
           ? behavior.holdToClose
           : DEFAULT_EXTENSION_SETTINGS.behavior.holdToClose,
+    },
+    inspect: {
+      codeFormat:
+        inspect.codeFormat === 'css' ||
+        inspect.codeFormat === 'tailwind' ||
+        inspect.codeFormat === 'jsx'
+          ? inspect.codeFormat
+          : DEFAULT_EXTENSION_SETTINGS.inspect.codeFormat,
+      colorFormat:
+        inspect.colorFormat === 'hex' ||
+        inspect.colorFormat === 'rgb' ||
+        inspect.colorFormat === 'oklch'
+          ? inspect.colorFormat
+          : DEFAULT_EXTENSION_SETTINGS.inspect.colorFormat,
+      unitFormat:
+        inspect.unitFormat === 'px' ||
+        inspect.unitFormat === 'rem' ||
+        inspect.unitFormat === 'both'
+          ? inspect.unitFormat
+          : DEFAULT_EXTENSION_SETTINGS.inspect.unitFormat,
+      cardPlacement:
+        inspect.cardPlacement === 'floating' ||
+        inspect.cardPlacement === 'pinned'
+          ? inspect.cardPlacement
+          : DEFAULT_EXTENSION_SETTINGS.inspect.cardPlacement,
+      showPadding:
+        typeof inspect.showPadding === 'boolean'
+          ? inspect.showPadding
+          : DEFAULT_EXTENSION_SETTINGS.inspect.showPadding,
+      showMargin:
+        typeof inspect.showMargin === 'boolean'
+          ? inspect.showMargin
+          : DEFAULT_EXTENSION_SETTINGS.inspect.showMargin,
+      showGap:
+        typeof inspect.showGap === 'boolean'
+          ? inspect.showGap
+          : DEFAULT_EXTENSION_SETTINGS.inspect.showGap,
     },
     hotkeys: {
       enabled:

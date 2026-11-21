@@ -20,6 +20,15 @@ export interface BoxPadding {
   left: number;
 }
 
+export interface GapOverlayBox {
+  axis: 'x' | 'y';
+  value: number;
+  top: number;
+  left: number;
+  width: number;
+  height: number;
+}
+
 export function parsePadding(el: HTMLElement): BoxPadding {
   const style = window.getComputedStyle(el);
   return {
@@ -28,6 +37,78 @@ export function parsePadding(el: HTMLElement): BoxPadding {
     bottom: Math.round(Number.parseFloat(style.paddingBottom) || 0),
     left: Math.round(Number.parseFloat(style.paddingLeft) || 0),
   };
+}
+
+export function parseMargin(el: HTMLElement): BoxPadding {
+  const style = window.getComputedStyle(el);
+  return {
+    top: Math.max(0, Math.round(Number.parseFloat(style.marginTop) || 0)),
+    right: Math.max(0, Math.round(Number.parseFloat(style.marginRight) || 0)),
+    bottom: Math.max(0, Math.round(Number.parseFloat(style.marginBottom) || 0)),
+    left: Math.max(0, Math.round(Number.parseFloat(style.marginLeft) || 0)),
+  };
+}
+
+/**
+ * Вычисляет прямоугольники визуальных отступов (gap) между прямыми видимыми детьми
+ * flex- или grid-контейнера для отображения на холсте в стиле Figma Auto Layout.
+ */
+export function calculateFlexGridGaps(el: HTMLElement): GapOverlayBox[] {
+  const style = window.getComputedStyle(el);
+  const display = style.display;
+  if (
+    display !== 'flex' &&
+    display !== 'inline-flex' &&
+    display !== 'grid' &&
+    display !== 'inline-grid'
+  ) {
+    return [];
+  }
+
+  const children = Array.from(el.children).filter(
+    (c): c is HTMLElement => c instanceof HTMLElement,
+  );
+  if (children.length < 2) return [];
+
+  const rects = children
+    .map((c) => c.getBoundingClientRect())
+    .filter((r) => r.width > 0 && r.height > 0);
+
+  const gaps: GapOverlayBox[] = [];
+  for (let i = 0; i < rects.length - 1; i++) {
+    const a = rects[i];
+    const b = rects[i + 1];
+    if (!a || !b) continue;
+
+    const hGap = Math.round(b.left - a.right);
+    const vOverlap = Math.min(a.bottom, b.bottom) - Math.max(a.top, b.top);
+    if (hGap >= 2 && vOverlap > 0) {
+      gaps.push({
+        axis: 'x',
+        value: hGap,
+        left: a.right,
+        top: Math.min(a.top, b.top),
+        width: hGap,
+        height: Math.max(a.bottom, b.bottom) - Math.min(a.top, b.top),
+      });
+      continue;
+    }
+
+    const vGap = Math.round(b.top - a.bottom);
+    const hOverlap = Math.min(a.right, b.right) - Math.max(a.left, b.left);
+    if (vGap >= 2 && hOverlap > 0) {
+      gaps.push({
+        axis: 'y',
+        value: vGap,
+        left: Math.min(a.left, b.left),
+        top: a.bottom,
+        width: Math.max(a.right, b.right) - Math.min(a.left, b.left),
+        height: vGap,
+      });
+    }
+  }
+
+  return gaps.slice(0, 12);
 }
 
 /**
@@ -196,4 +277,86 @@ export function calculateDistances(
   }
 
   return lines;
+}
+
+export interface InspectCardPosition {
+  top: number;
+  left: number;
+}
+
+/**
+ * Вычисляет позицию карточки инспектора рядом с зафиксированным элементом так,
+ * чтобы она не перекрывала сам элемент и не выходила за края вьюпорта.
+ */
+export function calculateInspectCardPosition(
+  targetRect: DOMRect,
+  viewport: { width: number; height: number },
+  cardSize: { width: number; height: number } = { width: 300, height: 290 },
+  placement: 'floating' | 'pinned' = 'floating',
+): InspectCardPosition {
+  const gap = 12;
+  const margin = 12;
+  const bottomSafeMargin = 72; // Оставляем место под Dock внизу экрана
+
+  const clampX = (x: number) =>
+    Math.max(
+      margin,
+      Math.min(x, Math.max(margin, viewport.width - cardSize.width - margin)),
+    );
+  const clampY = (y: number) =>
+    Math.max(
+      margin,
+      Math.min(
+        y,
+        Math.max(margin, viewport.height - cardSize.height - bottomSafeMargin),
+      ),
+    );
+
+  if (placement === 'pinned') {
+    return {
+      left: Math.round(clampX(viewport.width - cardSize.width - margin)),
+      top: Math.round(margin + 40),
+    };
+  }
+
+  // 1. Справа от элемента
+  if (targetRect.right + gap + cardSize.width <= viewport.width - margin) {
+    return {
+      left: Math.round(targetRect.right + gap),
+      top: Math.round(clampY(targetRect.top)),
+    };
+  }
+
+  // 2. Слева от элемента
+  if (targetRect.left - gap - cardSize.width >= margin) {
+    return {
+      left: Math.round(targetRect.left - gap - cardSize.width),
+      top: Math.round(clampY(targetRect.top)),
+    };
+  }
+
+  // 3. Снизу от элемента
+  if (
+    targetRect.bottom + gap + cardSize.height <=
+    viewport.height - bottomSafeMargin
+  ) {
+    return {
+      left: Math.round(clampX(targetRect.left)),
+      top: Math.round(targetRect.bottom + gap),
+    };
+  }
+
+  // 4. Сверху от элемента
+  if (targetRect.top - gap - cardSize.height >= margin) {
+    return {
+      left: Math.round(clampX(targetRect.left)),
+      top: Math.round(targetRect.top - gap - cardSize.height),
+    };
+  }
+
+  // 5. Если элемент занимает почти весь экран — фиксируем в правом верхнем углу вьюпорта
+  return {
+    left: Math.round(clampX(viewport.width - cardSize.width - margin)),
+    top: Math.round(margin + 40),
+  };
 }

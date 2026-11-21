@@ -57,7 +57,9 @@ test.describe('FrameIt Extension E2E (Shadow DOM & Portals)', () => {
     await triggerExtensionAction(page);
 
     const overlayHost = page.locator('frameit-overlay');
-    const popoverTrigger = overlayHost.locator('[data-slot="popover-trigger"]');
+    const popoverTrigger = overlayHost.locator(
+      '[data-testid="guides-popover-trigger"]',
+    );
     await popoverTrigger.click();
 
     const popoverContent = overlayHost.locator('[data-slot="popover-content"]');
@@ -109,7 +111,7 @@ test.describe('FrameIt Extension E2E (Shadow DOM & Portals)', () => {
     await triggerExtensionAction(page);
 
     const overlayHost = page.locator('frameit-overlay');
-    await overlayHost.locator('[data-slot="popover-trigger"]').click();
+    await overlayHost.locator('[data-testid="guides-popover-trigger"]').click();
 
     const popoverContent = overlayHost.locator('[data-slot="popover-content"]');
     await expect(popoverContent).toBeVisible();
@@ -145,7 +147,7 @@ test.describe('FrameIt Extension E2E (Shadow DOM & Portals)', () => {
     await triggerExtensionAction(page);
 
     const overlayHost = page.locator('frameit-overlay');
-    await overlayHost.locator('[data-slot="popover-trigger"]').click();
+    await overlayHost.locator('[data-testid="guides-popover-trigger"]').click();
 
     // Auto-detected main#hero-container (1200px width, 24px horizontal padding)
     await expect(overlayHost.locator('#frameit-root')).toContainText(
@@ -171,7 +173,7 @@ test.describe('FrameIt Extension E2E (Shadow DOM & Portals)', () => {
     await secondary.click();
 
     // Re-open popover and verify snapped container updated to section#secondary-container (960px, margin 16)
-    await overlayHost.locator('[data-slot="popover-trigger"]').click();
+    await overlayHost.locator('[data-testid="guides-popover-trigger"]').click();
     await expect(overlayHost.locator('#frameit-root')).toContainText(
       'section#secondary-container',
     );
@@ -206,5 +208,56 @@ test.describe('FrameIt Extension E2E (Shadow DOM & Portals)', () => {
     await expect(rootText).toContainText('div#card-b');
     await expect(rootText).toContainText('200 × 100');
     await expect(rootText).toContainText('48');
+  });
+
+  test('6. opens InspectDetailsCard with WCAG contrast, updates format via InspectTool popover, and copies styles', async ({
+    page,
+    testServerUrl,
+    triggerExtensionAction,
+  }) => {
+    await page.goto(testServerUrl);
+    await triggerExtensionAction(page);
+
+    const overlayHost = page.locator('frameit-overlay');
+    const inspectBtn = overlayHost.getByRole('button', {
+      name: 'Inspect & measure distances',
+    });
+    await expect(inspectBtn).toBeVisible();
+
+    await page.keyboard.press('Shift+KeyI');
+    await expect(inspectBtn).toHaveAttribute('aria-pressed', 'true');
+
+    // Click #card-a to open InspectDetailsCard
+    await page.locator('#card-a').click();
+
+    const card = overlayHost.locator('[data-testid="inspect-details-card"]');
+    await expect(card).toBeVisible();
+    await expect(
+      card.locator('[data-testid="inspect-breadcrumbs"]'),
+    ).toContainText('div#card-a');
+    await expect(
+      card.locator('[data-testid="inspect-contrast-badge"]'),
+    ).toContainText('AAA');
+
+    // Open InspectTool settings popover in Dock and switch color format to OKLCH and units to rem
+    await overlayHost
+      .locator('[data-testid="inspect-popover-trigger"]')
+      .click();
+    await overlayHost
+      .locator('[data-testid="dock-inspect-color-oklch"]')
+      .click();
+    await overlayHost.locator('[data-testid="dock-inspect-unit-rem"]').click();
+
+    await expect(
+      card.locator('[data-testid="inspect-copy-text-hex"]'),
+    ).toContainText('oklch(');
+    await expect(
+      card.locator('[data-testid="inspect-copy-padding"]'),
+    ).toContainText('1rem');
+
+    // Click Copy Code and verify visual confirmation ("Copied")
+    const copyCssBtn = card.locator('[data-testid="inspect-copy-css"]');
+    await copyCssBtn.click();
+    await expect(copyCssBtn).toHaveClass(/text-emerald/);
   });
 });

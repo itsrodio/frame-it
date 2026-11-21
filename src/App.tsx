@@ -1,5 +1,5 @@
 import { CSPProvider } from '@base-ui/react/csp-provider';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Dock } from '@/components/overlay/dock/dock';
 import { InspectMeasureOverlay } from '@/components/overlay/inspect/inspect-measure-overlay';
 import { ContainerPickerOverlay } from '@/components/overlay/layout-guides/container-picker-overlay';
@@ -49,7 +49,12 @@ export function App({ portalContainer, onClose }: AppProps) {
   const [hasCustomSiteSettings, setHasCustomSiteSettings] = useState<boolean>(
     initialSetup.hasCustomSiteSettings,
   );
+  const hasCustomSiteSettingsRef = useRef(hasCustomSiteSettings);
+  hasCustomSiteSettingsRef.current = hasCustomSiteSettings;
   const [activeTool, setActiveTool] = useState<ActiveOverlayTool>('none');
+  const [inspectSettings, setInspectSettings] = useState(
+    () => getCachedSettings().inspect,
+  );
   const [trackedElement, setTrackedElement] = useState<HTMLElement | null>(
     initialSetup.trackedElement,
   );
@@ -59,16 +64,18 @@ export function App({ portalContainer, onClose }: AppProps) {
 
   const handleExternalSettingsChange = useCallback(
     (nextSettings: ExtensionSettings) => {
-      setHasCustomSiteSettings((currentHasCustom) => {
-        if (!currentHasCustom || !nextSettings.behavior.rememberSiteSettings) {
-          const setup = getInitialGuidesSetup(nextSettings);
-          setGuidesState(setup.state);
-          setTrackedElement(setup.trackedElement);
-          setTrackedElementLabel(setup.trackedElementLabel);
-          return setup.hasCustomSiteSettings;
-        }
-        return currentHasCustom;
-      });
+      setInspectSettings(nextSettings.inspect);
+      if (
+        !hasCustomSiteSettingsRef.current ||
+        !nextSettings.behavior.rememberSiteSettings
+      ) {
+        const setup = getInitialGuidesSetup(nextSettings);
+        setGuidesState(setup.state);
+        setTrackedElement(setup.trackedElement);
+        setTrackedElementLabel(setup.trackedElementLabel);
+        hasCustomSiteSettingsRef.current = setup.hasCustomSiteSettings;
+        setHasCustomSiteSettings(setup.hasCustomSiteSettings);
+      }
     },
     [],
   );
@@ -224,6 +231,17 @@ export function App({ portalContainer, onClose }: AppProps) {
     }));
   }, [settings]);
 
+  const handleUpdateInspectSettings = useCallback(
+    (patch: Partial<typeof inspectSettings>) => {
+      setInspectSettings((prev) => ({ ...prev, ...patch }));
+    },
+    [],
+  );
+
+  const handleResetInspectSettings = useCallback(() => {
+    setInspectSettings(settings.inspect);
+  }, [settings.inspect]);
+
   const isInspectActive = activeTool === 'inspect';
   const isPickingContainer = activeTool === 'pick-container';
 
@@ -238,6 +256,8 @@ export function App({ portalContainer, onClose }: AppProps) {
               {!isPickingContainer && (
                 <InspectMeasureOverlay
                   active={isInspectActive}
+                  inspectSettings={inspectSettings}
+                  onUpdateInspectSettings={handleUpdateInspectSettings}
                   onSnapToElement={(el) =>
                     applyDetectedContainer(extractContainerInfo(el), true)
                   }
@@ -257,6 +277,8 @@ export function App({ portalContainer, onClose }: AppProps) {
               <Dock
                 state={guidesState}
                 isInspectActive={isInspectActive}
+                inspectSettings={inspectSettings}
+                defaultInspectSettings={settings.inspect}
                 isPickingContainer={isPickingContainer}
                 trackedElementLabel={trackedElementLabel}
                 hasCustomSiteSettings={hasCustomSiteSettings}
@@ -265,6 +287,8 @@ export function App({ portalContainer, onClose }: AppProps) {
                 onToggleInspect={(active) =>
                   setActiveTool(active ? 'inspect' : 'none')
                 }
+                onUpdateInspectSettings={handleUpdateInspectSettings}
+                onResetInspectSettings={handleResetInspectSettings}
                 onTypeChange={handleTypeChange}
                 onColumnsChange={handleColumnsChange}
                 onRowsChange={handleRowsChange}

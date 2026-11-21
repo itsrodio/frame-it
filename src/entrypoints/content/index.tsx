@@ -1,6 +1,7 @@
 import ReactDOM from 'react-dom/client';
 import '@/assets/tailwind.css';
 import { App } from '@/App';
+import { loadExtensionSettings } from '@/lib/settings-storage';
 
 declare global {
   interface Window {
@@ -15,6 +16,8 @@ export default defineContentScript({
   async main(ctx) {
     if (window.__frameItInjected) return;
     window.__frameItInjected = true;
+
+    await loadExtensionSettings();
 
     let isMounted = false;
 

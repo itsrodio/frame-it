@@ -30,7 +30,53 @@
     "measureDistances": "measure distances",
     "shiftClickKey": "Shift+Click",
     "snapGrid": "snap grid to container",
-    "exit": "exit"
+    "exit": "exit",
+    "card": {
+      "copyCss": "Copy",
+      "copied": "Copied",
+      "clickToCopy": "Click to copy",
+      "unpinAriaLabel": "Unpin element",
+      "dimensions": "Dimensions",
+      "font": "Font",
+      "typography": "Typography",
+      "color": "Color",
+      "background": "Background",
+      "contrast": "Contrast",
+      "display": "Display",
+      "gap": "Gap",
+      "padding": "Padding",
+      "margin": "Margin",
+      "radius": "Radius",
+      "domTree": "DOM Tree",
+      "navParent": "Parent element (↑)",
+      "navChild": "First child (↓)",
+      "navPrev": "Previous sibling (←)",
+      "navNext": "Next sibling (→)",
+      "copyFigma": "Copy to Figma",
+      "copySvg": "Copy SVG",
+      "pinCard": "Pin card to corner",
+      "floatCard": "Float card near element",
+      "resetTweaks": "Reset live tweaks"
+    },
+    "settings": {
+      "title": "Inspector & Export",
+      "description": "Configure default export format, color notation, units, card placement, and box-model overlays.",
+      "codeFormat": "Code format",
+      "codeFormatDescription": "Default syntax used when copying an inspected element's styles.",
+      "colorFormat": "Color format",
+      "colorFormatDescription": "Primary color notation shown in the inspector card and copied values.",
+      "unitFormat": "Units",
+      "unitFormatDescription": "Display typography and spacing values in pixels, rem, or both.",
+      "cardPlacement": "Card position",
+      "cardPlacementDescription": "Place the inspector card next to the selected element or pin it to the corner.",
+      "placementFloating": "Near element",
+      "placementPinned": "Pinned to corner",
+      "boxOverlays": "Box model overlays",
+      "boxOverlaysDescription": "Choose which spacing layers are highlighted on hover in Inspect mode.",
+      "showPadding": "Padding",
+      "showMargin": "Margin",
+      "showGap": "Flex / Grid Gap"
+    }
   },
   "guides": {
     "types": {
@@ -53,6 +99,7 @@
       "desktopFigma": "Desktop Figma"
     },
     "header": {
+      "settingsAriaLabel": "Layout guide settings",
       "autoDetectAriaLabel": "Auto-detect page container",
       "autoDetectTooltip": "Auto-detect container (Shift+A)",
       "pickContainerAriaLabel": "Pick container on page",

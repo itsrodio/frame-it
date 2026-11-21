@@ -1,6 +1,6 @@
 # Chrome Web Store Listing — FrameIt
 
-> Last Updated: 2026-11-20
+> Last Updated: 2026-11-21
 
 ## Store Listing
 
@@ -18,7 +18,7 @@ FEATURES
 • Interactive Container Picker (Shift+C) — Click any container, sidebar, or card on the page to snap the grid directly to that element. Automatically adapts column count (2, 4, 6, 8, or 12 columns) to the element's width and stays synced on resize.
 • Web-Native Column, Row & Pixel Grids — Configure track count, alignment (stretch, center, start, end), container Max Width with presets (768px–1536px), inner margin/padding, gutter spacing, X/Y offsets, and viewport-fixed vs. scroll-linked positioning.
 • Multi-Layer Overlays — Switch cleanly between Columns, Rows, and Pixel Grid, or explicitly enable multiple grid layers simultaneously.
-• Inspect & Figma Redline Measurements (Hold Alt or Shift+I) — Hold Alt to measure pixel distances between elements and their parent containers, view element dimensions, and highlight inner paddings. Click to pin any element and measure exact X/Y distances to any other element on the page.
+• Inspect & Figma Redline Measurements (Hold Alt or Shift+I) — Hold Alt to measure pixel distances between elements and their parent containers, view element dimensions, and highlight inner paddings, margins, and flex/grid gaps. Click to pin any element, open the floating Style Inspector Card (typography, HEX/RGB/OKLCH colors, WCAG 2.1 contrast ratio, DOM tree navigation), and copy CSS, Tailwind CSS, React JSX, or Figma-ready SVG frames.
 • Figma-Style Scrubbable Inputs & Shortcuts — Drag field labels horizontally to adjust numbers on the fly, and control everything with keyboard shortcuts (Shift+G, Shift+I, Shift+A, Shift+C, Shift+1/2/3).
 • Clean & Non-Intrusive — Renders inside an isolated Shadow DOM with automatic light and dark theme adaptation without altering website layout or styles.
 
@@ -85,8 +85,7 @@ English (`en`)
 | ----------- | ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `activeTab` | permissions | Grants temporary access to the currently active tab only when the user clicks the FrameIt toolbar icon, allowing the extension to toggle the layout grid overlay on that page without requesting broad host permissions. |
 | `scripting` | permissions | Required to inject the on-page layout grid overlay and floating control dock into the active tab when the user clicks the extension toolbar icon.                                                                        |
-| `storage`   | permissions | Stores the user's extension preferences (interface language, theme, keyboard shortcuts, launch behavior, and default layout guide settings) locally via `chrome.storage.local`.                                          |
-| `storage`   | permissions | Stores the user's extension preferences (interface language, theme, keyboard shortcuts, launch behavior, and default layout guide settings) locally via `chrome.storage.local`.                                          |
+| `storage`   | permissions | Stores the user's extension preferences (interface language, theme, keyboard shortcuts, launch behavior, and default layout grid settings) locally via `chrome.storage.local`.                                           |
 
 ## Privacy & Data Use
 
@@ -128,6 +127,7 @@ https://github.com/itsrodio/frame-it
 
 | Version | Date       | Changes                                                                                                                                                                                                 | Status |
 | ------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------ |
+| 0.3.0   | 2026-11-21 | Added Style Inspector Card with typography, HEX/RGB/OKLCH color formats, WCAG 2.1 contrast ratio, DOM tree navigation, padding/margin/gap overlays, and CSS/Tailwind/JSX/Figma SVG export.              | Draft  |
 | 0.2.0   | 2026-11-17 | Smart container auto-detection by default, interactive container picker with adaptive column counts, Inspect & Alt distance redlines, Max Width presets, X/Y offsets, scroll-linked grids, and hotkeys. | Draft  |
 | 0.1.0   | 2026-11-14 | Initial MVP release: customizable column, row, and pixel grid overlays with floating on-page dock.                                                                                                      | Draft  |
 

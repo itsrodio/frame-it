@@ -30,7 +30,53 @@
     "measureDistances": "거리 측정",
     "shiftClickKey": "Shift+클릭",
     "snapGrid": "컨테이너에 그리드 스냅",
-    "exit": "종료"
+    "exit": "종료",
+    "card": {
+      "copyCss": "복사",
+      "copied": "복사됨",
+      "clickToCopy": "클릭하여 복사",
+      "unpinAriaLabel": "요소 고정 해제",
+      "dimensions": "크기",
+      "font": "글꼴",
+      "typography": "타이포그래피",
+      "color": "텍스트 색상",
+      "background": "배경색",
+      "contrast": "대비",
+      "display": "표시 방식",
+      "gap": "간격",
+      "padding": "안쪽 여백",
+      "margin": "바깥 여백",
+      "radius": "모서리 반경",
+      "domTree": "DOM 트리",
+      "navParent": "상위 요소 (↑)",
+      "navChild": "첫 번째 하위 요소 (↓)",
+      "navPrev": "이전 형제 요소 (←)",
+      "navNext": "다음 형제 요소 (→)",
+      "copyFigma": "Figma로 복사",
+      "copySvg": "SVG 복사",
+      "pinCard": "카드를 모서리에 고정",
+      "floatCard": "요소 근처에 표시",
+      "resetTweaks": "실시간 수정 초기화"
+    },
+    "settings": {
+      "title": "인스펙터 및 내보내기",
+      "description": "코드 내보내기 형식, 색상 표기법, 단위, 카드 위치 및 박스 모델 오버레이를 설정합니다.",
+      "codeFormat": "코드 형식",
+      "codeFormatDescription": "선택한 요소의 스타일을 복사할 때 사용할 기본 문법입니다.",
+      "colorFormat": "색상 형식",
+      "colorFormatDescription": "인스펙터 카드와 복사된 값에 표시되는 기본 색상 표기법입니다.",
+      "unitFormat": "단위",
+      "unitFormatDescription": "타이포그래피와 여백 값을 px, rem 또는 둘 다로 표시합니다.",
+      "cardPlacement": "카드 위치",
+      "cardPlacementDescription": "선택한 요소 옆에 카드를 띄우거나 화면 모서리에 고정합니다.",
+      "placementFloating": "요소 근처",
+      "placementPinned": "모서리에 고정",
+      "boxOverlays": "박스 모델 오버레이",
+      "boxOverlaysDescription": "검사 모드에서 마우스를 올렸을 때 강조 표시할 여백 레이어를 선택합니다.",
+      "showPadding": "Padding",
+      "showMargin": "Margin",
+      "showGap": "Flex / Grid Gap"
+    }
   },
   "guides": {
     "types": {
@@ -53,6 +99,7 @@
       "desktopFigma": "데스크톱 Figma"
     },
     "header": {
+      "settingsAriaLabel": "레이아웃 가이드 설정",
       "autoDetectAriaLabel": "페이지 컨테이너 자동 감지",
       "autoDetectTooltip": "컨테이너 자동 감지 (Shift+A)",
       "pickContainerAriaLabel": "페이지에서 컨테이너 선택",

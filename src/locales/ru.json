@@ -30,7 +30,53 @@
     "measureDistances": "замерить расстояния",
     "shiftClickKey": "Shift+Клик",
     "snapGrid": "привязать сетку к контейнеру",
-    "exit": "выход"
+    "exit": "выход",
+    "card": {
+      "copyCss": "Копировать",
+      "copied": "Скопировано",
+      "clickToCopy": "Нажмите, чтобы скопировать",
+      "unpinAriaLabel": "Открепить элемент",
+      "dimensions": "Размеры",
+      "font": "Шрифт",
+      "typography": "Типографика",
+      "color": "Цвет текста",
+      "background": "Фон",
+      "contrast": "Контраст",
+      "display": "Отображение",
+      "gap": "Отступ",
+      "padding": "Внутр. поля",
+      "margin": "Внеш. поля",
+      "radius": "Скругление",
+      "domTree": "DOM-дерево",
+      "navParent": "Родительский элемент (↑)",
+      "navChild": "Первый дочерний (↓)",
+      "navPrev": "Предыдущий сосед (←)",
+      "navNext": "Следующий сосед (→)",
+      "copyFigma": "Копировать в Figma",
+      "copySvg": "Копировать SVG",
+      "pinCard": "Закрепить карточку в углу",
+      "floatCard": "Карточка рядом с элементом",
+      "resetTweaks": "Сбросить изменения стилей"
+    },
+    "settings": {
+      "title": "Инспектор и экспорт",
+      "description": "Формат копирования кода, представление цветов, единицы измерения, позиция карточки и подсветка отступов.",
+      "codeFormat": "Формат кода",
+      "codeFormatDescription": "Синтаксис по умолчанию при копировании стилей выбранного элемента.",
+      "colorFormat": "Формат цвета",
+      "colorFormatDescription": "Основная цветовая модель в карточке инспектора и при копировании.",
+      "unitFormat": "Единицы",
+      "unitFormatDescription": "Отображать размеры шрифтов и отступы в px, rem или в обоих форматах.",
+      "cardPlacement": "Позиция карточки",
+      "cardPlacementDescription": "Размещать карточку инспектора рядом с элементом или закреплять в углу экрана.",
+      "placementFloating": "Рядом с элементом",
+      "placementPinned": "В углу экрана",
+      "boxOverlays": "Подсветка отступов",
+      "boxOverlaysDescription": "Какие слои отступов подсвечивать при наведении в режиме инспектора.",
+      "showPadding": "Padding",
+      "showMargin": "Margin",
+      "showGap": "Flex / Grid Gap"
+    }
   },
   "guides": {
     "types": {
@@ -53,6 +99,7 @@
       "desktopFigma": "Десктоп Figma"
     },
     "header": {
+      "settingsAriaLabel": "Настройки направляющих",
       "autoDetectAriaLabel": "Автоопределение контейнера страницы",
       "autoDetectTooltip": "Автоопределение контейнера (Shift+A)",
       "pickContainerAriaLabel": "Выбрать контейнер на странице",
