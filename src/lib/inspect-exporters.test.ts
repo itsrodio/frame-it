@@ -7,6 +7,7 @@ import {
   formatColorByPreference,
   formatDimensionWithUnit,
 } from '@/lib/inspect-exporters';
+import { preloadImagesForFigma } from '@/lib/inspect-figma-svg';
 import { extractInspectedStyles, formatColor } from '@/lib/inspect-styles';
 
 function mockRect(
@@ -185,5 +186,47 @@ describe('inspect-exporters', () => {
     // Must clamp 9999px pill border-radius to half of height (14 for 28px badge, 4 for 8px bar)
     expect(svg).toContain('rx="14"');
     expect(svg).toContain('rx="4"');
+  });
+
+  it('exports gradient text, asymmetric borders, and preloaded PNG data URL images for Figma SVG', async () => {
+    const wrapper = document.createElement('div');
+    wrapper.style.borderTopWidth = '2px';
+    wrapper.style.borderTopColor = 'rgb(59, 130, 246)';
+    wrapper.style.borderBottomWidth = '1px';
+    wrapper.style.borderBottomColor = 'rgb(203, 213, 225)';
+
+    const gradHeading = document.createElement('h2');
+    gradHeading.textContent = 'Hero Title';
+    gradHeading.style.backgroundImage =
+      'linear-gradient(90deg, rgb(56, 189, 248), rgb(168, 85, 247))';
+    gradHeading.style.backgroundClip = 'text';
+    gradHeading.style.color = 'transparent';
+
+    const avatar = document.createElement('img');
+    avatar.setAttribute('src', 'data:image/png;base64,iVBORw0KGgo=');
+    avatar.style.objectFit = 'contain';
+
+    wrapper.append(gradHeading, avatar);
+    document.body.appendChild(wrapper);
+
+    vi.spyOn(gradHeading, 'getBoundingClientRect').mockReturnValue(
+      mockRect(12, 12, 200, 32),
+    );
+    vi.spyOn(avatar, 'getBoundingClientRect').mockReturnValue(
+      mockRect(12, 56, 48, 48),
+    );
+
+    const preloaded = await preloadImagesForFigma(wrapper);
+    expect(preloaded.get(avatar)).toBe('data:image/png;base64,iVBORw0KGgo=');
+
+    const rect = mockRect(0, 0, 300, 140);
+    const styles = extractInspectedStyles(wrapper, rect);
+    const svg = buildFigmaSvg(wrapper, styles, rect, preloaded);
+
+    expect(svg).toContain('<line x1="0" y1="0" x2="300" y2="0"');
+    expect(svg).toContain('<line x1="0" y1="140" x2="300" y2="140"');
+    expect(svg).toContain('fill="url(#frameit-grad-1)"');
+    expect(svg).toContain('preserveAspectRatio="xMidYMid meet"');
+    expect(svg).toContain('data:image/png;base64,iVBORw0KGgo=');
   });
 });

@@ -77,6 +77,7 @@ export function InspectSettingsSection({
                   inspect.codeFormat === item.value ? 'default' : 'ghost'
                 }
                 size="xs"
+                aria-pressed={inspect.codeFormat === item.value}
                 data-testid={`inspect-code-format-${item.value}`}
                 onClick={() => onChange({ codeFormat: item.value })}
                 className="h-7 px-2.5 text-xs"
@@ -100,6 +101,7 @@ export function InspectSettingsSection({
                   inspect.colorFormat === item.value ? 'default' : 'ghost'
                 }
                 size="xs"
+                aria-pressed={inspect.colorFormat === item.value}
                 data-testid={`inspect-color-format-${item.value}`}
                 onClick={() => onChange({ colorFormat: item.value })}
                 className="h-7 px-2.5 text-xs"
@@ -123,6 +125,7 @@ export function InspectSettingsSection({
                   inspect.unitFormat === item.value ? 'default' : 'ghost'
                 }
                 size="xs"
+                aria-pressed={inspect.unitFormat === item.value}
                 data-testid={`inspect-unit-format-${item.value}`}
                 onClick={() => onChange({ unitFormat: item.value })}
                 className="h-7 px-2.5 font-mono text-xs"
@@ -146,6 +149,7 @@ export function InspectSettingsSection({
                   inspect.cardPlacement === item.value ? 'default' : 'ghost'
                 }
                 size="xs"
+                aria-pressed={inspect.cardPlacement === item.value}
                 data-testid={`inspect-placement-${item.value}`}
                 onClick={() => onChange({ cardPlacement: item.value })}
                 className="h-7 px-2.5 text-xs"

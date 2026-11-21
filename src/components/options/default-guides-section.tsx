@@ -128,6 +128,7 @@ export function DefaultGuidesSection({
               key={tab.value}
               variant={isActive ? 'default' : 'ghost'}
               size="xs"
+              aria-pressed={isActive}
               data-testid={`default-tab-${tab.value}`}
               onClick={() => setActiveDefaultTab(tab.value)}
               className="h-7 px-3 text-xs"

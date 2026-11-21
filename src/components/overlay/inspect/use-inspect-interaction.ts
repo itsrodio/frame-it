@@ -122,7 +122,9 @@ export function useInspectInteraction({
     };
 
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (isEditableTarget(e.target)) return;
+      const originTarget = (e.composedPath?.()[0] ??
+        e.target) as EventTarget | null;
+      if (isEditableTarget(e.target) || isEditableTarget(originTarget)) return;
 
       if (e.key === 'Alt') {
         updateAltState(true);
@@ -137,6 +139,14 @@ export function useInspectInteraction({
           e.preventDefault();
           onCancel();
         }
+        return;
+      }
+
+      // Не перехватываем стрелки и Enter, когда фокус находится внутри UI самого оверлея (Dock, Popover, карточка)
+      if (
+        (e.target instanceof Element && isOverlayElement(e.target)) ||
+        (originTarget instanceof Element && isOverlayElement(originTarget))
+      ) {
         return;
       }
 

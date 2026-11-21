@@ -23,6 +23,14 @@ export function OptionsApp() {
     document.title = pageTitle;
   }, [pageTitle]);
 
+  useEffect(() => {
+    const resolvedLang =
+      settings.language === 'auto'
+        ? (typeof navigator !== 'undefined' && navigator.language) || 'en'
+        : settings.language.replace('_', '-');
+    document.documentElement.lang = resolvedLang;
+  }, [settings.language]);
+
   return (
     <CSPProvider disableStyleElements>
       <ThemeProvider

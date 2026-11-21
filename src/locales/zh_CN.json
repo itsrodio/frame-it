@@ -94,6 +94,7 @@
       "desktopFigma": "Figma 桌面端"
     },
     "header": {
+      "settingsAriaLabel": "布局网格设置",
       "autoDetectAriaLabel": "自动检测页面容器",
       "autoDetectTooltip": "自动检测容器 (Shift+A)",
       "pickContainerAriaLabel": "在页面上选择容器",

@@ -31,18 +31,12 @@ export function InspectMeasureOverlay({
   onSnapToElement,
   onCancel,
 }: InspectMeasureOverlayProps) {
-  const {
-    selectedEl,
-    hoveredEl,
-    isAltPressed,
-    navigateDom,
-    clearSelection,
-    selectElement,
-  } = useInspectInteraction({
-    active,
-    onSnapToElement,
-    onCancel,
-  });
+  const { selectedEl, hoveredEl, isAltPressed, clearSelection, selectElement } =
+    useInspectInteraction({
+      active,
+      onSnapToElement,
+      onCancel,
+    });
 
   const isVisible = active || isAltPressed;
   if (!isVisible) return null;
@@ -105,7 +99,6 @@ export function InspectMeasureOverlay({
             inspectSettings={inspectSettings}
             onUpdateInspectSettings={onUpdateInspectSettings}
             onSelectElement={selectElement}
-            onNavigateDom={navigateDom}
             onClose={clearSelection}
           />
         </>

@@ -94,6 +94,7 @@
       "desktopFigma": "데스크톱 Figma"
     },
     "header": {
+      "settingsAriaLabel": "레이아웃 가이드 설정",
       "autoDetectAriaLabel": "페이지 컨테이너 자동 감지",
       "autoDetectTooltip": "컨테이너 자동 감지 (Shift+A)",
       "pickContainerAriaLabel": "페이지에서 컨테이너 선택",

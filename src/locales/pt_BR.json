@@ -94,6 +94,7 @@
       "desktopFigma": "Desktop Figma"
     },
     "header": {
+      "settingsAriaLabel": "Configurações de guias de layout",
       "autoDetectAriaLabel": "Detectar contêiner da página automaticamente",
       "autoDetectTooltip": "Detectar contêiner (Shift+A)",
       "pickContainerAriaLabel": "Selecionar contêiner na página",

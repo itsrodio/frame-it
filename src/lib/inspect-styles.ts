@@ -115,8 +115,60 @@ function parseAlphaToken(raw: string | undefined): number {
   return Number.isNaN(val) ? 1 : clampAlpha(val);
 }
 
+function hslToRgba(
+  hueDeg: number,
+  saturationPct: number,
+  lightnessPct: number,
+  alpha: number,
+): RgbaColor {
+  const h = ((hueDeg % 360) + 360) % 360;
+  const s = Math.max(0, Math.min(1, saturationPct / 100));
+  const l = Math.max(0, Math.min(1, lightnessPct / 100));
+
+  const c = (1 - Math.abs(2 * l - 1)) * s;
+  const x = c * (1 - Math.abs(((h / 60) % 2) - 1));
+  const m = l - c / 2;
+
+  let r1 = 0;
+  let g1 = 0;
+  let b1 = 0;
+  if (h < 60) {
+    r1 = c;
+    g1 = x;
+  } else if (h < 120) {
+    r1 = x;
+    g1 = c;
+  } else if (h < 180) {
+    g1 = c;
+    b1 = x;
+  } else if (h < 240) {
+    g1 = x;
+    b1 = c;
+  } else if (h < 300) {
+    r1 = x;
+    b1 = c;
+  } else {
+    r1 = c;
+    b1 = x;
+  }
+
+  return {
+    r: clampByte((r1 + m) * 255),
+    g: clampByte((g1 + m) * 255),
+    b: clampByte((b1 + m) * 255),
+    a: clampAlpha(alpha),
+  };
+}
+
+function parseRgbChannel(raw: string): number {
+  if (raw === 'none') return 0;
+  const val = Number.parseFloat(raw);
+  if (Number.isNaN(val)) return Number.NaN;
+  return raw.endsWith('%') ? (val / 100) * 255 : val;
+}
+
 /**
- * Парсит CSS-строку цвета (`rgb(...)`, `rgba(...)`, `oklch(...)`, `oklab(...)`, `#rgb`, `#rrggbb`, `#rrggbbaa`).
+ * Парсит CSS-строку цвета (`rgb(...)`, `rgba(...)`, `hsl(...)`, `hsla(...)`, `oklch(...)`, `oklab(...)`, `color(srgb ...)`, `#rgb`, `#rrggbb`, `#rrggbbaa`).
  * Возвращает `null` для `transparent` или полностью прозрачного цвета (`a === 0`).
  */
 export function parseCssColor(
@@ -194,6 +246,24 @@ export function parseCssColor(
     return oklabToRgba(L, aVal, bVal, alpha);
   }
 
+  // Поддержка hsl(...) / hsla(...)
+  const hslMatch = trimmed.match(/^hsla?\((.+)\)$/);
+  if (hslMatch?.[1]) {
+    const parts = hslMatch[1]
+      .trim()
+      .replace('/', ' ')
+      .split(/[\s,]+/)
+      .filter(Boolean);
+    if (parts.length < 3) return null;
+    const h = parseHueAngleDegrees(parts[0] ?? '0');
+    const s = Number.parseFloat(parts[1] ?? '');
+    const l = Number.parseFloat(parts[2] ?? '');
+    if ([h, s, l].some(Number.isNaN)) return null;
+    const a = parseAlphaToken(parts[3]);
+    if (a === 0) return null;
+    return hslToRgba(h, s, l, a);
+  }
+
   // Поддержка color(srgb r g b [/ a])
   const srgbFuncMatch = trimmed.match(/^color\(srgb\s+(.+)\)$/);
   if (srgbFuncMatch?.[1]) {
@@ -228,9 +298,9 @@ export function parseCssColor(
 
   if (parts.length < 3) return null;
 
-  const r = Number.parseFloat(parts[0] ?? '');
-  const g = Number.parseFloat(parts[1] ?? '');
-  const b = Number.parseFloat(parts[2] ?? '');
+  const r = parseRgbChannel(parts[0] ?? '');
+  const g = parseRgbChannel(parts[1] ?? '');
+  const b = parseRgbChannel(parts[2] ?? '');
   if ([r, g, b].some(Number.isNaN)) return null;
 
   const clampedA = parseAlphaToken(parts[3]);
@@ -316,13 +386,46 @@ export function formatColor(
 const GRADIENT_COLOR_TOKEN_REGEX =
   /(?:rgba?|hsla?|oklch|oklab|color)\([^)]+\)|#[0-9a-fA-F]{3,8}\b|\btransparent\b/gi;
 
-function isTextBackgroundClip(style: CSSStyleDeclaration): boolean {
+export function isTextBackgroundClip(style: CSSStyleDeclaration): boolean {
   const clip =
     style.backgroundClip ||
     style.webkitBackgroundClip ||
     style.getPropertyValue('-webkit-background-clip') ||
     style.getPropertyValue('background-clip');
   return clip?.trim().toLowerCase() === 'text';
+}
+
+/**
+ * Извлекает список RGBA-стопов из CSS-градиента (`linear-gradient`, `radial-gradient`, `conic-gradient`).
+ */
+export function extractGradientStops(
+  bgImage: string | null | undefined,
+): RgbaColor[] {
+  if (!bgImage || bgImage === 'none' || !bgImage.includes('gradient(')) {
+    return [];
+  }
+
+  const matches = bgImage.match(GRADIENT_COLOR_TOKEN_REGEX);
+  if (!matches || matches.length === 0) return [];
+
+  const stops: RgbaColor[] = [];
+  for (const token of matches) {
+    if (token.toLowerCase() === 'transparent') {
+      stops.push({ r: 0, g: 0, b: 0, a: 0 });
+    } else {
+      const parsed = parseCssColor(token);
+      if (parsed) {
+        stops.push(parsed);
+      } else if (
+        /^(?:rgba?|hsla?|oklch|oklab|color)\(|^#/.test(token.toLowerCase())
+      ) {
+        // Явный прозрачный цвет вида rgba(0, 0, 0, 0) внутри градиента
+        stops.push({ r: 0, g: 0, b: 0, a: 0 });
+      }
+    }
+  }
+
+  return stops.some((s) => s.a > 0) ? stops : [];
 }
 
 /**
@@ -333,30 +436,8 @@ export function parseGradientColor(
   bgImage: string | null | undefined,
   positionRatio = 0.5,
 ): RgbaColor | null {
-  if (!bgImage || bgImage === 'none' || !bgImage.includes('gradient(')) {
-    return null;
-  }
-
-  const matches = bgImage.match(GRADIENT_COLOR_TOKEN_REGEX);
-  if (!matches || matches.length === 0) return null;
-
-  const stops: RgbaColor[] = [];
-  for (const token of matches) {
-    if (token.toLowerCase() === 'transparent') {
-      stops.push({ r: 0, g: 0, b: 0, a: 0 });
-    } else {
-      const parsed = parseCssColor(token);
-      if (parsed) {
-        stops.push(parsed);
-      } else if (/^rgba?\(|^oklch\(|^oklab\(|^#/.test(token.toLowerCase())) {
-        // Явный прозрачный цвет вида rgba(0, 0, 0, 0) внутри градиента
-        stops.push({ r: 0, g: 0, b: 0, a: 0 });
-      }
-    }
-  }
-
-  const hasVisibleStop = stops.some((s) => s.a > 0);
-  if (!hasVisibleStop) return null;
+  const stops = extractGradientStops(bgImage);
+  if (stops.length === 0) return null;
 
   if (stops.length === 1) {
     return stops[0] ?? null;

@@ -15,9 +15,9 @@
   - **Max Width & Presets**: Constrain `Stretch` grids to a specific `Max W` (with one-click presets for Tailwind `xl`/`2xl`, Bootstrap, and Figma desktop frames) instead of stretching across the entire monitor.
   - **Margin, Gutter & Offset**: Full support for inner container padding (`Margin`) in all alignment modes, plus X/Y `Offset` and `Scroll with page` vs `Fixed to viewport` positioning.
   - **Figma-Style Scrubbing**: Drag any field label horizontally to tweak values on the fly (hold `Shift` for `10x` steps).
-- 📏 **Inspect & Redline Distance Measurement (`Alt` / `Shift + I`)**:
-  - Hold `Alt` at any time to measure pixel distances from the hovered element to its parent container and visualize inner paddings.
-  - Click an element in Inspect mode (`Shift + I`) to pin it, then hover over any other element to measure exact X/Y distances between them—just like in Figma.
+- 📏 **Inspect, Style Card & Redline Distance Measurement (`Alt` / `Shift + I`)**:
+  - Hold `Alt` at any time to measure pixel distances from the hovered element to its parent container and visualize paddings, margins, and flex/grid gaps.
+  - Click an element in Inspect mode (`Shift + I`) to pin it, hover over any other element to measure exact X/Y distances, navigate the DOM tree (`↑` / `↓` / `←` / `→`), check **WCAG 2.1 contrast**, and copy **CSS**, **Tailwind CSS**, **React JSX**, or **Figma SVG** layers directly from the Style Inspector Card.
 - ⚡ **Cross-Browser & Isolated**: Renders inside an isolated Shadow DOM with automatic light/dark theme adaptation. Works on Chrome, Firefox, Edge, and Brave.
 - 🔒 **Zero Data Collection**: Runs 100% locally on your machine.
 

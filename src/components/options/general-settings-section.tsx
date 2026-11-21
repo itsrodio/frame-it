@@ -126,6 +126,7 @@ export function GeneralSettingsSection({
                   key={item.value}
                   variant={isSelected ? 'default' : 'ghost'}
                   size="xs"
+                  aria-pressed={isSelected}
                   data-testid={`theme-${item.value}`}
                   onClick={() => onThemeChange(item.value)}
                   className="h-7 px-2.5 text-xs"

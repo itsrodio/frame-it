@@ -94,6 +94,7 @@
       "desktopFigma": "Десктоп Figma"
     },
     "header": {
+      "settingsAriaLabel": "Настройки направляющих",
       "autoDetectAriaLabel": "Автоопределение контейнера страницы",
       "autoDetectTooltip": "Автоопределение контейнера (Shift+A)",
       "pickContainerAriaLabel": "Выбрать контейнер на странице",

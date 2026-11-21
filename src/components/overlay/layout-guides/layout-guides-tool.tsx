@@ -96,7 +96,12 @@ export function LayoutGuidesTool({
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger
           render={
-            <Button variant="ghost" className="px-1">
+            <Button
+              variant="ghost"
+              className="px-1"
+              data-testid="guides-popover-trigger"
+              aria-label={i18n.t('guides.header.settingsAriaLabel')}
+            >
               <ChevronDown className="size-3" />
             </Button>
           }

@@ -155,7 +155,7 @@ describe('InspectMeasureOverlay', () => {
     expect(onCancel).toHaveBeenCalledTimes(1);
   });
 
-  it('navigates DOM tree with arrow keys / Enter when an element is locked and copies styles from InspectDetailsCard', () => {
+  it('navigates DOM tree with arrow keys / Enter when an element is locked and copies styles from InspectDetailsCard', async () => {
     const writeText = vi.fn().mockResolvedValue(undefined);
     Object.defineProperty(navigator, 'clipboard', {
       value: { writeText },
@@ -214,7 +214,7 @@ describe('InspectMeasureOverlay', () => {
     const textHexBtn = card.querySelector(
       '[data-testid="inspect-copy-text-hex"]',
     ) as HTMLButtonElement;
-    act(() => {
+    await act(async () => {
       textHexBtn.click();
     });
     expect(writeText).toHaveBeenCalledWith('#111827');
@@ -224,13 +224,21 @@ describe('InspectMeasureOverlay', () => {
     const copyCssBtn = card.querySelector(
       '[data-testid="inspect-copy-css"]',
     ) as HTMLButtonElement;
-    act(() => {
+    await act(async () => {
       copyCssBtn.click();
     });
     expect(writeText).toHaveBeenLastCalledWith(
       expect.stringContaining('text-[16px]/[24px]'),
     );
     expect(copyCssBtn.textContent).toContain('Copied');
+
+    // ArrowRight dispatched from inside overlay UI must NOT hijack DOM navigation
+    act(() => {
+      copyCssBtn.dispatchEvent(
+        new KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true }),
+      );
+    });
+    expect(card.textContent).toContain('div#child-1');
 
     // Press ArrowRight -> selects sibling div#child-2
     act(() => {
@@ -274,7 +282,7 @@ describe('InspectMeasureOverlay', () => {
       const btn = card.querySelector(
         `[data-testid="${testId}"]`,
       ) as HTMLButtonElement;
-      act(() => {
+      await act(async () => {
         btn.click();
       });
     }

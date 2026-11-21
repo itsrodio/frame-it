@@ -1,6 +1,8 @@
 import {
   cleanFontFamily,
+  extractGradientStops,
   type InspectedElementStyles,
+  isTextBackgroundClip,
   parseCssColor,
   type RgbaColor,
   rgbaToHex,
@@ -21,37 +23,6 @@ function round1(n: number): number {
 
 function round2(n: number): number {
   return Math.round(n * 100) / 100;
-}
-
-const GRADIENT_STOP_REGEX =
-  /(?:rgba?|hsla?|oklch|oklab|color)\([^)]+\)|#[0-9a-fA-F]{3,8}\b|\btransparent\b/gi;
-
-function extractGradientStops(bgImage: string): RgbaColor[] {
-  if (!bgImage?.includes('gradient(')) return [];
-  const matches = bgImage.match(GRADIENT_STOP_REGEX);
-  if (!matches) return [];
-
-  const stops: RgbaColor[] = [];
-  for (const token of matches) {
-    if (token.toLowerCase() === 'transparent') {
-      stops.push({ r: 0, g: 0, b: 0, a: 0 });
-    } else {
-      const parsed = parseCssColor(token);
-      if (parsed) {
-        stops.push(parsed);
-      }
-    }
-  }
-  return stops.some((s) => s.a > 0) ? stops : [];
-}
-
-function isTextBackgroundClip(style: CSSStyleDeclaration): boolean {
-  const clip =
-    style.backgroundClip ||
-    style.webkitBackgroundClip ||
-    style.getPropertyValue('-webkit-background-clip') ||
-    style.getPropertyValue('background-clip');
-  return clip?.trim().toLowerCase() === 'text';
 }
 
 function isVisuallyHiddenElement(

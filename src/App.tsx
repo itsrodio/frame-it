@@ -1,5 +1,5 @@
 import { CSPProvider } from '@base-ui/react/csp-provider';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Dock } from '@/components/overlay/dock/dock';
 import { InspectMeasureOverlay } from '@/components/overlay/inspect/inspect-measure-overlay';
 import { ContainerPickerOverlay } from '@/components/overlay/layout-guides/container-picker-overlay';
@@ -49,6 +49,8 @@ export function App({ portalContainer, onClose }: AppProps) {
   const [hasCustomSiteSettings, setHasCustomSiteSettings] = useState<boolean>(
     initialSetup.hasCustomSiteSettings,
   );
+  const hasCustomSiteSettingsRef = useRef(hasCustomSiteSettings);
+  hasCustomSiteSettingsRef.current = hasCustomSiteSettings;
   const [activeTool, setActiveTool] = useState<ActiveOverlayTool>('none');
   const [inspectSettings, setInspectSettings] = useState(
     () => getCachedSettings().inspect,
@@ -63,16 +65,17 @@ export function App({ portalContainer, onClose }: AppProps) {
   const handleExternalSettingsChange = useCallback(
     (nextSettings: ExtensionSettings) => {
       setInspectSettings(nextSettings.inspect);
-      setHasCustomSiteSettings((currentHasCustom) => {
-        if (!currentHasCustom || !nextSettings.behavior.rememberSiteSettings) {
-          const setup = getInitialGuidesSetup(nextSettings);
-          setGuidesState(setup.state);
-          setTrackedElement(setup.trackedElement);
-          setTrackedElementLabel(setup.trackedElementLabel);
-          return setup.hasCustomSiteSettings;
-        }
-        return currentHasCustom;
-      });
+      if (
+        !hasCustomSiteSettingsRef.current ||
+        !nextSettings.behavior.rememberSiteSettings
+      ) {
+        const setup = getInitialGuidesSetup(nextSettings);
+        setGuidesState(setup.state);
+        setTrackedElement(setup.trackedElement);
+        setTrackedElementLabel(setup.trackedElementLabel);
+        hasCustomSiteSettingsRef.current = setup.hasCustomSiteSettings;
+        setHasCustomSiteSettings(setup.hasCustomSiteSettings);
+      }
     },
     [],
   );

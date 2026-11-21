@@ -94,6 +94,7 @@
       "desktopFigma": "Desktop Figma"
     },
     "header": {
+      "settingsAriaLabel": "Layout-Raster-Einstellungen",
       "autoDetectAriaLabel": "Seiten-Container automatisch erkennen",
       "autoDetectTooltip": "Container automatisch erkennen (Shift+A)",
       "pickContainerAriaLabel": "Container auf der Seite auswählen",

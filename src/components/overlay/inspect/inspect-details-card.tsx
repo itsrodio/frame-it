@@ -4,6 +4,7 @@ import {
   type MouseEvent as ReactMouseEvent,
   useCallback,
   useEffect,
+  useMemo,
   useRef,
   useState,
 } from 'react';
@@ -12,7 +13,6 @@ import {
   CopyableFieldBox,
   DomBreadcrumbsTitle,
 } from '@/components/overlay/inspect/inspect-card-fields';
-import type { DomNavDirection } from '@/components/overlay/inspect/use-inspect-interaction';
 import { Button } from '@/components/ui/button';
 import { Field, FieldGroup, FieldLabel } from '@/components/ui/field';
 import {
@@ -46,13 +46,39 @@ export interface InspectDetailsCardProps {
   inspectSettings?: ExtensionInspectSettings;
   onUpdateInspectSettings?: (patch: Partial<ExtensionInspectSettings>) => void;
   onSelectElement?: (el: HTMLElement) => void;
-  onNavigateDom?: (direction: DomNavDirection) => void;
   onClose?: () => void;
 }
 
 const CARD_WIDTH = 272;
 const CARD_MIN_HEIGHT = 120;
 const VIEWPORT_MARGIN = 8;
+
+async function copyTextToClipboard(text: string): Promise<boolean> {
+  if (navigator.clipboard?.writeText) {
+    try {
+      await navigator.clipboard.writeText(text);
+      return true;
+    } catch {
+      // Fallback to execCommand below
+    }
+  }
+
+  try {
+    const textarea = document.createElement('textarea');
+    textarea.value = text;
+    textarea.setAttribute('readonly', '');
+    textarea.style.position = 'fixed';
+    textarea.style.opacity = '0';
+    textarea.style.pointerEvents = 'none';
+    document.body.appendChild(textarea);
+    textarea.select();
+    const ok = document.execCommand('copy');
+    textarea.remove();
+    return ok;
+  } catch {
+    return false;
+  }
+}
 
 export function InspectDetailsCard({
   element,
@@ -64,6 +90,7 @@ export function InspectDetailsCard({
 }: InspectDetailsCardProps) {
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [draggedPos, setDraggedPos] = useState<{
+    element: HTMLElement;
     top: number;
     left: number;
   } | null>(null);
@@ -84,12 +111,9 @@ export function InspectDetailsCard({
     };
   }, []);
 
-  const handleCopy = useCallback((id: string, text: string) => {
-    try {
-      void navigator.clipboard?.writeText?.(text);
-    } catch {
-      // Ignore clipboard errors in restricted contexts
-    }
+  const handleCopy = useCallback(async (id: string, text: string) => {
+    const copied = await copyTextToClipboard(text);
+    if (!copied) return;
     setCopiedId(id);
     if (timerRef.current !== null) {
       window.clearTimeout(timerRef.current);
@@ -100,25 +124,44 @@ export function InspectDetailsCard({
     }, 1400);
   }, []);
 
-  const styles = extractInspectedStyles(element, rect);
+  const styles = useMemo(
+    () => extractInspectedStyles(element, rect),
+    [element, rect],
+  );
   const isDirectSvg = element.tagName.toLowerCase() === 'svg';
-  const figmaSvgPayload = buildFigmaSvg(element, styles, rect);
-  const copyPayload = isDirectSvg
-    ? figmaSvgPayload
-    : buildCodeSnippet(element, styles, inspectSettings.codeFormat);
+
+  const handleCopyCode = useCallback(() => {
+    const payload = isDirectSvg
+      ? buildFigmaSvg(element, styles, rect)
+      : buildCodeSnippet(element, styles, inspectSettings.codeFormat);
+    void handleCopy('all-css', payload);
+  }, [
+    element,
+    handleCopy,
+    inspectSettings.codeFormat,
+    isDirectSvg,
+    rect,
+    styles,
+  ]);
 
   const handleCopyFigma = useCallback(async () => {
     const hasImgs =
       element instanceof HTMLImageElement ||
       element.querySelector('img') !== null;
     if (!hasImgs) {
-      handleCopy('figma-svg', figmaSvgPayload);
+      await handleCopy('figma-svg', buildFigmaSvg(element, styles, rect));
       return;
     }
     const preloaded = await preloadImagesForFigma(element);
     const svgWithImages = buildFigmaSvg(element, styles, rect, preloaded);
-    handleCopy('figma-svg', svgWithImages);
-  }, [element, figmaSvgPayload, handleCopy, rect, styles]);
+    await handleCopy('figma-svg', svgWithImages);
+  }, [element, handleCopy, rect, styles]);
+
+  const optionalRowsCount =
+    (styles.layout.gap ? 1 : 0) +
+    (styles.layout.margin !== '0px' ? 1 : 0) +
+    (styles.layout.borderRadius !== '0px' ? 1 : 0);
+  const estimatedCardHeight = 336 + optionalRowsCount * 36;
 
   const viewport = {
     width: document.documentElement.clientWidth || window.innerWidth || 1280,
@@ -129,11 +172,13 @@ export function InspectDetailsCard({
     viewport,
     {
       width: CARD_WIDTH,
-      height: 320,
+      height: estimatedCardHeight,
     },
     inspectSettings.cardPlacement,
   );
-  const position = draggedPos ?? autoPosition;
+  const activeDraggedPos =
+    draggedPos && draggedPos.element === element ? draggedPos : null;
+  const position = activeDraggedPos ?? autoPosition;
 
   const handleDragBarMouseDown = useCallback(
     (e: ReactMouseEvent<HTMLDivElement>) => {
@@ -171,6 +216,7 @@ export function InspectDetailsCard({
         vh - CARD_MIN_HEIGHT - VIEWPORT_MARGIN,
       );
       setDraggedPos({
+        element,
         left: Math.min(
           maxLeft,
           Math.max(VIEWPORT_MARGIN, Math.round(session.initialLeft + dx)),
@@ -193,7 +239,7 @@ export function InspectDetailsCard({
       window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('mouseup', handleMouseUp);
     };
-  }, [isDragging]);
+  }, [element, isDragging]);
 
   const contrastLevel = styles.colors.contrast.level;
   const contrastBadgeClass =
@@ -227,7 +273,7 @@ export function InspectDetailsCard({
     >
       {/* Цветная (primary) полоска сверху карточки для перетаскивания без конфликта с кнопками */}
       <div
-        role="toolbar"
+        aria-hidden="true"
         data-testid="inspect-card-drag-handle"
         onMouseDown={handleDragBarMouseDown}
         className={cn(
@@ -295,7 +341,7 @@ export function InspectDetailsCard({
                       ? 'text-emerald-600 dark:text-emerald-400'
                       : 'text-muted-foreground hover:text-foreground',
                   )}
-                  onClick={() => handleCopy('all-css', copyPayload)}
+                  onClick={handleCopyCode}
                   aria-label={i18n.t('inspect.card.copyCss')}
                 >
                   {isCodeCopied ? (

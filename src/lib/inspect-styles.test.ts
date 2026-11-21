@@ -58,6 +58,24 @@ describe('inspect-styles & WCAG 2.1 contrast', () => {
       b: 0,
       a: 0.25,
     });
+    expect(parseCssColor('hsl(120 100% 50%)')).toEqual({
+      r: 0,
+      g: 255,
+      b: 0,
+      a: 1,
+    });
+    expect(parseCssColor('hsla(240, 100%, 50%, 0.5)')).toEqual({
+      r: 0,
+      g: 0,
+      b: 255,
+      a: 0.5,
+    });
+    expect(parseCssColor('rgb(100% 50% 0%)')).toEqual({
+      r: 255,
+      g: 128,
+      b: 0,
+      a: 1,
+    });
   });
 
   it('calculates WCAG 2.1 contrast ratios and levels (AAA, AA, Fail)', () => {

@@ -56,6 +56,53 @@ const UNIT_FORMAT_ITEMS: Array<{ value: InspectUnitFormat; label: string }> = [
   { value: 'both', label: 'px+rem' },
 ];
 
+function SegmentedButtonGroup<T extends string>({
+  label,
+  items,
+  value,
+  testIdPrefix,
+  mono = false,
+  onSelect,
+}: {
+  label: string;
+  items: Array<{ value: T; label: string }>;
+  value: T;
+  testIdPrefix: string;
+  mono?: boolean;
+  onSelect: (value: T) => void;
+}) {
+  return (
+    <Field orientation="horizontal">
+      <FieldLabel className="w-2/5 text-xs text-muted-foreground">
+        {label}
+      </FieldLabel>
+      <div className="grid h-7 w-3/5 grid-cols-3 gap-0.5 rounded-md border border-input bg-muted/30 p-0.5">
+        {items.map((item) => {
+          const isSelected = value === item.value;
+          return (
+            <button
+              key={item.value}
+              type="button"
+              aria-pressed={isSelected}
+              data-testid={`${testIdPrefix}-${item.value}`}
+              onClick={() => onSelect(item.value)}
+              className={cn(
+                'flex items-center justify-center rounded-xs text-[11px] font-medium transition-colors cursor-pointer',
+                mono && 'font-mono',
+                isSelected
+                  ? 'bg-primary text-primary-foreground shadow-2xs'
+                  : 'text-muted-foreground hover:text-foreground',
+              )}
+            >
+              {item.label}
+            </button>
+          );
+        })}
+      </div>
+    </Field>
+  );
+}
+
 function isInspectSettingsModified(
   current: ExtensionInspectSettings,
   defaults: ExtensionInspectSettings,
@@ -173,95 +220,36 @@ export function InspectTool({
 
           {/* Quick Session Settings Fields */}
           <FieldGroup className="gap-2.5 p-3">
-            {/* Code Format (CSS | TW | JSX) */}
-            <Field orientation="horizontal">
-              <FieldLabel className="w-2/5 text-xs text-muted-foreground">
-                {i18n.t('inspect.settings.codeFormat')}
-              </FieldLabel>
-              <div className="grid h-7 w-3/5 grid-cols-3 gap-0.5 rounded-md border border-input bg-muted/30 p-0.5">
-                {CODE_FORMAT_ITEMS.map((item) => {
-                  const isSelected = inspectSettings.codeFormat === item.value;
-                  return (
-                    <button
-                      key={item.value}
-                      type="button"
-                      data-testid={`dock-inspect-code-${item.value}`}
-                      onClick={() =>
-                        onUpdateInspectSettings?.({ codeFormat: item.value })
-                      }
-                      className={cn(
-                        'flex items-center justify-center rounded-xs text-[11px] font-medium transition-colors cursor-pointer',
-                        isSelected
-                          ? 'bg-primary text-primary-foreground shadow-2xs'
-                          : 'text-muted-foreground hover:text-foreground',
-                      )}
-                    >
-                      {item.label}
-                    </button>
-                  );
-                })}
-              </div>
-            </Field>
+            <SegmentedButtonGroup
+              label={i18n.t('inspect.settings.codeFormat')}
+              items={CODE_FORMAT_ITEMS}
+              value={inspectSettings.codeFormat}
+              testIdPrefix="dock-inspect-code"
+              onSelect={(codeFormat) =>
+                onUpdateInspectSettings?.({ codeFormat })
+              }
+            />
 
-            {/* Color Format (HEX | RGB | OKLCH) */}
-            <Field orientation="horizontal">
-              <FieldLabel className="w-2/5 text-xs text-muted-foreground">
-                {i18n.t('inspect.settings.colorFormat')}
-              </FieldLabel>
-              <div className="grid h-7 w-3/5 grid-cols-3 gap-0.5 rounded-md border border-input bg-muted/30 p-0.5">
-                {COLOR_FORMAT_ITEMS.map((item) => {
-                  const isSelected = inspectSettings.colorFormat === item.value;
-                  return (
-                    <button
-                      key={item.value}
-                      type="button"
-                      data-testid={`dock-inspect-color-${item.value}`}
-                      onClick={() =>
-                        onUpdateInspectSettings?.({ colorFormat: item.value })
-                      }
-                      className={cn(
-                        'flex items-center justify-center rounded-xs text-[11px] font-medium transition-colors cursor-pointer',
-                        isSelected
-                          ? 'bg-primary text-primary-foreground shadow-2xs'
-                          : 'text-muted-foreground hover:text-foreground',
-                      )}
-                    >
-                      {item.label}
-                    </button>
-                  );
-                })}
-              </div>
-            </Field>
+            <SegmentedButtonGroup
+              label={i18n.t('inspect.settings.colorFormat')}
+              items={COLOR_FORMAT_ITEMS}
+              value={inspectSettings.colorFormat}
+              testIdPrefix="dock-inspect-color"
+              onSelect={(colorFormat) =>
+                onUpdateInspectSettings?.({ colorFormat })
+              }
+            />
 
-            {/* Units (px | rem | px+rem) */}
-            <Field orientation="horizontal">
-              <FieldLabel className="w-2/5 text-xs text-muted-foreground">
-                {i18n.t('inspect.settings.unitFormat')}
-              </FieldLabel>
-              <div className="grid h-7 w-3/5 grid-cols-3 gap-0.5 rounded-md border border-input bg-muted/30 p-0.5">
-                {UNIT_FORMAT_ITEMS.map((item) => {
-                  const isSelected = inspectSettings.unitFormat === item.value;
-                  return (
-                    <button
-                      key={item.value}
-                      type="button"
-                      data-testid={`dock-inspect-unit-${item.value}`}
-                      onClick={() =>
-                        onUpdateInspectSettings?.({ unitFormat: item.value })
-                      }
-                      className={cn(
-                        'flex items-center justify-center rounded-xs font-mono text-[11px] font-medium transition-colors cursor-pointer',
-                        isSelected
-                          ? 'bg-primary text-primary-foreground shadow-2xs'
-                          : 'text-muted-foreground hover:text-foreground',
-                      )}
-                    >
-                      {item.label}
-                    </button>
-                  );
-                })}
-              </div>
-            </Field>
+            <SegmentedButtonGroup
+              label={i18n.t('inspect.settings.unitFormat')}
+              items={UNIT_FORMAT_ITEMS}
+              value={inspectSettings.unitFormat}
+              testIdPrefix="dock-inspect-unit"
+              mono
+              onSelect={(unitFormat) =>
+                onUpdateInspectSettings?.({ unitFormat })
+              }
+            />
 
             {/* Box Model Overlays */}
             <Field orientation="horizontal">
@@ -297,6 +285,7 @@ export function InspectTool({
                   size="sm"
                   variant="outline"
                   data-testid="dock-inspect-gap"
+                  aria-label={i18n.t('inspect.settings.showGap')}
                   pressed={inspectSettings.showGap}
                   onPressedChange={(showGap) =>
                     onUpdateInspectSettings?.({ showGap })

@@ -94,6 +94,7 @@
       "desktopFigma": "Bureau Figma"
     },
     "header": {
+      "settingsAriaLabel": "Paramètres des grilles",
       "autoDetectAriaLabel": "Détecter automatiquement le conteneur",
       "autoDetectTooltip": "Détecter le conteneur (Shift+A)",
       "pickContainerAriaLabel": "Choisir un conteneur sur la page",
