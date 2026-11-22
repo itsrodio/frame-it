@@ -44,7 +44,7 @@
 
 #### From Web Stores
 
-- [Chrome Web Store](#) _(coming soon)_
+- [Chrome Web Store](https://chromewebstore.google.com/detail/frameit/haepfbidkoiaoapnojbmjcidjhiipdpe)
 - [Firefox Add-ons](#) _(coming soon)_
 
 #### Manual (Developer Mode)
