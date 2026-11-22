@@ -68,6 +68,15 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Publish to Chrome Web Store
+        run: pnpm exec wxt submit --chrome-zip .output/*-chrome.zip
+        env:
+          CHROME_API_VERSION: v1.1
+          CHROME_EXTENSION_ID: ${{ secrets.CWS_EXTENSION_ID }}
+          CHROME_CLIENT_ID: ${{ secrets.CWS_CLIENT_ID }}
+          CHROME_CLIENT_SECRET: ${{ secrets.CWS_CLIENT_SECRET }}
+          CHROME_REFRESH_TOKEN: ${{ secrets.CWS_REFRESH_TOKEN }}
+
   # 3. Build macOS .app for Safari on macOS runner (ad-hoc signed)
   build-safari:
     name: Build Safari (macOS)
