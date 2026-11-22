@@ -1,0 +1,39 @@
+name: Feature Request
+description: Suggest a new feature or improvement for FrameIt
+title: "[Feature]: "
+labels: ["enhancement"]
+body:
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      description: Which part of FrameIt does this relate to?
+      options:
+        - Layout Guides (Columns / Rows / Grid / Container Detection)
+        - Inspect & Redlines / Style Card
+        - Design Overlay
+        - Full-Page Export (Figma SVG / PNG)
+        - Options & Keyboard Shortcuts
+        - Other / New Tool
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem or use case
+      description: What workflow or problem would this solve?
+      placeholder: When inspecting..., it would help if...
+    validations:
+      required: true
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed solution
+      description: Describe how you envision this feature working.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Additional context (optional)
+      description: Mockups, examples from Figma/DevTools, or alternative ideas.
