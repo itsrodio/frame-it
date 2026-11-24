@@ -2,7 +2,7 @@
   "name": "frame-it",
   "description": "Figma-style layout grids, smart container detection, and live element spacing inspector for any website.",
   "private": true,
-  "version": "0.5.0",
+  "version": "0.5.1",
   "type": "module",
   "scripts": {
     "dev": "wxt",

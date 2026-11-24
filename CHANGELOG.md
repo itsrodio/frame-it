@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.1](https://github.com/itsrodio/frame-it/compare/v0.5.0...v0.5.1) (2026-11-24)
+
+
+### ⚙️ CI
+
+* **release:** migrate Chrome Web Store publish to API v2 ([#32](https://github.com/itsrodio/frame-it/issues/32)) ([473fa80](https://github.com/itsrodio/frame-it/commit/473fa80af44004743af00f8cb36ffacd89534a1c))
+
 ## [0.5.0](https://github.com/itsrodio/frame-it/compare/v0.4.0...v0.5.0) (2026-11-24)
 
 
