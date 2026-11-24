@@ -71,11 +71,11 @@ jobs:
       - name: Publish to Chrome Web Store
         run: pnpm exec wxt submit --chrome-zip .output/*-chrome.zip
         env:
-          CHROME_API_VERSION: v1.1
+          CHROME_API_VERSION: v2
           CHROME_EXTENSION_ID: ${{ secrets.CWS_EXTENSION_ID }}
-          CHROME_CLIENT_ID: ${{ secrets.CWS_CLIENT_ID }}
-          CHROME_CLIENT_SECRET: ${{ secrets.CWS_CLIENT_SECRET }}
-          CHROME_REFRESH_TOKEN: ${{ secrets.CWS_REFRESH_TOKEN }}
+          CHROME_PUBLISHER_ID: ${{ secrets.CWS_PUBLISHER_ID }}
+          CHROME_SERVICE_ACCOUNT_CLIENT_EMAIL: ${{ secrets.CWS_SERVICE_ACCOUNT_CLIENT_EMAIL }}
+          CHROME_SERVICE_ACCOUNT_PRIVATE_KEY: ${{ secrets.CWS_SERVICE_ACCOUNT_PRIVATE_KEY }}
 
   # 3. Build macOS .app for Safari on macOS runner (ad-hoc signed)
   build-safari:
