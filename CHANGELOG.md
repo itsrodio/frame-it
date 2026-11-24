@@ -1,5 +1,26 @@
 # Changelog
 
+## [0.5.0](https://github.com/itsrodio/frame-it/compare/v0.4.0...v0.5.0) (2026-11-24)
+
+
+### 🚀 Features
+
+* add interactive onboarding tour and help popover ([#30](https://github.com/itsrodio/frame-it/issues/30)) ([87eaf14](https://github.com/itsrodio/frame-it/commit/87eaf14bbad7044c31cf65029ebd6aacfd18eb0b))
+
+
+### 📚 Documentation
+
+* add GitHub community standards, license, and issue/PR templates ([#22](https://github.com/itsrodio/frame-it/issues/22)) ([55f5011](https://github.com/itsrodio/frame-it/commit/55f501147b7dcb1300119eb6321b5c34c7a6dd45))
+* **readme:** add Chrome Web Store link ([#25](https://github.com/itsrodio/frame-it/issues/25)) ([c70832b](https://github.com/itsrodio/frame-it/commit/c70832bc637ad9161c073e3e1ccb8bf5d290ff98))
+* **store-assets:** add demo gif ([#31](https://github.com/itsrodio/frame-it/issues/31)) ([fcf8976](https://github.com/itsrodio/frame-it/commit/fcf8976760478bd3468eadb044e264762c3fae1a))
+
+
+### ⚙️ CI
+
+* **release:** auto publish to CWS ([#27](https://github.com/itsrodio/frame-it/issues/27)) ([742a494](https://github.com/itsrodio/frame-it/commit/742a49438adf4162b0d7ae36dfd4fb1e11f1b475))
+* update CI configuration for release app token and triggers ([#26](https://github.com/itsrodio/frame-it/issues/26)) ([f3fc782](https://github.com/itsrodio/frame-it/commit/f3fc78227c28d4e293c61f0b3f093e0a868ded65))
+* upgrade GitHub Actions to Node.js 24 compatible versions ([#24](https://github.com/itsrodio/frame-it/issues/24)) ([0156b82](https://github.com/itsrodio/frame-it/commit/0156b82496266be6bfe0ab781de0739167793195))
+
 ## [0.4.0](https://github.com/itsrodio/frame-it/compare/v0.3.0...v0.4.0) (2026-11-21)
 
 
