@@ -30,6 +30,7 @@ const VALID_LANGUAGES = new Set<ExtensionLanguage>([
 export const DEFAULT_EXTENSION_SETTINGS: ExtensionSettings = {
   language: 'auto',
   theme: 'system',
+  hasCompletedTour: false,
   behavior: {
     autoDetectOnLaunch: true,
     guidesEnabledByDefault: true,
@@ -101,6 +102,10 @@ export function normalizeExtensionSettings(
   return {
     language,
     theme,
+    hasCompletedTour:
+      typeof raw.hasCompletedTour === 'boolean'
+        ? raw.hasCompletedTour
+        : DEFAULT_EXTENSION_SETTINGS.hasCompletedTour,
     behavior: {
       autoDetectOnLaunch:
         typeof behavior.autoDetectOnLaunch === 'boolean'

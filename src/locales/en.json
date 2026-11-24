@@ -26,6 +26,10 @@
       "holdToClose": "Hold to close",
       "keepHolding": "Keep holding...",
       "clickToClose": "Close FrameIt"
+    },
+    "help": {
+      "ariaLabel": "Help & shortcuts",
+      "tooltip": "Help, tour & shortcuts"
     }
   },
   "pageExport": {
@@ -227,7 +231,11 @@
       "themeDescription": "Color scheme for the floating dock, popovers, and settings page.",
       "themeSystem": "System",
       "themeLight": "Light",
-      "themeDark": "Dark"
+      "themeDark": "Dark",
+      "onboardingTour": "Interactive onboarding tour",
+      "onboardingTourDescription": "Show the quick 5-step dock walkthrough again the next time you open FrameIt on a page.",
+      "resetTour": "Reset onboarding tour",
+      "tourReady": "Ready on next launch"
     },
     "behavior": {
       "title": "Launch & Behavior",
@@ -269,6 +277,53 @@
       "description": "Fallback settings for Columns, Rows, and Grid when opening FrameIt on a new website.",
       "resetDefaults": "Reset guide defaults",
       "preview": "Live Preview"
+    },
+    "welcome": {
+      "title": "Welcome to FrameIt!",
+      "description": "Open any website and click the FrameIt icon in your browser toolbar to launch the floating dock and quick interactive tour."
+    },
+    "about": {
+      "title": "About & Feedback",
+      "description": "Found an issue, have an idea, or enjoy using FrameIt? Let us know."
+    }
+  },
+  "help": {
+    "title": "Help & Shortcuts",
+    "startTour": "Start Interactive Tour",
+    "shortcutsTitle": "Keyboard Shortcuts",
+    "shortcutsDisabled": "Keyboard shortcuts are currently disabled in Options.",
+    "configureOptions": "Configure in Options",
+    "feedbackTitle": "Feedback & Support",
+    "reportBug": "Report a Bug",
+    "requestFeature": "Request a Feature",
+    "rateStore": "Rate on Chrome Web Store"
+  },
+  "tour": {
+    "skip": "Skip",
+    "back": "Back",
+    "next": "Next",
+    "done": "Done",
+    "steps": {
+      "inspect": {
+        "title": "Inspect & Redlines",
+        "description": "Hover any element to inspect spacing, typography, contrast, and pixel distances between blocks."
+      },
+      "guides": {
+        "title": "Layout Guides",
+        "description": "Overlay column, row, and pixel grids, and snap them directly to any DOM container on the page."
+      },
+      "designOverlay": {
+        "title": "Design Overlay",
+        "description": "Place a Figma mockup or screenshot over your layout with opacity, scale, and Difference blend mode."
+      },
+      "pageExport": {
+        "title": "Export to PNG / Figma SVG",
+        "description": "Copy or save the current page as a full-page PNG screenshot or editable SVG layers for Figma."
+      },
+      "help": {
+        "title": "Help & Shortcuts",
+        "description": "Replay this tour anytime, view your keyboard shortcuts, open Options, or send feedback."
+      }
     }
   }
 }

@@ -36,6 +36,7 @@ describe('settings-storage & locale-manager', () => {
 
     expect(normalized.language).toBe('auto');
     expect(normalized.theme).toBe('system');
+    expect(normalized.hasCompletedTour).toBe(false);
     expect(normalized.behavior.autoDetectOnLaunch).toBe(false);
     expect(normalized.behavior.defaultGuideType).toBe('grid');
     expect(normalized.hotkeys.enabled).toBe(false);

@@ -260,4 +260,62 @@ test.describe('FrameIt Extension E2E (Shadow DOM & Portals)', () => {
     await copyCssBtn.click();
     await expect(copyCssBtn).toHaveClass(/text-emerald/);
   });
+
+  test('7. runs first-launch interactive onboarding tour, persists completion, and opens Help & Shortcuts popover inside Shadow DOM', async ({
+    page,
+    testServerUrl,
+    triggerExtensionAction,
+    setTourCompleted,
+  }) => {
+    await setTourCompleted(false);
+    await page.goto(testServerUrl);
+    await triggerExtensionAction(page);
+
+    const overlayHost = page.locator('frameit-overlay');
+    const tourCard = overlayHost.locator(
+      '[data-testid="onboarding-tour-card"]',
+    );
+    await expect(tourCard).toBeVisible();
+    await expect(tourCard).toHaveAttribute('data-tour-active-step', 'inspect');
+    await expect(
+      tourCard.locator('[data-testid="tour-step-counter"]'),
+    ).toHaveText('1/5');
+
+    // Navigate with Next button and ArrowRight through all 5 steps
+    await tourCard.locator('[data-testid="tour-next-button"]').click();
+    await expect(tourCard).toHaveAttribute('data-tour-active-step', 'guides');
+
+    await page.keyboard.press('ArrowRight');
+    await expect(tourCard).toHaveAttribute(
+      'data-tour-active-step',
+      'design-overlay',
+    );
+
+    await page.keyboard.press('ArrowRight');
+    await expect(tourCard).toHaveAttribute(
+      'data-tour-active-step',
+      'page-export',
+    );
+
+    await page.keyboard.press('ArrowRight');
+    await expect(tourCard).toHaveAttribute('data-tour-active-step', 'help');
+
+    // Finish tour
+    await tourCard.locator('[data-testid="tour-next-button"]').click();
+    await expect(tourCard).toHaveCount(0);
+
+    // Open Help (?) popover inside Shadow DOM and verify shortcuts + replay tour
+    await overlayHost.locator('[data-testid="help-popover-trigger"]').click();
+    await expect(
+      overlayHost.locator('[data-testid="help-shortcuts-list"]'),
+    ).toBeVisible();
+    await expect(
+      overlayHost.locator('[data-testid="help-report-bug"]'),
+    ).toBeVisible();
+
+    await overlayHost.locator('[data-testid="help-start-tour"]').click();
+    await expect(tourCard).toBeVisible();
+    await page.keyboard.press('Escape');
+    await expect(tourCard).toHaveCount(0);
+  });
 });

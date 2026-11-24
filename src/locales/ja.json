@@ -26,6 +26,10 @@
       "holdToClose": "長押しで閉じる",
       "keepHolding": "そのまま長押し...",
       "clickToClose": "FrameIt を閉じる"
+    },
+    "help": {
+      "ariaLabel": "ヘルプとショートカット",
+      "tooltip": "ヘルプ・ツアー・ショートカット"
     }
   },
   "pageExport": {
@@ -227,7 +231,11 @@
       "themeDescription": "フローティングドック、ポップオーバー、設定ページの配色テーマ。",
       "themeSystem": "システム",
       "themeLight": "ライト",
-      "themeDark": "ダーク"
+      "themeDark": "ダーク",
+      "onboardingTour": "オンボーディングツアー",
+      "onboardingTourDescription": "次回 FrameIt を開いたときに 5 ステップの簡単なガイドをもう一度表示します。",
+      "resetTour": "ツアーをリセット",
+      "tourReady": "次回起動時に表示"
     },
     "behavior": {
       "title": "起動と動作",
@@ -269,6 +277,53 @@
       "description": "新しいWebサイトで FrameIt を開いた際のカラム、行、グリッドの初期設定。",
       "resetDefaults": "ガイド初期値をリセット",
       "preview": "ライブプレビュー"
+    },
+    "welcome": {
+      "title": "FrameIt へようこそ！",
+      "description": "任意のサイトでブラウザのツールバーにある FrameIt アイコンをクリックすると、ドックとクイックツアーが開きます。"
+    },
+    "about": {
+      "title": "情報とフィードバック",
+      "description": "不具合の報告や機能のご要望があれば、お気軽にお知らせください。"
+    }
+  },
+  "help": {
+    "title": "ヘルプとショートカット",
+    "startTour": "インタラクティブツアーを開始",
+    "shortcutsTitle": "キーボードショートカット",
+    "shortcutsDisabled": "設定でキーボードショートカットが無効になっています。",
+    "configureOptions": "設定で変更",
+    "feedbackTitle": "フィードバックとサポート",
+    "reportBug": "バグを報告",
+    "requestFeature": "機能をリクエスト",
+    "rateStore": "Chrome ウェブストアで評価"
+  },
+  "tour": {
+    "skip": "スキップ",
+    "back": "戻る",
+    "next": "次へ",
+    "done": "完了",
+    "steps": {
+      "inspect": {
+        "title": "インスペクターと距離測定",
+        "description": "要素にホバーして余白、タイポグラフィ、コントラスト、要素間の距離を確認できます。"
+      },
+      "guides": {
+        "title": "レイアウトガイド",
+        "description": "カラム・行・ピクセルグリッドを重ねて、ページ上の DOM コンテナにスナップできます。"
+      },
+      "designOverlay": {
+        "title": "デザインオーバーレイ",
+        "description": "Figma のモックアップを重ねて、不透明度・拡大率・差の絶対値ブレンドで比較できます。"
+      },
+      "pageExport": {
+        "title": "PNG / Figma SVG エクスポート",
+        "description": "ページ全体を PNG スクリーンショットまたは Figma 用の編集可能な SVG レイヤーとして出力します。"
+      },
+      "help": {
+        "title": "ヘルプとショートカット",
+        "description": "いつでもツアーを再開したり、ショートカットの確認やフィードバックの送信ができます。"
+      }
     }
   }
 }

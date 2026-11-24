@@ -82,6 +82,7 @@ export interface ExtensionDefaultGuides {
 export interface ExtensionSettings {
   language: ExtensionLanguage;
   theme: Theme;
+  hasCompletedTour: boolean;
   behavior: ExtensionBehaviorSettings;
   inspect: ExtensionInspectSettings;
   hotkeys: ExtensionHotkeys;

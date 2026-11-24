@@ -7,6 +7,7 @@ import {
   DEFAULT_EXTENSION_SETTINGS,
   getCachedSettings,
   saveExtensionSettings,
+  setCachedSettings,
 } from '@/lib/settings-storage';
 
 describe('App', () => {
@@ -15,6 +16,10 @@ describe('App', () => {
 
   beforeEach(() => {
     window.localStorage.clear();
+    setCachedSettings({
+      ...DEFAULT_EXTENSION_SETTINGS,
+      hasCompletedTour: true,
+    });
     Object.defineProperty(window, 'scrollY', {
       value: 0,
       configurable: true,

@@ -26,6 +26,10 @@
       "holdToClose": "长按关闭",
       "keepHolding": "继续按住...",
       "clickToClose": "关闭 FrameIt"
+    },
+    "help": {
+      "ariaLabel": "帮助与快捷键",
+      "tooltip": "帮助、引导与快捷键"
     }
   },
   "pageExport": {
@@ -227,7 +231,11 @@
       "themeDescription": "悬浮工具栏、弹出面板和设置页面的配色方案。",
       "themeSystem": "跟随系统",
       "themeLight": "浅色",
-      "themeDark": "深色"
+      "themeDark": "深色",
+      "onboardingTour": "交互式新手引导",
+      "onboardingTourDescription": "下次打开 FrameIt 时再次显示简短的 5 步工具栏引导。",
+      "resetTour": "重置引导",
+      "tourReady": "下次启动时显示"
     },
     "behavior": {
       "title": "启动与行为",
@@ -269,6 +277,53 @@
       "description": "在新网站上打开 FrameIt 时用于列、行和网格的默认后备参数。",
       "resetDefaults": "重置参考线默认值",
       "preview": "实时预览"
+    },
+    "welcome": {
+      "title": "欢迎使用 FrameIt！",
+      "description": "打开任意网页并点击浏览器工具栏中的 FrameIt 图标，即可启动悬浮工具栏与快速引导。"
+    },
+    "about": {
+      "title": "关于与反馈",
+      "description": "发现问题、有改进想法，或喜欢 FrameIt？欢迎告诉我们。"
+    }
+  },
+  "help": {
+    "title": "帮助与快捷键",
+    "startTour": "开始交互式引导",
+    "shortcutsTitle": "键盘快捷键",
+    "shortcutsDisabled": "键盘快捷键当前已在选项中禁用。",
+    "configureOptions": "在选项中配置",
+    "feedbackTitle": "反馈与支持",
+    "reportBug": "报告 Bug",
+    "requestFeature": "提交功能建议",
+    "rateStore": "前往 Chrome 应用商店评分"
+  },
+  "tour": {
+    "skip": "跳过",
+    "back": "上一步",
+    "next": "下一步",
+    "done": "完成",
+    "steps": {
+      "inspect": {
+        "title": "检查器与红线测量",
+        "description": "悬停任意元素即可查看间距、排版、对比度以及区块之间的精确像素距离。"
+      },
+      "guides": {
+        "title": "布局参考线",
+        "description": "叠加列、行与像素网格，并直接吸附到页面中的任意 DOM 容器。"
+      },
+      "designOverlay": {
+        "title": "设计稿叠加",
+        "description": "将 Figma 设计稿叠加在页面上，支持透明度、缩放以及差值混合模式对比。"
+      },
+      "pageExport": {
+        "title": "导出 PNG / Figma SVG",
+        "description": "将当前页面复制或保存为完整 PNG 截图，或适用于 Figma 的可编辑 SVG 图层。"
+      },
+      "help": {
+        "title": "帮助与快捷键",
+        "description": "随时重新体验引导、查看快捷键、打开设置或发送反馈。"
+      }
     }
   }
 }
