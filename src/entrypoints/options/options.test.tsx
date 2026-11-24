@@ -312,5 +312,59 @@ describe('OptionsApp', () => {
     });
     expect(getCachedSettings().theme).toBe('system');
     expect(getCachedSettings().behavior.holdToClose).toBe(true);
+    expect(getCachedSettings().hasCompletedTour).toBe(false);
+
+    // About & Feedback links are rendered
+    expect(
+      container.querySelector('[data-testid="options-report-bug"]'),
+    ).not.toBeNull();
+    expect(
+      container.querySelector('[data-testid="options-feature-request"]'),
+    ).not.toBeNull();
+    expect(
+      container.querySelector('[data-testid="options-rate-store"]'),
+    ).not.toBeNull();
+  });
+
+  it('shows dismissible welcome banner when ?welcome=1 is present and allows resetting completed tour', async () => {
+    window.history.replaceState({}, '', '/options.html?welcome=1');
+
+    const { DEFAULT_EXTENSION_SETTINGS, saveExtensionSettings } = await import(
+      '@/lib/settings-storage'
+    );
+    await saveExtensionSettings({
+      ...DEFAULT_EXTENSION_SETTINGS,
+      hasCompletedTour: true,
+    });
+
+    await act(async () => {
+      root.render(<OptionsApp />);
+    });
+
+    const welcomeBanner = container.querySelector(
+      '[data-testid="welcome-banner"]',
+    );
+    expect(welcomeBanner).not.toBeNull();
+
+    const dismissBtn = container.querySelector(
+      '[data-testid="welcome-banner-dismiss"]',
+    ) as HTMLButtonElement;
+    await act(async () => {
+      dismissBtn.click();
+    });
+    expect(
+      container.querySelector('[data-testid="welcome-banner"]'),
+    ).toBeNull();
+
+    const resetTourBtn = container.querySelector(
+      '[data-testid="reset-onboarding-tour"]',
+    ) as HTMLButtonElement;
+    expect(resetTourBtn.disabled).toBe(false);
+    await act(async () => {
+      resetTourBtn.click();
+    });
+    expect(getCachedSettings().hasCompletedTour).toBe(false);
+
+    window.history.replaceState({}, '', '/');
   });
 });

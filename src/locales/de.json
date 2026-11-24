@@ -26,6 +26,10 @@
       "holdToClose": "Halten zum Schließen",
       "keepHolding": "Weiter gedrückt halten...",
       "clickToClose": "FrameIt schließen"
+    },
+    "help": {
+      "ariaLabel": "Hilfe & Tastenkürzel",
+      "tooltip": "Hilfe, Tour & Tastenkürzel"
     }
   },
   "pageExport": {
@@ -227,7 +231,11 @@
       "themeDescription": "Farbschema für das schwebende Dock, Popovers und die Einstellungsseite.",
       "themeSystem": "System",
       "themeLight": "Hell",
-      "themeDark": "Dunkel"
+      "themeDark": "Dunkel",
+      "onboardingTour": "Interaktive Einführungstour",
+      "onboardingTourDescription": "Zeige die kurze 5-Schritte-Tour beim nächsten Öffnen von FrameIt erneut an.",
+      "resetTour": "Tour zurücksetzen",
+      "tourReady": "Bereit beim nächsten Start"
     },
     "behavior": {
       "title": "Start & Verhalten",
@@ -269,6 +277,53 @@
       "description": "Standardwerte für Spalten, Zeilen und Raster beim Öffnen von FrameIt auf einer neuen Website.",
       "resetDefaults": "Raster-Standards zurücksetzen",
       "preview": "Live-Vorschau"
+    },
+    "welcome": {
+      "title": "Willkommen bei FrameIt!",
+      "description": "Öffne eine beliebige Website und klicke auf das FrameIt-Symbol in der Browserleiste, um das Dock und die Tour zu starten."
+    },
+    "about": {
+      "title": "Über & Feedback",
+      "description": "Fehler gefunden, eine Idee oder gefällt dir FrameIt? Schreib uns gerne."
+    }
+  },
+  "help": {
+    "title": "Hilfe & Tastenkürzel",
+    "startTour": "Interaktive Tour starten",
+    "shortcutsTitle": "Tastenkürzel",
+    "shortcutsDisabled": "Tastenkürzel sind derzeit in den Einstellungen deaktiviert.",
+    "configureOptions": "In Optionen anpassen",
+    "feedbackTitle": "Feedback & Support",
+    "reportBug": "Fehler melden",
+    "requestFeature": "Funktion vorschlagen",
+    "rateStore": "Im Chrome Web Store bewerten"
+  },
+  "tour": {
+    "skip": "Überspringen",
+    "back": "Zurück",
+    "next": "Weiter",
+    "done": "Fertig",
+    "steps": {
+      "inspect": {
+        "title": "Inspektor & Abstände",
+        "description": "Bewege den Mauszeiger über Elemente, um Abstände, Typografie, Kontrast und Distanzen zu messen."
+      },
+      "guides": {
+        "title": "Layout-Hilfslinien",
+        "description": "Lege Spalten-, Zeilen- und Pixelraster über die Seite und richte sie an DOM-Containern aus."
+      },
+      "designOverlay": {
+        "title": "Design-Overlay",
+        "description": "Lege einen Figma-Entwurf mit Deckkraft, Skalierung und Differenz-Mischmodus über das Layout."
+      },
+      "pageExport": {
+        "title": "Export als PNG / Figma SVG",
+        "description": "Kopiere oder speichere die Seite als vollständigen PNG-Screenshot oder bearbeitbare SVG-Ebenen für Figma."
+      },
+      "help": {
+        "title": "Hilfe & Tastenkürzel",
+        "description": "Starte diese Tour jederzeit neu, sieh dir deine Tastenkürzel an oder sende Feedback."
+      }
     }
   }
 }

@@ -1,6 +1,7 @@
-import { Globe, Monitor, Moon, Sun } from 'lucide-react';
+import { Compass, Globe, Monitor, Moon, Sun } from 'lucide-react';
 import { OptionsSectionCard } from '@/components/options/options-section-card';
 import { SegmentedControl } from '@/components/overlay/shared/segmented-control';
+import { Button } from '@/components/ui/button';
 import {
   Select,
   SelectContent,
@@ -16,15 +17,19 @@ import type { ExtensionLanguage } from '@/types/settings';
 export interface GeneralSettingsSectionProps {
   language: ExtensionLanguage;
   theme: Theme;
+  hasCompletedTour?: boolean;
   onLanguageChange: (language: ExtensionLanguage) => void;
   onThemeChange: (theme: Theme) => void;
+  onResetTour?: () => void;
 }
 
 export function GeneralSettingsSection({
   language,
   theme,
+  hasCompletedTour = false,
   onLanguageChange,
   onThemeChange,
+  onResetTour,
 }: GeneralSettingsSectionProps) {
   const languageItems = LANGUAGE_OPTIONS.map((opt) => ({
     value: opt.value,
@@ -131,6 +136,34 @@ export function GeneralSettingsSection({
             itemClassName="h-full gap-1.5 rounded-md px-2.5 text-xs"
           />
         </div>
+
+        {onResetTour && (
+          <div className="flex flex-col gap-3 py-4 last:pb-0 sm:flex-row sm:items-center sm:justify-between">
+            <div className="space-y-0.5">
+              <div className="text-xs font-medium">
+                {i18n.t('options.general.onboardingTour')}
+              </div>
+              <div className="text-xs text-muted-foreground">
+                {i18n.t('options.general.onboardingTourDescription')}
+              </div>
+            </div>
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={!hasCompletedTour}
+              data-testid="reset-onboarding-tour"
+              onClick={onResetTour}
+              className="w-fit gap-1.5 text-xs"
+            >
+              <Compass className="size-3.5" aria-hidden="true" />
+              <span>
+                {hasCompletedTour
+                  ? i18n.t('options.general.resetTour')
+                  : i18n.t('options.general.tourReady')}
+              </span>
+            </Button>
+          </div>
+        )}
       </div>
     </OptionsSectionCard>
   );

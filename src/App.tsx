@@ -5,6 +5,10 @@ import { Dock } from '@/components/overlay/dock/dock';
 import { InspectMeasureOverlay } from '@/components/overlay/inspect/inspect-measure-overlay';
 import { ContainerPickerOverlay } from '@/components/overlay/layout-guides/container-picker-overlay';
 import { LayoutGuidesOverlay } from '@/components/overlay/layout-guides/layout-guides-overlay';
+import {
+  OnboardingTour,
+  TOUR_STEPS,
+} from '@/components/overlay/tour/onboarding-tour';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { useDesignOverlay } from '@/hooks/use-design-overlay';
 import { useDesignOverlayInteraction } from '@/hooks/use-design-overlay-interaction';
@@ -61,6 +65,10 @@ export function App({ portalContainer, onClose }: AppProps) {
   hasCustomSiteSettingsRef.current = hasCustomSiteSettings;
 
   const [activeTool, setActiveTool] = useState<ActiveOverlayTool>('none');
+  const [isTourOpen, setIsTourOpen] = useState(
+    () => !getCachedSettings().hasCompletedTour,
+  );
+  const [tourStepIndex, setTourStepIndex] = useState(0);
   const [inspectSettings, setInspectSettings] = useState(
     () => getCachedSettings().inspect,
   );
@@ -74,6 +82,9 @@ export function App({ portalContainer, onClose }: AppProps) {
   const handleExternalSettingsChange = useCallback(
     (nextSettings: ExtensionSettings) => {
       setInspectSettings(nextSettings.inspect);
+      if (nextSettings.hasCompletedTour) {
+        setIsTourOpen(false);
+      }
       if (
         !hasCustomSiteSettingsRef.current ||
         !nextSettings.behavior.rememberSiteSettings
@@ -89,9 +100,22 @@ export function App({ portalContainer, onClose }: AppProps) {
     [],
   );
 
-  const { settings } = useExtensionSettings({
+  const { settings, persistSettings } = useExtensionSettings({
     onExternalChange: handleExternalSettingsChange,
   });
+
+  const handleStartTour = useCallback(() => {
+    setActiveTool('none');
+    setTourStepIndex(0);
+    setIsTourOpen(true);
+  }, []);
+
+  const handleCloseTour = useCallback(() => {
+    setIsTourOpen(false);
+    persistSettings((prev) =>
+      prev.hasCompletedTour ? prev : { ...prev, hasCompletedTour: true },
+    );
+  }, [persistSettings]);
 
   const resetActiveTool = useCallback(() => {
     setActiveTool('none');
@@ -205,7 +229,9 @@ export function App({ portalContainer, onClose }: AppProps) {
   });
 
   useGlobalHotkeys({
-    hotkeys: settings.hotkeys,
+    hotkeys: isTourOpen
+      ? { ...settings.hotkeys, enabled: false }
+      : settings.hotkeys,
     portalContainer,
     onToggleGuides: () =>
       setGuidesState((prev) => ({ ...prev, enabled: !prev.enabled })),
@@ -338,6 +364,11 @@ export function App({ portalContainer, onClose }: AppProps) {
                 trackedElementLabel={trackedElementLabel}
                 hasCustomSiteSettings={hasCustomSiteSettings}
                 holdToClose={settings.behavior.holdToClose}
+                hotkeys={settings.hotkeys}
+                activeTourStep={
+                  isTourOpen ? (TOUR_STEPS[tourStepIndex] ?? null) : null
+                }
+                onStartTour={handleStartTour}
                 designOverlay={{
                   state: designOverlay.state,
                   quotaExceeded: designOverlay.quotaExceeded,
@@ -367,6 +398,15 @@ export function App({ portalContainer, onClose }: AppProps) {
                 onClearTrackedElement={handleClearTrackedElement}
                 onReset={handleReset}
                 onClose={onClose}
+              />
+
+              <OnboardingTour
+                open={isTourOpen}
+                stepIndex={tourStepIndex}
+                steps={TOUR_STEPS}
+                portalContainer={portalContainer}
+                onStepChange={setTourStepIndex}
+                onClose={handleCloseTour}
               />
             </div>
           </TooltipProvider>

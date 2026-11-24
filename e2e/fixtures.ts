@@ -65,6 +65,7 @@ export const test = base.extend<{
   serviceWorker: Worker;
   testServerUrl: string;
   triggerExtensionAction: (page: Page) => Promise<void>;
+  setTourCompleted: (completed: boolean) => Promise<void>;
 }>({
   // Local HTTP server so the extension operates on a real http://127.0.0.1 origin
   // biome-ignore lint/correctness/noEmptyPattern: Playwright fixture signature requires destructuring
@@ -127,7 +128,41 @@ export const test = base.extend<{
     if (!sw) {
       sw = await context.waitForEvent('serviceworker');
     }
+    // Pre-mark onboarding tour completed so existing E2E tests are not blocked by the auto-tour
+    await sw.evaluate(async () => {
+      const g = globalThis as unknown as {
+        chrome: {
+          storage: {
+            local: {
+              set: (items: Record<string, unknown>) => Promise<void>;
+            };
+          };
+        };
+      };
+      await g.chrome.storage.local.set({
+        'frameit:extension-settings': { hasCompletedTour: true },
+      });
+    });
     await use(sw);
+  },
+
+  setTourCompleted: async ({ serviceWorker }, use) => {
+    await use(async (completed: boolean) => {
+      await serviceWorker.evaluate(async (flag: boolean) => {
+        const g = globalThis as unknown as {
+          chrome: {
+            storage: {
+              local: {
+                set: (items: Record<string, unknown>) => Promise<void>;
+              };
+            };
+          };
+        };
+        await g.chrome.storage.local.set({
+          'frameit:extension-settings': { hasCompletedTour: flag },
+        });
+      }, completed);
+    });
   },
 
   triggerExtensionAction: async ({ serviceWorker }, use) => {

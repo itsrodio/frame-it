@@ -26,6 +26,10 @@
       "holdToClose": "Segure para fechar",
       "keepHolding": "Continue segurando...",
       "clickToClose": "Fechar FrameIt"
+    },
+    "help": {
+      "ariaLabel": "Ajuda e atalhos",
+      "tooltip": "Ajuda, tour e atalhos"
     }
   },
   "pageExport": {
@@ -227,7 +231,11 @@
       "themeDescription": "Esquema de cores para a barra flutuante, popovers e página de configurações.",
       "themeSystem": "Sistema",
       "themeLight": "Claro",
-      "themeDark": "Escuro"
+      "themeDark": "Escuro",
+      "onboardingTour": "Tour interativo",
+      "onboardingTourDescription": "Mostrar novamente o tour rápido de 5 passos na próxima vez que você abrir o FrameIt.",
+      "resetTour": "Redefinir tour",
+      "tourReady": "Pronto no próximo início"
     },
     "behavior": {
       "title": "Inicialização e Comportamento",
@@ -269,6 +277,53 @@
       "description": "Configurações padrão para Colunas, Linhas e Grade ao abrir o FrameIt em um novo site.",
       "resetDefaults": "Redefinir padrões de guias",
       "preview": "Pré-visualização"
+    },
+    "welcome": {
+      "title": "Bem-vindo ao FrameIt!",
+      "description": "Abra qualquer site e clique no ícone do FrameIt na barra do navegador para abrir o dock e iniciar o tour rápido."
+    },
+    "about": {
+      "title": "Sobre e feedback",
+      "description": "Encontrou um problema, tem uma ideia ou curte o FrameIt? Fale com a gente."
+    }
+  },
+  "help": {
+    "title": "Ajuda e atalhos",
+    "startTour": "Iniciar tour interativo",
+    "shortcutsTitle": "Atalhos de teclado",
+    "shortcutsDisabled": "Os atalhos de teclado estão desativados nas Opções.",
+    "configureOptions": "Configurar nas Opções",
+    "feedbackTitle": "Feedback e suporte",
+    "reportBug": "Reportar um bug",
+    "requestFeature": "Sugerir um recurso",
+    "rateStore": "Avaliar na Chrome Web Store"
+  },
+  "tour": {
+    "skip": "Pular",
+    "back": "Voltar",
+    "next": "Próximo",
+    "done": "Concluir",
+    "steps": {
+      "inspect": {
+        "title": "Inspetor e medidas",
+        "description": "Passe o mouse sobre elementos para inspecionar espaçamentos, tipografia, contraste e distâncias."
+      },
+      "guides": {
+        "title": "Guias de layout",
+        "description": "Adicione grades de colunas, linhas e pixels, alinhando-as diretamente a contêineres DOM."
+      },
+      "designOverlay": {
+        "title": "Sobreposição de design",
+        "description": "Sobreponha um mockup do Figma com controle de opacidade, escala e modo de mesclagem Diferença."
+      },
+      "pageExport": {
+        "title": "Exportar para PNG / Figma SVG",
+        "description": "Copie ou salve a página como captura PNG completa ou camadas SVG editáveis para o Figma."
+      },
+      "help": {
+        "title": "Ajuda e atalhos",
+        "description": "Refaça este tour quando quiser, veja seus atalhos de teclado ou envie feedback."
+      }
     }
   }
 }

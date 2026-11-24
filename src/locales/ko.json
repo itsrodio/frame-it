@@ -26,6 +26,10 @@
       "holdToClose": "길게 눌러 닫기",
       "keepHolding": "계속 누르고 계세요...",
       "clickToClose": "FrameIt 닫기"
+    },
+    "help": {
+      "ariaLabel": "도움말 및 단축키",
+      "tooltip": "도움말, 투어 및 단축키"
     }
   },
   "pageExport": {
@@ -227,7 +231,11 @@
       "themeDescription": "플로팅 독, 팝오버 및 설정 페이지의 색상 테마입니다.",
       "themeSystem": "시스템",
       "themeLight": "라이트",
-      "themeDark": "다크"
+      "themeDark": "다크",
+      "onboardingTour": "온보딩 투어",
+      "onboardingTourDescription": "다음에 FrameIt을 열 때 5단계 도구 안내 투어를 다시 표시합니다.",
+      "resetTour": "투어 초기화",
+      "tourReady": "다음 실행 시 표시됨"
     },
     "behavior": {
       "title": "시작 및 동작",
@@ -269,6 +277,53 @@
       "description": "새 웹사이트에서 FrameIt을 열 때 적용할 열, 행, 그리드의 기본 설정입니다.",
       "resetDefaults": "가이드 기본값 초기화",
       "preview": "실시간 미리보기"
+    },
+    "welcome": {
+      "title": "FrameIt에 오신 것을 환영합니다!",
+      "description": "원하는 웹사이트에서 브라우저 툴바의 FrameIt 아이콘을 클릭하면 독과 간단한 투어가 시작됩니다."
+    },
+    "about": {
+      "title": "정보 및 피드백",
+      "description": "버그를 발견했거나 아이디어가 있다면 언제든 알려주세요."
+    }
+  },
+  "help": {
+    "title": "도움말 및 단축키",
+    "startTour": "인터랙티브 투어 시작",
+    "shortcutsTitle": "키보드 단축키",
+    "shortcutsDisabled": "현재 설정에서 키보드 단축키가 비활성화되어 있습니다.",
+    "configureOptions": "옵션에서 설정",
+    "feedbackTitle": "피드백 및 지원",
+    "reportBug": "버그 신고",
+    "requestFeature": "기능 제안",
+    "rateStore": "Chrome 웹 스토어에서 평가"
+  },
+  "tour": {
+    "skip": "건너뛰기",
+    "back": "이전",
+    "next": "다음",
+    "done": "완료",
+    "steps": {
+      "inspect": {
+        "title": "인스펙터 및 거리 측정",
+        "description": "요소에 마우스를 올려 여백, 타이포그래피, 대비 및 블록 간 거리를 확인하세요."
+      },
+      "guides": {
+        "title": "레이아웃 가이드",
+        "description": "열, 행, 픽셀 그리드를 표시하고 페이지의 DOM 컨테이너에 바로 맞출 수 있습니다."
+      },
+      "designOverlay": {
+        "title": "디자인 오버레이",
+        "description": "Figma 시안을 페이지 위에 겹쳐 투명도, 배율, 차이(Difference) 블렌드 모드로 비교하세요."
+      },
+      "pageExport": {
+        "title": "PNG / Figma SVG 내보내기",
+        "description": "현재 페이지를 전체 PNG 스크린샷이나 Figma용 편집 가능한 SVG 레이어로 복사하거나 저장합니다."
+      },
+      "help": {
+        "title": "도움말 및 단축키",
+        "description": "언제든 투어를 다시 보거나 단축키를 확인하고 피드백을 보낼 수 있습니다."
+      }
     }
   }
 }

@@ -95,4 +95,42 @@ describe('background entrypoint', () => {
       });
     });
   });
+
+  it('opens welcome options page on fresh install only', async () => {
+    const createTabSpy = vi
+      .spyOn(browser.tabs, 'create')
+      .mockResolvedValue(createMockTab({ id: 101 }) as never);
+
+    background.main();
+
+    await fakeBrowser.runtime.onInstalled.trigger({
+      reason: 'update',
+      previousVersion: '0.3.0',
+    });
+    expect(createTabSpy).not.toHaveBeenCalled();
+
+    await fakeBrowser.runtime.onInstalled.trigger({
+      reason: 'install',
+    });
+    expect(createTabSpy).toHaveBeenCalledTimes(1);
+    expect(createTabSpy.mock.calls[0]?.[0]?.url).toContain(
+      'options.html?welcome=1',
+    );
+  });
+
+  it('opens options page when OPEN_OPTIONS_PAGE message is received', async () => {
+    const openOptionsSpy = vi
+      .spyOn(browser.runtime, 'openOptionsPage')
+      .mockResolvedValue(undefined);
+
+    background.main();
+
+    await fakeBrowser.runtime.onMessage.trigger(
+      { type: 'OPEN_OPTIONS_PAGE' },
+      { tab: createMockTab({ id: 7 }) },
+      vi.fn(),
+    );
+
+    expect(openOptionsSpy).toHaveBeenCalledTimes(1);
+  });
 });
